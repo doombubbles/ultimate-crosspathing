@@ -16,6 +16,6 @@ I'm releasing this now because the majority of the combinations work just fine (
 
 **Changelog**
 
-v0.1.1 Fixed Buccaneer and Dartling crashes, enable auto-updating
+v0.1.1 Fixed Buccaneer and Dartling crashes
 
 v0.1.0 Prototype
