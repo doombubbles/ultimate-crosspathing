@@ -11,13 +11,19 @@ using MelonLoader;
 using UnityEngine;
 using static Assets.Scripts.Models.Towers.TowerType;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "0.1.0", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "0.1.1", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
 {
     public class Main : BloonsTD6Mod
     {
+        public override string MelonInfoCsURL =>
+            "https://raw.githubusercontent.com/doombubbles/ultimate-crosspathing/main/Main.cs";
+
+        public override string LatestURL =>
+            "https://github.com/doombubbles/ultimate-crosspathing/raw/main/UltimateCrosspathing.dll";
+
         private static readonly ModSettingBool DartMonkeyEnabled = true;
         private static readonly ModSettingBool BoomerangMonkeyEnabled = true;
         private static readonly ModSettingBool BombShooterEnabled = true;

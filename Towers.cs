@@ -174,7 +174,7 @@ namespace UltimateCrosspathing
                                     {
                                         if (Main.DebugSaveTowerJSON)
                                         {
-                                            FileIOUtil.SaveFile($"MergedTowers/{newTowerName}.json", e.ToString());
+                                            FileIOUtil.SaveFile($"MergedTowers/{leftTowerModel.baseId}/{newTowerName}.json", e.ToString());
                                         }
 
                                         MelonLogger.Msg($"Failed making {newTowerName}");
@@ -237,7 +237,7 @@ namespace UltimateCrosspathing
                 PostFixes(towerModel);
                 if (Main.DebugSaveTowerJSON)
                 {
-                    FileIOUtil.SaveObject($"MergedTowers/{towerModel.name}.json", towerModel);
+                    FileIOUtil.SaveObject($"MergedTowers/{towerModel.baseId}/{towerModel.name}.json", towerModel);
                 }
             }
 
@@ -370,18 +370,20 @@ namespace UltimateCrosspathing
                                         EmissionArcRotationOffTowerDirectionModel>();
                         }
                     }
+
+                    model.GetWeapon(4).emission.behaviors = model.GetWeapon(4).emission.behaviors
+                        .AddTo(new EmissionRotationOffDisplayModel("", 90));
+                    model.GetWeapon(5).emission.behaviors = model.GetWeapon(5).emission.behaviors
+                        .AddTo(new EmissionRotationOffDisplayModel("", -90));
                 }
 
-                if (model.appliedUpgrades.Contains("Buccaneer-Destroyer"))
+                if (model.appliedUpgrades.Contains("Buccaneer-Destroyer")) // TODO apply rate buffs to all weapons
                 {
                     model.GetWeapon(4).Rate /= 5f;
                     model.GetWeapon(5).Rate /= 5f;
                 }
-
-                model.GetWeapon(4).emission.behaviors = model.GetWeapon(4).emission.behaviors
-                    .AddTo(new EmissionRotationOffDisplayModel("", 90));
-                model.GetWeapon(5).emission.behaviors = model.GetWeapon(5).emission.behaviors
-                    .AddTo(new EmissionRotationOffDisplayModel("", -90));
+                
+                
             }
 
             if (model.appliedUpgrades.Contains("Spectre"))
@@ -400,6 +402,13 @@ namespace UltimateCrosspathing
                 model.GetWeapon().projectile.RemoveBehaviors<PickupModel>();
                 model.GetWeapon().projectile.RemoveBehaviors<ArriveAtTargetModel>();
                 model.GetDescendant<CreateTextEffectModel>().useTowerPosition = false;
+            }
+
+            if (model.appliedUpgrades.Contains("Plasma Accelerator"))
+            {
+                model.GetWeapon().projectile.radius = 2;
+                //model.GetWeapon().projectile.RemoveBehavior<TravelStraightSlowdownModel>();
+                //model.GetWeapon().projectile.RemoveBehavior<KnockbackModel>();
             }
         }
     }

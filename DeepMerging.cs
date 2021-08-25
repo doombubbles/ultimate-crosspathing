@@ -127,7 +127,7 @@ namespace UltimateCrosspathing
                 history = new History();
                 history.Push(left, right, ancestor);
             }
-            
+
             Log($"{memberInfo.Name} ({memberType.Name})", history.depth);
 
             Object ancestorValue = null;
@@ -168,16 +168,15 @@ namespace UltimateCrosspathing
                 {
                     memberInfo.SetValue(left, MergeString(memberInfo, leftValue, rightValue, ancestorValue));
                 }
-            } else if (memberType.IsType<BloonProperties>())
+            }
+            else if (memberType.IsType<BloonProperties>())
             {
                 var leftProps = leftValue.Unbox<BloonProperties>();
                 var rightProps = rightValue.Unbox<BloonProperties>();
                 var result = (int)(leftProps & rightProps);
-                
-                memberInfo.SetValue(left, new Int32 {m_value = result}.BoxIl2CppObject());
+
+                memberInfo.SetValue(left, new Int32 { m_value = result }.BoxIl2CppObject());
             }
-            
-            
         }
 
         private static Object MergeArray(MemberInfo memberInfo, Object left, Object right, Object ancestor,
@@ -248,13 +247,14 @@ namespace UltimateCrosspathing
                         }
 
                         stuff.Add(leftModel);
-                        
-                        
+
+
                         if (leftModel.IsType<AttackModel>(out var attackModel)) // Newly added attacks 
                         {
                             var leftTowerModel = history.GetLeft<TowerModel>();
                             var rightTowerModel = history.GetRight<TowerModel>();
-                            if (Math.Abs(rightTowerModel.range - attackModel.range) < 1e7 && leftTowerModel.range > rightTowerModel.range)
+                            if (Math.Abs(rightTowerModel.range - attackModel.range) < 1e7 &&
+                                leftTowerModel.range > rightTowerModel.range)
                             {
                                 attackModel.range = leftTowerModel.range;
                             }
@@ -504,42 +504,16 @@ namespace UltimateCrosspathing
                     ancestorModel = ancestor.Cast<Model>();
                 }
 
-                if (leftModel.IsType<EmissionModel>() && rightModel.IsType<EmissionModel>())
+                if (leftModel.IsType<EmissionModel>(out var leftEmission) &&
+                    rightModel.IsType<EmissionModel>(out var rightEmission))
                 {
                     if (rightModel.IsType<SendToBankModel>())
                     {
                         return rightModel;
                     }
-                    
-                    var leftCount = 1;
-                    var rightCount = 1;
-                    var maybeCount = leftModel.GetIl2CppType().GetProperty("count");
-                    if (maybeCount != null)
-                    {
-                        var value = maybeCount.GetValue(left);
-                        if (value != null) leftCount = value.Unbox<int>();
-                    }
 
-                    var maybeCount2 = leftModel.GetIl2CppType().GetField("count");
-                    if (maybeCount2 != null)
-                    {
-                        var value = maybeCount2.GetValue(left);
-                        if (value != null) leftCount = value.Unbox<int>();
-                    }
-
-                    maybeCount = rightModel.GetIl2CppType().GetProperty("count");
-                    if (maybeCount != null)
-                    {
-                        var value = maybeCount.GetValue(right);
-                        if (value != null) rightCount = value.Unbox<int>();
-                    }
-
-                    maybeCount2 = rightModel.GetIl2CppType().GetField("count");
-                    if (maybeCount2 != null)
-                    {
-                        var value = maybeCount2.GetValue(right);
-                        if (value != null) rightCount = value.Unbox<int>();
-                    }
+                    var leftCount = GetCountForEmissionModel(left, leftEmission);
+                    var rightCount = GetCountForEmissionModel(right, rightEmission);
 
                     //Ring of Fire type things
                     if (history.GetLeft<TowerModel>()?.GetBehavior<LinkProjectileRadiusToTowerRangeModel>() != null)
@@ -548,20 +522,7 @@ namespace UltimateCrosspathing
                         var ancestorWeapon = history.GetAncestor<WeaponModel>();
                         if (leftWeapon != null && ancestorWeapon != null)
                         {
-                            var ancestorCount = 1;
-                            maybeCount = ancestorWeapon.emission.GetIl2CppType().GetProperty("count");
-                            if (maybeCount != null)
-                            {
-                                var value = maybeCount.GetValue(ancestor);
-                                if (value != null) ancestorCount = value.Unbox<int>();
-                            }
-
-                            maybeCount2 = ancestorWeapon.emission.GetIl2CppType().GetField("count");
-                            if (maybeCount2 != null)
-                            {
-                                var value = maybeCount2.GetValue(ancestor);
-                                if (value != null) ancestorCount = value.Unbox<int>();
-                            }
+                            var ancestorCount = GetCountForEmissionModel(ancestor, ancestorModel.Cast<EmissionModel>());
 
                             leftWeapon.projectile.GetDamageModel().damage =
                                 (float)Math.Round(
@@ -606,6 +567,31 @@ namespace UltimateCrosspathing
             {
                 history.Pop();
             }
+        }
+
+        private static int GetCountForEmissionModel(Object methodInfo, EmissionModel emissionModel)
+        {
+            var count = 1;
+            if (emissionModel.IsType<LineProjectileEmissionModel>())
+            {
+                count = 10000;  // Lines should always take priority
+            }
+
+            var maybeCount = emissionModel.GetIl2CppType().GetProperty("count");
+            if (maybeCount != null)
+            {
+                var value = maybeCount.GetValue(methodInfo);
+                if (value != null) count = value.Unbox<int>();
+            }
+
+            var maybeCount2 = emissionModel.GetIl2CppType().GetField("count");
+            if (maybeCount2 != null)
+            {
+                var value = maybeCount2.GetValue(methodInfo);
+                if (value != null) count = value.Unbox<int>();
+            }
+
+            return count;
         }
 
         private static void Log(string msg, int depth)
@@ -732,7 +718,7 @@ namespace UltimateCrosspathing
             {
                 return (from o in left where o.IsType<T>() select o.Cast<T>()).FirstOrDefault();
             }
-            
+
             public T GetRight<T>() where T : Object
             {
                 return (from o in right where o.IsType<T>() select o.Cast<T>()).FirstOrDefault();
