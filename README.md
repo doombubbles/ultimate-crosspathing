@@ -4,6 +4,12 @@
 
 As always, requires [BTD Mod Helper](https://github.com/gurrenm3/BTD-Mod-Helper/releases/latest).
 
+# New v1.0.0
+
+Polish be damned, those who venture to scroll all the way down to the bottom of the mod settings list will find what their hearts desire.
+
+I've also re-enabled an old setting I'd forgotten about for trying to load the MergedTowers from JSON files instead of remaking all of them each time. It works for some of the towers, but not others. Still overall quicker loading though.
+
 ## New v0.1.2 Community Crosspathing Patches
 
 Since the algorithm is only ever going to get so smart, there's going to need to be manual fixes to certain Crosspathing combinations one way or another.
@@ -17,12 +23,10 @@ Patches can be "published" as Github Issues on this repository using the appropr
 The very first one is an example / template patch by me that has more information for those interested.
 
 
-
-
 ![Screenshot](https://github.com/doombubbles/ultimate-crosspathing/blob/main/screenshot.png?raw=true)
 
 This is a prototype I've been working on for algorithmically generating more crosspathing combinations. 
-With this mod, instead of your Towers being restricted to 5 Upgrades in one path and 2 in another, you can take your 7 Upgrades in any combination.
+With this mod, instead of your Towers being restricted to 5 Upgrades in one path and 2 in another, you can take your 7* Upgrades in any combination.
 This means you can do 430s, 331s, 322s, 511s, etc.
 
 I'm releasing this now because the majority of the combinations work just fine (no visuals obviously), so there's a lot of fun to be had trying them all out. I do intend to eventually make this much more polished and balanced.
@@ -30,6 +34,8 @@ I'm releasing this now because the majority of the combinations work just fine (
 ### NOTE: The generation isn't very fast. Making the combinations for every single tower can take up to 2 minutes on startup. If you don't like that, you can go into the Mod Settings page and disable generation for Towers you aren't going to use.
 
 **Changelog**
+
+v1.0.0 Execute order 66
 
 v0.1.2 Fix Monkey Knowledge inconsistencies, allow Community Crosspathing Patches
 

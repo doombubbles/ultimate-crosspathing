@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Models;
 using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Models.Towers.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Attack;
 using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 using Assets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors;
-using Assets.Scripts.Models.Towers.Mods;
 using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 using Assets.Scripts.Models.Towers.Upgrades;
 using Assets.Scripts.Models.Towers.Weapons;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
-using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
-using Harmony;
 using HarmonyLib;
 using MelonLoader;
 using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
 using Math = System.Math;
 using static Assets.Scripts.Models.Towers.TowerType;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
@@ -33,19 +26,19 @@ namespace UltimateCrosspathing
         /// <summary>
         /// Determines which paths takes precedence when determining for visuals and certain other behavior
         /// </summary>
-        private static readonly Dictionary<string, (int, int, int)> PATH_PRIORITIES =
+        public static readonly Dictionary<string, (int, int, int)> PathPriorities =
             new Dictionary<string, (int, int, int)>
             {
                 { DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
                 { TackShooter, (0, 1, 2) },
                 { BoomerangMonkey, (1, 2, 0) },
-                { BombShooter, (1, 2, 0) },
+                { BombShooter, (2, 1, 0) },
                 { MonkeyBuccaneer, (0, 1, 2) },
                 { NinjaMonkey, (0, 2, 1) },
                 { SniperMonkey, (0, 2, 1) },
                 { DartlingGunner, (0, 1, 2) },
                 { IceMonkey, (2, 0, 1) },
-                { SuperMonkey, (1, 0, 2) }
+                { SuperMonkey, (0, 1, 2) }
             };
 
         /// <summary>
@@ -62,16 +55,16 @@ namespace UltimateCrosspathing
         private static bool GetTiersForMerging(string baseId, int i, int j, int k, bool aboveThree, out int[] leftTiers,
             out int[] rightTiers)
         {
-            var (highest, middle, lowest) = PATH_PRIORITIES.ContainsKey(baseId)
-                ? PATH_PRIORITIES[baseId]
-                : PATH_PRIORITIES[DartMonkey];
+            var (highest, middle, lowest) = PathPriorities.ContainsKey(baseId)
+                ? PathPriorities[baseId]
+                : PathPriorities[DartMonkey];
             var tiers = new[] { i, j, k };
             leftTiers = new[] { i, j, k };
             rightTiers = new[] { i, j, k };
             var orderedTiers = tiers.OrderBy(num => -num).ToArray();
             if (orderedTiers[1] > 2 && !aboveThree) return false;
 
-            if (orderedTiers[0] == orderedTiers[1] && orderedTiers[0] == 3) // Towers with two 3rd tier upgrades
+            if (orderedTiers[0] == orderedTiers[1] && orderedTiers[0] >= 3) // Towers with two 3rd tier upgrades
             {
                 if (tiers[lowest] == orderedTiers[2]) // If the lowest priority path isn't one of the 3rd tiers
                 {
@@ -144,8 +137,8 @@ namespace UltimateCrosspathing
                     for (var k = 0; k <= 5; k++)
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
-                        if (Game.instance.model.towers.All(model => model.name != newTowerName) && i + j + k <= 7 &&
-                            i + j + k > 0)
+                        if (Game.instance.model.towers.All(model => model.name != newTowerName) &&
+                            (i + j + k <= Main.MaxTiers) && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, aboveThree, out var leftTiers, out var rightTiers))
                             {
@@ -167,29 +160,26 @@ namespace UltimateCrosspathing
                                     try
                                     {
                                         var newTowerModel = Merge(leftTowerModel, rightTowerModel);
-                                        MelonLogger.Msg(
-                                            $"Successfully made {newTowerName} from {leftName} and {rightName}");
                                         Game.instance.model.AddTowerToGame(newTowerModel);
                                     }
                                     catch (Exception e)
                                     {
-                                        if (Main.DebugSaveTowerJSON)
-                                        {
-                                            FileIOUtil.SaveFile($"MergedTowers/{leftTowerModel.baseId}/{newTowerName}.json", e.ToString());
-                                        }
+                                        FileIOUtil.SaveFile(
+                                            $"MergedTowers/{leftTowerModel.baseId}/{newTowerName}-{Main.GetVersion}.txt",
+                                            e.ToString());
 
-                                        MelonLogger.Msg($"Failed making {newTowerName}");
+                                        MelonLogger.Warning($"Failed making {newTowerName}");
                                     }
                                 }
                                 catch (Exception)
                                 {
-                                    MelonLogger.Msg(
+                                    MelonLogger.Warning(
                                         $"Failed finding right tower for {(rightTiers[0], rightTiers[1], rightTiers[2])}");
                                 }
                             }
                             catch (Exception)
                             {
-                                MelonLogger.Msg(
+                                MelonLogger.Warning(
                                     $"Failed finding left tower for {(leftTiers[0], leftTiers[1], leftTiers[2])}");
                             }
                         }
@@ -210,18 +200,23 @@ namespace UltimateCrosspathing
             towerModel.name = $"{towerModel.baseId}-{towerModel.tiers[0]}{towerModel.tiers[1]}{towerModel.tiers[2]}";
 
             TowerModel loaded = null;
-            /*try
+            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}-{Main.GetVersion}.json";
+            if (Main.TryLoadingFromJSON)
             {
-                loaded = FileIOUtil.LoadObject<TowerModel>($"MergedTowers/{towerModel.name}-{Main.VERSION}.json");
-                if (loaded != null)
+                try
                 {
-                    towerModel = loaded;
+                    loaded = FileIOUtil.LoadObject<TowerModel>(fileName);
+                    if (loaded != null)
+                    {
+                        towerModel = loaded;
+                        MelonLogger.Msg($"Successfully loaded {towerModel.name} from {fileName}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    FileIOUtil.SaveFile($"MergedTowers/{towerModel.baseId}/{towerModel.name}-{Main.GetVersion}.txt", e.ToString());
                 }
             }
-            catch (Exception e)
-            {
-                FileIOUtil.SaveObject($"MergedTowers/{towerModel.name}.txt", e.ToString());
-            }*/
 
             if (loaded == null)
             {
@@ -233,18 +228,20 @@ namespace UltimateCrosspathing
 
                 var behaviorsInfo = Il2CppType.Of<TowerModel>().GetField("behaviors");
                 DeepMerging.MergeField(behaviorsInfo, towerModel, second, commonAncestor);
-                
+
                 var range = Il2CppType.Of<TowerModel>().GetField("range");
                 DeepMerging.MergeField(range, towerModel, second, commonAncestor);
 
                 var mods = Il2CppType.Of<TowerModel>().GetField("mods");
                 DeepMerging.MergeField(mods, towerModel, second, commonAncestor);
-                
+
                 PostMerge(towerModel);
-                if (Main.DebugSaveTowerJSON)
+                if (Main.TryLoadingFromJSON)
                 {
-                    FileIOUtil.SaveObject($"MergedTowers/{towerModel.baseId}/{towerModel.name}.json", towerModel);
+                    FileIOUtil.SaveObject(fileName, towerModel);
                 }
+                
+                MelonLogger.Msg($"Successfully made {towerModel.name} from {first.name} and {second.name}");
             }
 
             AddUpgradeToPrevs(towerModel);
@@ -388,8 +385,6 @@ namespace UltimateCrosspathing
                     model.GetWeapon(4).Rate /= 5f;
                     model.GetWeapon(5).Rate /= 5f;
                 }
-                
-                
             }
 
             if (model.appliedUpgrades.Contains("Spectre"))
@@ -397,13 +392,14 @@ namespace UltimateCrosspathing
                 model.GetAttackModel().weapons = new Il2CppReferenceArray<WeaponModel>(0);
             }
 
-            if (model.appliedUpgrades.Contains("Robo Monkey"))  // TODO more logic about adding duplicate attacks
+            if (model.appliedUpgrades.Contains("Robo Monkey")) // TODO more logic about adding duplicate attacks
             {
                 model.GetWeapon(1).projectile = model.GetWeapon(0).projectile.Duplicate();
                 model.GetWeapon(1).emission = model.GetWeapon(0).emission.Duplicate();
             }
 
-            if (model.appliedUpgrades.Contains("Marketplace") || model.appliedUpgrades.Contains("Monkey Bank")) // TODO smartly leave this out in MergeArray
+            if (model.appliedUpgrades.Contains("Marketplace") ||
+                model.appliedUpgrades.Contains("Monkey Bank")) // TODO smartly leave this out in MergeArray
             {
                 model.GetWeapon().projectile.RemoveBehaviors<PickupModel>();
                 model.GetWeapon().projectile.RemoveBehaviors<ArriveAtTargetModel>();
@@ -416,7 +412,7 @@ namespace UltimateCrosspathing
                 //model.GetWeapon().projectile.RemoveBehavior<TravelStraightSlowdownModel>();
                 //model.GetWeapon().projectile.RemoveBehavior<KnockbackModel>();
             }
-            
+
             foreach (var crosspathingPatchMod in MelonHandler.Mods.OfType<CrosspathingPatchMod>())
             {
                 crosspathingPatchMod.Postmerge(model, model.baseId, model.tiers[0], model.tiers[1], model.tiers[2]);

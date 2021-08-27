@@ -25,7 +25,7 @@ namespace UltimateCrosspathing
 {
     public static class DeepMerging
     {
-        private static readonly HashSet<string> DONT_MERGE = new HashSet<string>
+        private static readonly HashSet<string> DontMerge = new HashSet<string>
         {
             "animation",
             "offsetX",
@@ -39,19 +39,19 @@ namespace UltimateCrosspathing
             "isPowerTower"
         };
 
-        private static readonly HashSet<string> MULTIPLICATIVE = new HashSet<string>
+        private static readonly HashSet<string> Multiplicative = new HashSet<string>
         {
             "pierce",
             "range"
         };
 
-        private static readonly Dictionary<string, string> STRING_OVERRIDES = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> StringOverrides = new Dictionary<string, string>
         {
             { "fcddee8a92f5d2e4d8605a8924566620", "69bf8d5932f2bea4f9ce36f861240d2e" }, //DartMonkey-340
             { "0ddd8752be0d3554cb0db6abe6686e8e", "69bf8d5932f2bea4f9ce36f861240d2e" } //DartMonkey-043
         };
 
-        private static readonly Dictionary<(string, Type), bool> BETTER_BOOLEANS = new Dictionary<(string, Type), bool>
+        private static readonly Dictionary<(string, Type), bool> BetterBooleans = new Dictionary<(string, Type), bool>
         {
             { ("isActive", Il2CppType.Of<FilterModel>()), false },
             { ("ignoreBlockers", Il2CppType.Of<ProjectileModel>()), true }
@@ -72,47 +72,52 @@ namespace UltimateCrosspathing
 
             history.Push(left, right, ancestor);
 
-            // Without this, there is inconsistent handling of the WeaponModels rate and rateFrames fields
-            if (left.IsType<WeaponModel>(out var leftWeapon)
-                && right.IsType<WeaponModel>(out var rightWeapon)
-                && ancestor != null && ancestor.IsType<WeaponModel>(out var ancestorWeapon))
+            try
             {
-                leftWeapon.Rate *= rightWeapon.Rate / ancestorWeapon.Rate;
-            }
-
-            if (left.IsType<Model>(out var leftModel) && right.IsType<Model>(out var rightModel) &&
-                !ModelsAreTheSame(leftModel, rightModel, false))
-            {
-                return MergeDifferentModels(left, right, ancestor, history);
-            }
-
-            var leftFields = left.GetIl2CppType().GetFields();
-            foreach (var fieldInfo in leftFields)
-            {
-                var fieldName = fieldInfo.Name;
-
-                if (DONT_MERGE.Any(s => fieldName.Contains(s))) continue;
-
-                MergeField(fieldInfo, left, right, ancestor, history);
-            }
-
-            var leftProperties = left.GetIl2CppType().GetProperties();
-            foreach (var propertyInfo in leftProperties)
-            {
-                var propertyName = propertyInfo.Name;
-
-                if (propertyName.ToUpper()[0] == propertyName[0] || DONT_MERGE.Any(s => propertyName.Contains(s)))
+                // Without this, there is inconsistent handling of the WeaponModels rate and rateFrames fields
+                if (left.IsType<WeaponModel>(out var leftWeapon)
+                    && right.IsType<WeaponModel>(out var rightWeapon)
+                    && ancestor != null && ancestor.IsType<WeaponModel>(out var ancestorWeapon))
                 {
-                    //skip capitalized ones, they seem like weird ones
-                    continue;
+                    leftWeapon.Rate *= rightWeapon.Rate / ancestorWeapon.Rate;
                 }
 
-                MergeField(propertyInfo, left, right, ancestor, history);
+                if (left.IsType<Model>(out var leftModel) && right.IsType<Model>(out var rightModel) &&
+                    !ModelsAreTheSame(leftModel, rightModel, false))
+                {
+                    return MergeDifferentModels(left, right, ancestor, history);
+                }
+
+                var leftFields = left.GetIl2CppType().GetFields();
+                foreach (var fieldInfo in leftFields)
+                {
+                    var fieldName = fieldInfo.Name;
+
+                    if (DontMerge.Any(s => fieldName.Contains(s))) continue;
+
+                    MergeField(fieldInfo, left, right, ancestor, history);
+                }
+
+                var leftProperties = left.GetIl2CppType().GetProperties();
+                foreach (var propertyInfo in leftProperties)
+                {
+                    var propertyName = propertyInfo.Name;
+
+                    if (propertyName.ToUpper()[0] == propertyName[0] || DontMerge.Any(s => propertyName.Contains(s)))
+                    {
+                        //skip capitalized ones, they seem like weird ones
+                        continue;
+                    }
+
+                    MergeField(propertyInfo, left, right, ancestor, history);
+                }
+
+                return left;
             }
-
-            history.Pop();
-
-            return left;
+            finally
+            {
+                history.Pop();
+            }
         }
 
         public static void MergeField(MemberInfo memberInfo, Object left, Object right, Object ancestor,
@@ -131,8 +136,9 @@ namespace UltimateCrosspathing
             Log($"{memberInfo.Name} ({memberType.Name})", history.depth);
 
             Object ancestorValue = null;
-            if (ancestor != null)
+            if (ancestor != null && ancestor.GetIl2CppType().GetMember(memberInfo.Name).Length > 0)
             {
+                
                 ancestorValue = memberInfo.GetValue(ancestor);
             }
 
@@ -334,7 +340,7 @@ namespace UltimateCrosspathing
             {
                 var ancestorInt = ancestorValue.Unbox<int>();
 
-                if (MULTIPLICATIVE.Any(s => memberInfo.Name.Contains(s)))
+                if (Multiplicative.Any(s => memberInfo.Name.Contains(s)))
                 {
                     leftInt = leftInt * rightInt / ancestorInt;
                 }
@@ -375,7 +381,7 @@ namespace UltimateCrosspathing
             {
                 var ancestorFloat = ancestorValue.Unbox<float>();
 
-                if (MULTIPLICATIVE.Any(s => memberInfo.Name.Contains(s)))
+                if (Multiplicative.Any(s => memberInfo.Name.Contains(s)))
                 {
                     leftFloat *= rightFloat / ancestorFloat;
                 }
@@ -415,7 +421,7 @@ namespace UltimateCrosspathing
 
             if (leftBool != rightBool)
             {
-                var better = BETTER_BOOLEANS.FirstOrDefault(pair =>
+                var better = BetterBooleans.FirstOrDefault(pair =>
                     fieldName.Contains(pair.Key.Item1) && fieldType.IsAssignableFrom(pair.Key.Item2));
                 if (!better.Equals(default))
                 {
@@ -454,12 +460,12 @@ namespace UltimateCrosspathing
                 var rightString = rightValue.ToString();
 
 
-                if (STRING_OVERRIDES.ContainsKey(leftString) && STRING_OVERRIDES[leftString] == rightString)
+                if (StringOverrides.ContainsKey(leftString) && StringOverrides[leftString] == rightString)
                 {
                     return leftString;
                 }
 
-                if (STRING_OVERRIDES.ContainsKey(rightString) && STRING_OVERRIDES[rightString] == leftString)
+                if (StringOverrides.ContainsKey(rightString) && StringOverrides[rightString] == leftString)
                 {
                     return rightString;
                 }
@@ -494,79 +500,68 @@ namespace UltimateCrosspathing
         /// <returns></returns>
         private static Object MergeDifferentModels(Object left, Object right, Object ancestor, History history)
         {
-            try
+            var leftModel = left.Cast<Model>();
+            var rightModel = right.Cast<Model>();
+            Model ancestorModel = null;
+            if (ancestor != null)
             {
-                var leftModel = left.Cast<Model>();
-                var rightModel = right.Cast<Model>();
-                Model ancestorModel = null;
-                if (ancestor != null)
+                ancestorModel = ancestor.Cast<Model>();
+            }
+
+            if (leftModel.IsType<EmissionModel>(out var leftEmission) &&
+                rightModel.IsType<EmissionModel>(out var rightEmission))
+            {
+                if (rightModel.IsType<SendToBankModel>())
                 {
-                    ancestorModel = ancestor.Cast<Model>();
+                    return rightModel;
                 }
 
-                if (leftModel.IsType<EmissionModel>(out var leftEmission) &&
-                    rightModel.IsType<EmissionModel>(out var rightEmission))
+                var leftCount = GetCountForEmissionModel(left, leftEmission);
+                var rightCount = GetCountForEmissionModel(right, rightEmission);
+
+                //Ring of Fire type things
+                if (history.GetLeft<TowerModel>()?.GetBehavior<LinkProjectileRadiusToTowerRangeModel>() != null)
                 {
-                    if (rightModel.IsType<SendToBankModel>())
+                    var leftWeapon = history.GetLeft<WeaponModel>();
+                    var ancestorWeapon = history.GetAncestor<WeaponModel>();
+                    if (leftWeapon != null && ancestorWeapon != null)
                     {
-                        return rightModel;
+                        var ancestorCount = GetCountForEmissionModel(ancestor, ancestorModel.Cast<EmissionModel>());
+
+                        leftWeapon.projectile.GetDamageModel().damage =
+                            (float)Math.Round(
+                                leftWeapon.projectile.GetDamageModel().damage * rightCount / ancestorCount);
+
+                        history.GetLeft<TowerModel>().GetBehavior<LinkProjectileRadiusToTowerRangeModel>()
+                            .projectileModel = leftWeapon.projectile;
                     }
 
-                    var leftCount = GetCountForEmissionModel(left, leftEmission);
-                    var rightCount = GetCountForEmissionModel(right, rightEmission);
-
-                    //Ring of Fire type things
-                    if (history.GetLeft<TowerModel>()?.GetBehavior<LinkProjectileRadiusToTowerRangeModel>() != null)
-                    {
-                        var leftWeapon = history.GetLeft<WeaponModel>();
-                        var ancestorWeapon = history.GetAncestor<WeaponModel>();
-                        if (leftWeapon != null && ancestorWeapon != null)
-                        {
-                            var ancestorCount = GetCountForEmissionModel(ancestor, ancestorModel.Cast<EmissionModel>());
-
-                            leftWeapon.projectile.GetDamageModel().damage =
-                                (float)Math.Round(
-                                    leftWeapon.projectile.GetDamageModel().damage * rightCount / ancestorCount);
-
-                            history.GetLeft<TowerModel>().GetBehavior<LinkProjectileRadiusToTowerRangeModel>()
-                                .projectileModel = leftWeapon.projectile;
-                        }
-
-                        return leftModel;
-                    }
-
-                    return rightCount > leftCount ? rightModel : leftModel;
+                    return leftModel;
                 }
 
-                if (leftModel.IsType<ProjectileModel>() && rightModel.IsType<ProjectileModel>() &&
-                    ancestorModel != null)
+                return rightCount > leftCount ? rightModel : leftModel;
+            }
+
+            if (leftModel.IsType<ProjectileModel>() && rightModel.IsType<ProjectileModel>() &&
+                ancestorModel != null)
+            {
+                var leftProjectile = leftModel.Cast<ProjectileModel>();
+                var rightProjectile = rightModel.Cast<ProjectileModel>();
+                var ancestorProjectile = ancestorModel.Cast<ProjectileModel>();
+
+                if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
+                                                               ancestorProjectile.display
+                                                               && rightProjectile.id != ancestorProjectile.id &&
+                                                               rightProjectile.display !=
+                                                               ancestorProjectile.display)
                 {
-                    var leftProjectile = leftModel.Cast<ProjectileModel>();
-                    var rightProjectile = rightModel.Cast<ProjectileModel>();
-                    var ancestorProjectile = ancestorModel.Cast<ProjectileModel>();
-
-                    if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
-                                                                   ancestorProjectile.display
-                                                                   && rightProjectile.id != ancestorProjectile.id &&
-                                                                   rightProjectile.display !=
-                                                                   ancestorProjectile.display)
-                    {
-                        // MelonLogger.Msg("overriding projectile hmmmm");
-                        return rightModel;
-                    }
+                    // MelonLogger.Msg("overriding projectile hmmmm");
+                    return rightModel;
                 }
+            }
 
-                //MelonLogger.Msg($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
-                return leftModel;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed merging different models", e);
-            }
-            finally
-            {
-                history.Pop();
-            }
+            //MelonLogger.Msg($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
+            return leftModel;
         }
 
         private static int GetCountForEmissionModel(Object methodInfo, EmissionModel emissionModel)
@@ -574,7 +569,7 @@ namespace UltimateCrosspathing
             var count = 1;
             if (emissionModel.IsType<LineProjectileEmissionModel>())
             {
-                count = 10000;  // Lines should always take priority
+                count = 10000; // Lines should always take priority
             }
 
             var maybeCount = emissionModel.GetIl2CppType().GetProperty("count");

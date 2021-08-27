@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.Towers;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Models.Towers;
 using MelonLoader;
 using UltimateCrosspathing;
 
@@ -18,6 +19,11 @@ namespace CrosspathingPatchTemplate
                 towerModel.baseId = TowerType.DartMonkey;
                 MelonLogger.Msg("I'm doing my part!");
             }
+        }
+
+        public override void ModifyPathPriorities(Dictionary<string, (int, int, int)> pathPriorities)
+        {
+            pathPriorities[TowerType.TackShooter] = (2, 0, 1);
         }
     }
 }

@@ -34,38 +34,41 @@
 
     <ItemGroup>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="BloonsTD6 Mod Helper, Version=2.0.4.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
         </Reference>
         <Reference Include="Il2Cppmscorlib, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
         </Reference>
         <Reference Include="MelonLoader, Version=0.4.3.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\MelonLoader.dll</HintPath>
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\MelonLoader.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\mscorlib.dll</HintPath>
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\mscorlib.dll</HintPath>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
         </Reference>
         <Reference Include="NinjaKiwi.LiNK, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\NinjaKiwi.LiNK.dll</HintPath>
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\NinjaKiwi.LiNK.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
         <Reference Include="System.Xml" />
         <Reference Include="UnhollowerBaseLib, Version=0.4.15.4, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UI, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
