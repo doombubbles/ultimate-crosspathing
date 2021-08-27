@@ -11,7 +11,7 @@ using MelonLoader;
 using UnityEngine;
 using static Assets.Scripts.Models.Towers.TowerType;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "0.1.1", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "0.1.2", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing

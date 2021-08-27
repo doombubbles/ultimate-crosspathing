@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.Towers;
+using Assets.Scripts.Models.Towers.Behaviors;
 using Assets.Scripts.Models.Towers.Behaviors.Attack;
 using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 using Assets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors;
@@ -232,9 +233,14 @@ namespace UltimateCrosspathing
 
                 var behaviorsInfo = Il2CppType.Of<TowerModel>().GetField("behaviors");
                 DeepMerging.MergeField(behaviorsInfo, towerModel, second, commonAncestor);
+                
                 var range = Il2CppType.Of<TowerModel>().GetField("range");
                 DeepMerging.MergeField(range, towerModel, second, commonAncestor);
-                PostFixes(towerModel);
+
+                var mods = Il2CppType.Of<TowerModel>().GetField("mods");
+                DeepMerging.MergeField(mods, towerModel, second, commonAncestor);
+                
+                PostMerge(towerModel);
                 if (Main.DebugSaveTowerJSON)
                 {
                     FileIOUtil.SaveObject($"MergedTowers/{towerModel.baseId}/{towerModel.name}.json", towerModel);
@@ -334,7 +340,7 @@ namespace UltimateCrosspathing
         /// Apply final fixes to a new merged tower, after all the algorithmic merging is finished
         /// </summary>
         /// <param name="model"></param>
-        private static void PostFixes(TowerModel model)
+        private static void PostMerge(TowerModel model)
         {
             foreach (var projectileModel in model.GetDescendants<ProjectileModel>().ToList())
             {
@@ -409,6 +415,11 @@ namespace UltimateCrosspathing
                 model.GetWeapon().projectile.radius = 2;
                 //model.GetWeapon().projectile.RemoveBehavior<TravelStraightSlowdownModel>();
                 //model.GetWeapon().projectile.RemoveBehavior<KnockbackModel>();
+            }
+            
+            foreach (var crosspathingPatchMod in MelonHandler.Mods.OfType<CrosspathingPatchMod>())
+            {
+                crosspathingPatchMod.Postmerge(model, model.baseId, model.tiers[0], model.tiers[1], model.tiers[2]);
             }
         }
     }
