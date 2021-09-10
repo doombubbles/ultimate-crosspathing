@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Assets.Scripts.Models.Towers.Upgrades;
+using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
+using Assets.Scripts.Unity.UI_New.Popups;
 using Assets.Scripts.Utils;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
@@ -12,22 +13,25 @@ using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
+using UltimateCrosspathing.Loading;
+using UltimateCrosspathing.Merging;
 using static Assets.Scripts.Models.Towers.TowerType;
+using Environment = System.Environment;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.0.0", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.1.0", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
 {
     public class Main : BloonsTD6Mod
     {
-        public static string GetVersion => ModContent.GetInstance<Main>().Info.Version;
-
         public override string MelonInfoCsURL =>
             "https://raw.githubusercontent.com/doombubbles/ultimate-crosspathing/main/Main.cs";
 
         public override string LatestURL =>
             "https://github.com/doombubbles/ultimate-crosspathing/raw/main/UltimateCrosspathing.dll";
+
+        private static readonly ModSettingBool AffectModdedTowers = false;
 
         private static readonly ModSettingBool DartMonkeyEnabled = true;
         private static readonly ModSettingBool BoomerangMonkeyEnabled = true;
@@ -54,39 +58,112 @@ namespace UltimateCrosspathing
         private static readonly ModSettingBool MonkeyVillageEnabled = true;
         private static readonly ModSettingBool EngineerMonkeyEnabled = true;
 
-        public static readonly ModSettingBool TryLoadingFromJSON = new ModSettingBool(true)
+        public static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
         {
-            displayName = "Try Loading From JSONs"
+            displayName = "DEBUG: Regenerate Towers"
         };
 
-        private static readonly ModSettingBool DeleteStoredJSONs = new ModSettingBool(false)
+        private static readonly ModSettingBool ExportTowerJsons = new ModSettingBool(false)
         {
             IsButton = true,
-            displayName = "Delete All Stored JSONs"
+            displayName = "DEBUG: Export Tower JSONs"
         };
 
-        private static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
+        private static readonly ModSettingBool ExportTowerBytes = new ModSettingBool(false)
+        {
+            IsButton = true,
+            displayName = "DEBUG: Export Tower Bytes"
+        };
+
+        public static readonly int TowerBatchSize = 8;
+
+        public static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
         {
             displayName = "Execute Order 66"
         };
 
         public static int MaxTiers => ExecuteOrder66 ? 15 : 7;
 
+        public static Dictionary<string, ModSettingBool> TowersEnabled = new Dictionary<string, ModSettingBool>
+        {
+            { DartMonkey, DartMonkeyEnabled },
+            { BoomerangMonkey, BoomerangMonkeyEnabled },
+            { BombShooter, BombShooterEnabled },
+            { TackShooter, TackShooterEnabled },
+            { IceMonkey, IceMonkeyEnabled },
+            { GlueGunner, GlueGunnerEnabled },
+            { SniperMonkey, SniperMonkeyEnabled },
+            { MonkeySub, MonkeySubEnabled },
+            { MonkeyBuccaneer, MonkeyBuccaneerEnabled },
+            { MonkeyAce, MonkeyAceEnabled },
+            { HeliPilot, HeliPilotEnabled },
+            { MortarMonkey, MortarMonkeyEnabled },
+            { DartlingGunner, DartlingGunnerEnabled },
+            { WizardMonkey, WizardMonkeyEnabled },
+            { SuperMonkey, SuperMonkeyEnabled },
+            { NinjaMonkey, NinjaMonkeyEnabled },
+            { Druid, DruidEnabled },
+            { BananaFarm, BananaFarmEnabled },
+            { SpikeFactory, SpikeFactoryEnabled },
+            { MonkeyVillage, MonkeyVillageEnabled },
+            { EngineerMonkey, EngineerMonkeyEnabled },
+        };
+
         public override void OnTitleScreen()
         {
-            DeleteStoredJSONs.OnInitialized.Add(option =>
+            ExportTowerBytes.OnInitialized.Add(option =>
             {
                 var buttonOption = (ButtonOption)option;
-                buttonOption.ButtonText.text = "Delete";
+                buttonOption.ButtonText.text = "Export";
                 buttonOption.Button.AddOnClick(() =>
                 {
-                    var dir = FileIOUtil.sandboxRoot + "MergedTowers/";
-                    if (Directory.Exists(dir))
+                    LoaderConverter.ExportTowers("towers.bytes", "TowersLoaderOriginal.cs");
+                    LoaderConverter.ConvertLoader(Environment.CurrentDirectory + "\\TowersLoaderOriginal.cs",
+                        Environment.CurrentDirectory + "\\TowersLoader.cs");
+                });
+            });
+
+            ExportTowerJsons.OnInitialized.Add(option =>
+            {
+                var buttonOption = (ButtonOption)option;
+                buttonOption.ButtonText.text = "Export";
+                buttonOption.Button.AddOnClick(() =>
+                {
+                    if (LoadedTowerModels != null)
                     {
-                        Directory.Delete(dir, true);
-                        Directory.CreateDirectory(dir);
+                        foreach (var towerModel in LoadedTowerModels)
+                        {
+                            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
+                            FileIOUtil.SaveObject(fileName, towerModel);
+                        }
+                    }
+
+
+                    if (AsyncMerging.FinishedTowerModels != null)
+                    {
+                        foreach (var towerModel in AsyncMerging.FinishedTowerModels)
+                        {
+                            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
+                            FileIOUtil.SaveObject(fileName, towerModel);
+                        }
                     }
                 });
+            });
+
+            AffectModdedTowers.OnInitialized.Add(option =>
+            {
+                AffectModdedTowers.OnValueChanged = new List<Action<bool>>
+                {
+                    b =>
+                    {
+                        if (b && PopupScreen.instance != null)
+                        {
+                            PopupScreen.instance.ShowOkPopup(
+                                "CLARIFICATION: This setting doesn't cause algorithmic merging of modded towers. " +
+                                "It just activates any existing Ultimate Crosspathing integration that mod authors added themselves.");
+                        }
+                    }
+                };
             });
 
             foreach (var crosspathingPatchMod in MelonHandler.Mods.OfType<CrosspathingPatchMod>())
@@ -94,116 +171,119 @@ namespace UltimateCrosspathing
                 crosspathingPatchMod.ModifyPathPriorities(Towers.PathPriorities);
             }
 
-            if (DartMonkeyEnabled)
+            if (RegenerateTowers)
             {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(DartMonkey));
+                StarterMessage();
+                if (TowerBatchSize == 0)
+                {
+                    foreach (var tower in TowersEnabled.Keys.Where(tower => TowersEnabled[tower]))
+                    {
+                        Towers.CreateCrosspathsForTower(tower);
+                    }
+                }
+                else
+                {
+                    AsyncMerging.GetNextTowerBatch();
+                    AsyncMerging.AsyncCreateCrosspaths();
+                }
             }
-
-            if (BoomerangMonkeyEnabled)
+            else
             {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(BoomerangMonkey));
-            }
+                MelonLogger.Msg("Loading Towers...");
+                var resource = Assembly.GetManifestResourceStream("UltimateCrosspathing.towers.bytes");
+                var memoryStream = new MemoryStream();
+                resource?.CopyTo(memoryStream);
 
-            if (BombShooterEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(BombShooter));
-            }
+                var towerModelLoader = new TowersLoader();
+                var dummy = towerModelLoader.Load(memoryStream.ToArray());
+                MelonLogger.Msg("Finished Loading Towers!");
+                LoadedTowerModels = dummy.behaviors.Select(model => model.Cast<TowerModel>()).ToArray();
 
-            if (TackShooterEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(TackShooter));
-            }
+                MelonLogger.Msg("Applying PostMerge Fixes");
+                foreach (var model in LoadedTowerModels)
+                {
+                    CrosspathingPatchMod.DefaultPostmerge(model);
+                    foreach (var crosspathingPatchMod in MelonHandler.Mods.OfType<CrosspathingPatchMod>())
+                    {
+                        crosspathingPatchMod.Postmerge(model, model.baseId, model.tiers[0], model.tiers[1],
+                            model.tiers[2]);
+                    }
+                }
 
-            if (IceMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(IceMonkey));
-            }
+                MelonLogger.Msg("Adding Towers to Game");
+                Game.instance.model.AddTowersToGame(LoadedTowerModels);
+                MelonLogger.Msg("Adding Upgrade Paths");
+                foreach (var towerModel in LoadedTowerModels)
+                {
+                    Towers.AddUpgradeToPrevs(towerModel);
+                }
 
-            if (GlueGunnerEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(GlueGunner));
-            }
-
-            if (SniperMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(SniperMonkey));
-            }
-
-            if (MonkeySubEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(MonkeySub));
-            }
-
-            if (MonkeyBuccaneerEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(MonkeyBuccaneer));
-            }
-
-            if (MonkeyAceEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(MonkeyAce));
-            }
-
-            if (HeliPilotEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(HeliPilot));
-            }
-
-            if (MortarMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(MortarMonkey));
-            }
-
-            if (DartlingGunnerEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(DartlingGunner));
-            }
-
-            if (WizardMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(WizardMonkey));
-            }
-
-            if (SuperMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(SuperMonkey));
-            }
-
-            if (NinjaMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(NinjaMonkey));
-            }
-
-            /*if (AlchemistEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(Alchemist));
-            }*/
-
-            if (DruidEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(Druid));
-            }
-
-            if (BananaFarmEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(BananaFarm));
-            }
-
-            if (SpikeFactoryEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(SpikeFactory));
-            }
-
-            if (MonkeyVillageEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(MonkeyVillage));
-            }
-
-            if (EngineerMonkeyEnabled)
-            {
-                Towers.CreateCrosspathsForTower(Game.instance.model.GetTower(EngineerMonkey));
+                MelonLogger.Msg("Saving Towers to JSON...");
+                MelonLogger.Msg("All Done!");
             }
         }
+
+        private static TowerModel[] LoadedTowerModels;
+
+        public override void OnUpdate()
+        {
+            if (AsyncMerging.pass == AsyncMerging.middlePass && AsyncMerging.pass > AsyncMerging.finishedPass)
+            {
+                AsyncMerging.FinishCreatingCrosspaths();
+                AsyncMerging.finishedPass++;
+            }
+        }
+
+        public override void OnMainMenu()
+        {
+            if ((AsyncMerging.pass > AsyncMerging.finishedPass) && PopupScreen.instance != null)
+            {
+                PopupScreen.instance.ShowOkPopup(
+                    "Don't go into a game just yet, Ultimate Crosspathing is still setting up in the background.");
+            }
+        }
+
+        public static void ShowFinishedPopup()
+        {
+            if (PopupScreen.instance != null)
+            {
+                PopupScreen.instance.HideAllPopups();
+                TaskScheduler.ScheduleTask(() =>
+                    PopupScreen.instance.ShowOkPopup(
+                        "Ultimate Crosspathing has now finished merging.\n" +
+                        "Happy Crosspathing!"));
+            }
+        }
+
+
+        private static void StarterMessage()
+        {
+            var enabled = TowersEnabled.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
+            var disabled = TowersEnabled.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToArray();
+
+            if (enabled.Any())
+            {
+                if (ExecuteOrder66)
+                {
+                    MelonLogger.Warning(
+                        "Executing Order 66. Full 15 upgrade crosspathing is even less polished and tested than 7. You've been warned!");
+                    MelonLogger.Msg("");
+                }
+
+                MelonLogger.Msg("Enabled Towers: ");
+                MelonLogger.Msg(string.Join(", ", enabled));
+
+                MelonLogger.Msg("");
+
+                MelonLogger.Msg("Disabled Towers: ");
+                MelonLogger.Msg(string.Join(", ", disabled));
+
+                MelonLogger.Msg("");
+
+                MelonLogger.Msg("Beginning Crosspath Creation");
+            }
+        }
+
 
         [HarmonyPatch(typeof(TowerSelectionMenu), nameof(TowerSelectionMenu.IsUpgradePathClosed))]
         internal class TowerSelectionMenu_IsUpgradePathClosed
@@ -211,11 +291,16 @@ namespace UltimateCrosspathing
             [HarmonyPostfix]
             internal static void Postfix(TowerSelectionMenu __instance, ref bool __result)
             {
-                __result = false;
+                if (TowersEnabled.TryGetValue(__instance.selectedTower.Def.baseId, out var enabled)
+                    ? (bool)enabled
+                    : (AffectModdedTowers && __instance.selectedTower.Def.baseId != Alchemist))
+                {
+                    __result = __instance.selectedTower.Def.tiers.Sum() >= MaxTiers;
+                }
             }
         }
 
-        [HarmonyPatch(typeof(TowerSelectionMenu), nameof(TowerSelectionMenu.UpgradeTower), typeof(UpgradeModel),
+        /*[HarmonyPatch(typeof(TowerSelectionMenu), nameof(TowerSelectionMenu.UpgradeTower), typeof(UpgradeModel),
             typeof(int), typeof(float))]
         internal class TowerSelectionMenu_UpdateTower
         {
@@ -224,7 +309,7 @@ namespace UltimateCrosspathing
             {
                 TowerSelectionMenu.instance.SelectionChanged(TowerSelectionMenu.instance.selectedTower);
             }
-        }
+        }*/
 
         [HarmonyPatch(typeof(UpgradeObject), nameof(UpgradeObject.CheckBlockedPath))]
         internal class UpgradeObject_CheckBlockedPath
@@ -232,14 +317,19 @@ namespace UltimateCrosspathing
             [HarmonyPostfix]
             internal static void Postfix(UpgradeObject __instance, ref int __result)
             {
-                var tier = __instance.tier;
-                var tiers = __instance.tts.Def.tiers;
-                var sum = tiers.Sum();
-                var remainingTiers = MaxTiers - sum;
-                __result = tier + remainingTiers;
-                if (__result > 5)
+                if (TowersEnabled.TryGetValue(__instance.tts.Def.baseId, out var enabled)
+                    ? (bool)enabled
+                    : (AffectModdedTowers && __instance.tts.Def.baseId != Alchemist))
                 {
-                    __result = 5;
+                    var tier = __instance.tier;
+                    var tiers = __instance.tts.Def.tiers;
+                    var sum = tiers.Sum();
+                    var remainingTiers = Main.MaxTiers - sum;
+                    __result = tier + remainingTiers;
+                    if (__result > 5)
+                    {
+                        __result = 5;
+                    }
                 }
             }
         }

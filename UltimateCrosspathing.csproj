@@ -36,8 +36,8 @@
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
-        <Reference Include="BloonsTD6 Mod Helper, Version=2.0.4.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
+        <Reference Include="BloonsTD6 Mod Helper, Version=2.1.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
         </Reference>
         <Reference Include="Il2Cppmscorlib, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
@@ -73,13 +73,18 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CrosspathingPatchMod.cs" />
-        <Compile Include="DeepMerging.cs" />
+        <Compile Include="Loading\LoaderConverter.cs" />
+        <Compile Include="Loading\TowersLoader.cs" />
         <Compile Include="Main.cs" />
+        <Compile Include="Merging\AsyncMerging.cs" />
+        <Compile Include="Merging\DeepMerging.cs" />
+        <Compile Include="Merging\MergeInfo.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Towers.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="README.md" />
+      <EmbeddedResource Include="towers.bytes" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
