@@ -13,8 +13,6 @@ With this mod, instead of your Towers being restricted to 5 Upgrades in one path
 The default mode is keep the restriction of just 7 total upgrades so you can do 430s, 331s, 322s, 511s, etc, but if you're really adventurous, there's a setting at the bottom of the options list you can enable to allow for all 15 Upgrades.
 You can also individually toggle which Towers get Ultimate Crosspathing, and changing any settings no longer requires a restart.
 
-### Note: Alchemist is purposefully disabled as its currently incompatible with the algorithm.
-
 I'm releasing this now because the majority of the combinations work okay, so there's a lot of fun to be had trying them all out. I do intend to eventually make this much more polished and balanced.
 
 ## Community Crosspathing Patches
@@ -30,6 +28,8 @@ Patches can be "published" as Github Issues on this repository using the appropr
 The very first one is an example / template patch by me that has more information for those interested.
 
 **Changelog**
+
+v1.2.0 Fixed for Bloons TD 6 v28.0. Now supports Alchemist crosspathing
 
 v1.1.0 Crosspath Data is now bundled into the .dll. It's now a bigger download, but instead of taking minutes to load on startup it's ~15s. Also some misc algorithm improvements
 

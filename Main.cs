@@ -18,7 +18,7 @@ using UltimateCrosspathing.Merging;
 using static Assets.Scripts.Models.Towers.TowerType;
 using Environment = System.Environment;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.1.0", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.0", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
@@ -48,17 +48,17 @@ namespace UltimateCrosspathing
         private static readonly ModSettingBool DartlingGunnerEnabled = true;
         private static readonly ModSettingBool WizardMonkeyEnabled = true;
         private static readonly ModSettingBool SuperMonkeyEnabled = true;
-
         private static readonly ModSettingBool NinjaMonkeyEnabled = true;
-
-        //private static readonly ModSettingBool AlchemistEnabled = false;
+        
+        private static readonly ModSettingBool AlchemistEnabled = false;
+        
         private static readonly ModSettingBool DruidEnabled = true;
         private static readonly ModSettingBool BananaFarmEnabled = true;
         private static readonly ModSettingBool SpikeFactoryEnabled = true;
         private static readonly ModSettingBool MonkeyVillageEnabled = true;
         private static readonly ModSettingBool EngineerMonkeyEnabled = true;
 
-        public static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
+        private static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
         {
             displayName = "DEBUG: Regenerate Towers"
         };
@@ -75,16 +75,16 @@ namespace UltimateCrosspathing
             displayName = "DEBUG: Export Tower Bytes"
         };
 
-        public static readonly int TowerBatchSize = 8;
+        public const int TowerBatchSize = 8;
 
-        public static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
+        private static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
         {
             displayName = "Execute Order 66"
         };
 
         public static int MaxTiers => ExecuteOrder66 ? 15 : 7;
 
-        public static Dictionary<string, ModSettingBool> TowersEnabled = new Dictionary<string, ModSettingBool>
+        public static readonly Dictionary<string, ModSettingBool> TowersEnabled = new Dictionary<string, ModSettingBool>
         {
             { DartMonkey, DartMonkeyEnabled },
             { BoomerangMonkey, BoomerangMonkeyEnabled },
@@ -102,6 +102,7 @@ namespace UltimateCrosspathing
             { WizardMonkey, WizardMonkeyEnabled },
             { SuperMonkey, SuperMonkeyEnabled },
             { NinjaMonkey, NinjaMonkeyEnabled },
+            { Alchemist, AlchemistEnabled },
             { Druid, DruidEnabled },
             { BananaFarm, BananaFarmEnabled },
             { SpikeFactory, SpikeFactoryEnabled },
@@ -133,8 +134,15 @@ namespace UltimateCrosspathing
                     {
                         foreach (var towerModel in LoadedTowerModels)
                         {
-                            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
-                            FileIOUtil.SaveObject(fileName, towerModel);
+                            try
+                            {
+                                var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
+                                FileIOUtil.SaveObject(fileName, towerModel);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
 
@@ -143,8 +151,15 @@ namespace UltimateCrosspathing
                     {
                         foreach (var towerModel in AsyncMerging.FinishedTowerModels)
                         {
-                            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
-                            FileIOUtil.SaveObject(fileName, towerModel);
+                            try
+                            {
+                                var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
+                                FileIOUtil.SaveObject(fileName, towerModel);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
                 });

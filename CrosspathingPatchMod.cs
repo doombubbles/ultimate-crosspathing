@@ -11,6 +11,7 @@ using Assets.Scripts.Models.Towers.Weapons;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
+using HarmonyLib;
 using MelonLoader;
 using UnhollowerBaseLib;
 
@@ -18,7 +19,8 @@ namespace UltimateCrosspathing
 {
     public abstract class CrosspathingPatchMod : BloonsTD6Mod
     {
-        public abstract void Postmerge(TowerModel towerModel, string baseId, int topPath, int middlePath, int bottomPath);
+        public abstract void Postmerge(TowerModel towerModel, string baseId, int topPath, int middlePath,
+            int bottomPath);
 
         public virtual void ModifyPathPriorities(Dictionary<string, (int, int, int)> pathPriorities)
         {
@@ -43,24 +45,9 @@ namespace UltimateCrosspathing
             {
                 if (model.appliedUpgrades.Contains(UpgradeType.AircraftCarrier))
                 {
-                    foreach (var emissionModel in model.GetDescendants<EmissionModel>().ToList())
                     {
-                        if (emissionModel.behaviors != null)
-                        {
-                            emissionModel.behaviors =
-                                emissionModel.behaviors
-                                    .RemoveItemsOfType<EmissionBehaviorModel, EmissionRotationOffTowerDirectionModel>();
-                            emissionModel.behaviors =
-                                emissionModel.behaviors
-                                    .RemoveItemsOfType<EmissionBehaviorModel,
-                                        EmissionArcRotationOffTowerDirectionModel>();
-                        }
+                        //TODO fix the attack angles without crashing
                     }
-
-                    model.GetWeapon(4).emission.behaviors = model.GetWeapon(4).emission.behaviors
-                        .AddTo(new EmissionRotationOffDisplayModel("", 90));
-                    model.GetWeapon(5).emission.behaviors = model.GetWeapon(5).emission.behaviors
-                        .AddTo(new EmissionRotationOffDisplayModel("", -90));
                 }
 
                 if (model.appliedUpgrades.Contains(UpgradeType.Destroyer)) // TODO apply rate buffs to all weapons
@@ -85,6 +72,7 @@ namespace UltimateCrosspathing
                 {
                     ageModel.Lifespan = 0;
                 }
+
                 if (model.GetDescendant<CreateTextEffectModel>() is CreateTextEffectModel createTextEffectModel)
                 {
                     createTextEffectModel.useTowerPosition = true;
@@ -97,8 +85,8 @@ namespace UltimateCrosspathing
                 //model.GetWeapon().projectile.RemoveBehavior<TravelStraightSlowdownModel>();
                 //model.GetWeapon().projectile.RemoveBehavior<KnockbackModel>();
             }
-            
-            
+
+
             if (model.appliedUpgrades.Contains(UpgradeType.SunTemple))
             {
                 foreach (var attackModel in attackModels)
@@ -108,6 +96,7 @@ namespace UltimateCrosspathing
                     {
                         rotateToTargetModel.rotateTower = false;
                     }
+
                     attackModel.RemoveBehaviors<RotateToMiddleOfTargetsModel>();
                 }
             }

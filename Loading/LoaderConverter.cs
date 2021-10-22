@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.Towers;
+using MelonLoader;
 using UltimateCrosspathing.Merging;
 using UnhollowerBaseLib;
 
@@ -29,10 +30,14 @@ namespace UltimateCrosspathing.Loading
         {
             var flatFileCodeGen = new FlatFileCodeGen();
 
+            MelonLogger.Msg("Creating dummy tower");
+            
             var dummy = new TowerModel
             {
                 behaviors = new Il2CppReferenceArray<Model>(AsyncMerging.FinishedTowerModels.Count)
             };
+            
+            MelonLogger.Msg("Bundling towers into dummy tower");
             
             for (var i = 0; i < AsyncMerging.FinishedTowerModels.Count; i++)
             {
@@ -40,7 +45,11 @@ namespace UltimateCrosspathing.Loading
                 dummy.AddChildDependant(AsyncMerging.FinishedTowerModels[i]);
             }
 
+            MelonLogger.Msg("Generating bytes for dummy tower");
+            
             flatFileCodeGen.Generate(dummy, bytesName, loaderName);
+
+            MelonLogger.Msg("Finished exporting!");
         }
         
         public static void ConvertLoader(string loaderPath, string fixPath)

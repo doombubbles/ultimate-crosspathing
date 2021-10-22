@@ -9,6 +9,7 @@ using HarmonyLib;
 using Il2CppSystem;
 using MelonLoader;
 using Console = System.Console;
+using Exception = System.Exception;
 using IntPtr = System.IntPtr;
 using Task = Il2CppSystem.Threading.Tasks.Task;
 
@@ -142,8 +143,15 @@ namespace UltimateCrosspathing.Merging
             {
                 CurrentTowerModels.Do(result =>
                 {
-                    var fileName = $"MergedTowers/{result.baseId}/{result.name}.json";
-                    FileIOUtil.SaveObject(fileName, result);
+                    try
+                    {
+                        var fileName = $"MergedTowers/{result.baseId}/{result.name}.json";
+                        FileIOUtil.SaveObject(fileName, result);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 });
                 MelonLogger.Msg(
                     $"Step {GetStep(5, pass)} Completed, saved {CurrentTowerModels.Count} TowerModels as JSONs in {FileIOUtil.sandboxRoot}MergedTowers");

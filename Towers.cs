@@ -295,7 +295,14 @@ namespace UltimateCrosspathing
 
 
                 PostMerge(towerModel);
-                FileIOUtil.SaveObject(fileName, towerModel);
+                try
+                {
+                    FileIOUtil.SaveObject(fileName, towerModel);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
 
                 MelonLogger.Msg($"Successfully made {towerModel.name} from {first.name} and {second.name}");
             }
