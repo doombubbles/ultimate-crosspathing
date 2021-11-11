@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Unity;
+using Assets.Scripts.Simulation.Objects;
+using Assets.Scripts.Simulation.Towers.Behaviors;
 using Assets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
 using Assets.Scripts.Unity.UI_New.Popups;
 using Assets.Scripts.Utils;
@@ -13,12 +12,10 @@ using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
-using UltimateCrosspathing.Loading;
 using UltimateCrosspathing.Merging;
 using static Assets.Scripts.Models.Towers.TowerType;
-using Environment = System.Environment;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.0", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.1", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
@@ -49,9 +46,9 @@ namespace UltimateCrosspathing
         private static readonly ModSettingBool WizardMonkeyEnabled = true;
         private static readonly ModSettingBool SuperMonkeyEnabled = true;
         private static readonly ModSettingBool NinjaMonkeyEnabled = true;
-        
+
         private static readonly ModSettingBool AlchemistEnabled = false;
-        
+
         private static readonly ModSettingBool DruidEnabled = true;
         private static readonly ModSettingBool BananaFarmEnabled = true;
         private static readonly ModSettingBool SpikeFactoryEnabled = true;
@@ -61,6 +58,11 @@ namespace UltimateCrosspathing
         private static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
         {
             displayName = "DEBUG: Regenerate Towers"
+        };
+
+        public static readonly ModSettingBool PostMergeRegenerate = new ModSettingBool(true)
+        {
+            displayName = "DEBUG: PostMerge While Regenerating"
         };
 
         private static readonly ModSettingBool ExportTowerJsons = new ModSettingBool(false)
@@ -107,7 +109,7 @@ namespace UltimateCrosspathing
             { BananaFarm, BananaFarmEnabled },
             { SpikeFactory, SpikeFactoryEnabled },
             { MonkeyVillage, MonkeyVillageEnabled },
-            { EngineerMonkey, EngineerMonkeyEnabled },
+            { EngineerMonkey, EngineerMonkeyEnabled }
         };
 
         public override void OnTitleScreen()
@@ -116,12 +118,7 @@ namespace UltimateCrosspathing
             {
                 var buttonOption = (ButtonOption)option;
                 buttonOption.ButtonText.text = "Export";
-                buttonOption.Button.AddOnClick(() =>
-                {
-                    LoaderConverter.ExportTowers("towers.bytes", "TowersLoaderOriginal.cs");
-                    LoaderConverter.ConvertLoader(Environment.CurrentDirectory + "\\TowersLoaderOriginal.cs",
-                        Environment.CurrentDirectory + "\\TowersLoader.cs");
-                });
+                buttonOption.Button.AddOnClick(() => { Loading.ExportTowers(); });
             });
 
             ExportTowerJsons.OnInitialized.Add(option =>
@@ -130,23 +127,6 @@ namespace UltimateCrosspathing
                 buttonOption.ButtonText.text = "Export";
                 buttonOption.Button.AddOnClick(() =>
                 {
-                    if (LoadedTowerModels != null)
-                    {
-                        foreach (var towerModel in LoadedTowerModels)
-                        {
-                            try
-                            {
-                                var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
-                                FileIOUtil.SaveObject(fileName, towerModel);
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-                    }
-
-
                     if (AsyncMerging.FinishedTowerModels != null)
                     {
                         foreach (var towerModel in AsyncMerging.FinishedTowerModels)
@@ -196,49 +176,39 @@ namespace UltimateCrosspathing
                         Towers.CreateCrosspathsForTower(tower);
                     }
                 }
-                else
-                {
-                    AsyncMerging.GetNextTowerBatch();
-                    AsyncMerging.AsyncCreateCrosspaths();
-                }
+
+                AsyncMerging.GetNextTowerBatch();
+                AsyncMerging.AsyncCreateCrosspaths();
             }
             else
             {
                 MelonLogger.Msg("Loading Towers...");
-                var resource = Assembly.GetManifestResourceStream("UltimateCrosspathing.towers.bytes");
-                var memoryStream = new MemoryStream();
-                resource?.CopyTo(memoryStream);
 
-                var towerModelLoader = new TowersLoader();
-                var dummy = towerModelLoader.Load(memoryStream.ToArray());
-                MelonLogger.Msg("Finished Loading Towers!");
-                LoadedTowerModels = dummy.behaviors.Select(model => model.Cast<TowerModel>()).ToArray();
-
-                MelonLogger.Msg("Applying PostMerge Fixes");
-                foreach (var model in LoadedTowerModels)
+                foreach (var (tower, enabled) in TowersEnabled)
                 {
-                    CrosspathingPatchMod.DefaultPostmerge(model);
-                    foreach (var crosspathingPatchMod in MelonHandler.Mods.OfType<CrosspathingPatchMod>())
+                    MelonLogger.Msg($"{tower}s loading...");
+                    var resource = Assembly.GetManifestResourceStream($"UltimateCrosspathing.Bytes.{tower}s.bytes");
+                    if (resource == null)
                     {
-                        crosspathingPatchMod.Postmerge(model, model.baseId, model.tiers[0], model.tiers[1],
-                            model.tiers[2]);
+                        MelonLogger.Warning($"No bytes for {tower}!");
+                        continue;
                     }
+
+                    Loading.LoadTower(resource, tower);
                 }
 
-                MelonLogger.Msg("Adding Towers to Game");
-                Game.instance.model.AddTowersToGame(LoadedTowerModels);
-                MelonLogger.Msg("Adding Upgrade Paths");
-                foreach (var towerModel in LoadedTowerModels)
-                {
-                    Towers.AddUpgradeToPrevs(towerModel);
-                }
 
-                MelonLogger.Msg("Saving Towers to JSON...");
                 MelonLogger.Msg("All Done!");
             }
         }
 
-        private static TowerModel[] LoadedTowerModels;
+        /*public override void OnKeyDown(KeyCode keyCode)
+        {
+            if (keyCode == KeyCode.RightShift)
+            {
+                InGame.instance.AddCash(100000);
+            }
+        }*/
 
         public override void OnUpdate()
         {
@@ -251,7 +221,7 @@ namespace UltimateCrosspathing
 
         public override void OnMainMenu()
         {
-            if ((AsyncMerging.pass > AsyncMerging.finishedPass) && PopupScreen.instance != null)
+            if (AsyncMerging.pass > AsyncMerging.finishedPass && PopupScreen.instance != null)
             {
                 PopupScreen.instance.ShowOkPopup(
                     "Don't go into a game just yet, Ultimate Crosspathing is still setting up in the background.");
@@ -308,7 +278,7 @@ namespace UltimateCrosspathing
             {
                 if (TowersEnabled.TryGetValue(__instance.selectedTower.Def.baseId, out var enabled)
                     ? (bool)enabled
-                    : (AffectModdedTowers && __instance.selectedTower.Def.baseId != Alchemist))
+                    : AffectModdedTowers && __instance.selectedTower.Def.baseId != Alchemist)
                 {
                     __result = __instance.selectedTower.Def.tiers.Sum() >= MaxTiers;
                 }
@@ -326,6 +296,7 @@ namespace UltimateCrosspathing
             }
         }*/
 
+
         [HarmonyPatch(typeof(UpgradeObject), nameof(UpgradeObject.CheckBlockedPath))]
         internal class UpgradeObject_CheckBlockedPath
         {
@@ -334,12 +305,12 @@ namespace UltimateCrosspathing
             {
                 if (TowersEnabled.TryGetValue(__instance.tts.Def.baseId, out var enabled)
                     ? (bool)enabled
-                    : (AffectModdedTowers && __instance.tts.Def.baseId != Alchemist))
+                    : AffectModdedTowers && __instance.tts.Def.baseId != Alchemist)
                 {
                     var tier = __instance.tier;
                     var tiers = __instance.tts.Def.tiers;
                     var sum = tiers.Sum();
-                    var remainingTiers = Main.MaxTiers - sum;
+                    var remainingTiers = MaxTiers - sum;
                     __result = tier + remainingTiers;
                     if (__result > 5)
                     {
@@ -348,5 +319,21 @@ namespace UltimateCrosspathing
                 }
             }
         }
+
+        [HarmonyPatch(typeof(Bank), nameof(Bank.Cash), MethodType.Setter)]
+        internal class Bank_Cash
+        {
+            [HarmonyPostfix]
+            internal static void Postfix(Bank __instance)
+            {
+                if (__instance.bankModel.autoCollect && __instance.Cash >= __instance.bankModel.capacity)
+                {
+                    __instance.Collect();
+                }
+            }
+        }
+
+
+
     }
 }

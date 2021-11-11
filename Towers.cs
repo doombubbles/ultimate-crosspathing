@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Models.GenericBehaviors;
 using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Emissions;
-using Assets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors;
-using Assets.Scripts.Models.Towers.Projectiles;
-using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 using Assets.Scripts.Models.Towers.Upgrades;
-using Assets.Scripts.Models.Towers.Weapons;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
-using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
 using UltimateCrosspathing.Merging;
-using UnhollowerBaseLib;
-using Math = System.Math;
 using static Assets.Scripts.Models.Towers.TowerType;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
@@ -39,10 +29,14 @@ namespace UltimateCrosspathing
                 { BombShooter, (2, 1, 0) },
                 { MonkeyBuccaneer, (0, 1, 2) },
                 { NinjaMonkey, (0, 2, 1) },
-                { SniperMonkey, (0, 2, 1) },
+                { SniperMonkey, (1, 2, 0) },
                 { DartlingGunner, (2, 0, 1) },
                 { IceMonkey, (2, 0, 1) },
-                { SuperMonkey, (0, 1, 2) }
+                { SuperMonkey, (0, 1, 2) },
+                { GlueGunner, (2, 0, 1) },
+                { WizardMonkey, (2, 1, 0) },
+                { BananaFarm, (1, 2, 0) },
+                { SpikeFactory, (2, 1, 0) }
             };
 
         /// <summary>
@@ -71,8 +65,8 @@ namespace UltimateCrosspathing
             {
                 leftTiers[low] = 0;
                 rightTiers[medium] = 0;
-
-            } else if (orderedTiers[0] == orderedTiers[1] && orderedTiers[0] >= 3) // Towers with two 3rd tier upgrades
+            }
+            else if (orderedTiers[0] == orderedTiers[1] && orderedTiers[0] >= 3) // Towers with two 3rd tier upgrades
             {
                 if (tiers[low] == orderedTiers[2]) // If the lowest priority path isn't one of the 3rd tiers
                 {
@@ -98,15 +92,17 @@ namespace UltimateCrosspathing
                     {
                         leftTiers[low] = 0;
                         rightTiers[medium] = 0;
-                    } else if (orderedTiers[0] == tiers[medium])
+                    }
+                    else if (orderedTiers[0] == tiers[medium])
                     {
                         leftTiers[low] = 0;
                         rightTiers[high] = 0;
-                    } else if (orderedTiers[0] == tiers[low])
+                    }
+                    else if (orderedTiers[0] == tiers[low])
                     {
                         leftTiers[medium] = 0;
                         rightTiers[high] = 0;
-                    } 
+                    }
                 }
                 else
                 {
@@ -128,7 +124,6 @@ namespace UltimateCrosspathing
                         }
                     }
                 }
-
             }
             else // All other towers
             {
@@ -214,7 +209,7 @@ namespace UltimateCrosspathing
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
                         if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            (i + j + k <= Main.MaxTiers) && i + j + k > 0)
+                            i + j + k <= Main.MaxTiers && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
                             {
@@ -368,7 +363,7 @@ namespace UltimateCrosspathing
                 {
                     Math.Max(int.Parse(tierString[0].ToString()), towerModel.tiers[0]),
                     Math.Max(int.Parse(tierString[1].ToString()), towerModel.tiers[1]),
-                    Math.Max(int.Parse(tierString[2].ToString()), towerModel.tiers[2]),
+                    Math.Max(int.Parse(tierString[2].ToString()), towerModel.tiers[2])
                 };
                 if (upgradeTiers.Sum() <= Main.MaxTiers)
                 {
@@ -402,12 +397,18 @@ namespace UltimateCrosspathing
                     var prevName = $"{towerModel.baseId}-{newTiers.Printed()}";
                     var prevTowerModel = Game.instance.model.GetTowerWithName(prevName);
 
-                    if (prevTowerModel == null) continue;
+                    if (prevTowerModel == null)
+                    {
+                        continue;
+                    }
 
                     var upgradeNeeded = towerModel.appliedUpgrades.FirstOrDefault(upgrade =>
                         !prevTowerModel.appliedUpgrades.Contains(upgrade));
 
-                    if (upgradeNeeded == default) continue;
+                    if (upgradeNeeded == default)
+                    {
+                        continue;
+                    }
 
                     if (prevTowerModel.upgrades.All(upm => upm.upgrade != upgradeNeeded))
                     {
@@ -425,7 +426,37 @@ namespace UltimateCrosspathing
         /// <param name="model"></param>
         public static void PostMerge(TowerModel model)
         {
-            CrosspathingPatchMod.DefaultPostmerge(model);
+            PostMerging.FixHomingProjectiles(model);
+
+            PostMerging.FixSmallRanges(model);
+
+            PostMerging.FixCannonShips(model);
+
+            PostMerging.FixSpectre(model);
+
+            PostMerging.FixBananas(model);
+
+            PostMerging.FixPlasmaBeams(model);
+
+            PostMerging.FixTemples(model);
+
+            PostMerging.FixIceMonkeyRange(model);
+
+            PostMerging.FixGlueGunnerOverriding(model);
+
+            PostMerging.FixAircraftCarriers(model);
+
+            PostMerging.FixAutoCollecting(model);
+
+            PostMerging.FixAbilities(model);
+
+            PostMerging.FixLifespans(model);
+
+            PostMerging.FixSpikeStorm(model);
+
+            PostMerging.FixClusterMauling(model);
+
+            PostMerging.FixBehaviorNames(model);
         }
     }
 }

@@ -122,19 +122,23 @@ namespace UltimateCrosspathing.Merging
             AddFinishedToMsg(ref msg);
             MelonLogger.Msg(msg);
 
-            /*try
+            if (Main.PostMergeRegenerate)
             {
-                CurrentTowerModels.Do(Towers.PostMerge);
-            }
-            catch (System.Exception e)
-            {
-                MelonLogger.Error("Failed at postmerging " + e);
+                try
+                {
+                    CurrentTowerModels.Do(Towers.PostMerge);
+                }
+                catch (System.Exception e)
+                {
+                    MelonLogger.Error("Failed at postmerging " + e);
+                }
+
+                MelonLogger.Msg(
+                    $"Step {GetStep(3, pass)} Completed, applied PostMerge fixes to {CurrentTowerModels.Count} TowerModels");
+                
             }
 
-            MelonLogger.Msg(
-                $"Step {GetStep(3, pass)} Completed, applied PostMerge fixes to {CurrentTowerModels.Count} TowerModels");*/
-
-            CurrentTowerModels.Do(model => Game.instance.model.AddTowerToGame(model));
+            Game.instance.model.AddTowersToGame(CurrentTowerModels);
 
             MelonLogger.Msg($"Step {GetStep(4, pass)} Completed, added {CurrentTowerModels.Count} TowerModels to the game");
 
