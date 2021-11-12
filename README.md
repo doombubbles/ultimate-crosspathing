@@ -20,6 +20,10 @@ That's the Ninja Kiwi way of saying the tower doesn't exist for you to upgrade t
 
 Open the Bloons TD 6 Settings screen, click the Mod Settings button in the bottom right, click on Ultimate Crosspathing in the mods list, scroll all the way down the options and enable "Execute Order 66".
 
+### Loading the mod takes more like 30 minutes than 30 seconds
+
+Make sure that the "Debug: Regenerate Towers" setting near the bottom of the options is DISABLED. If you don't want to sit through the load time, you can change the `RegenerateTowers` value in the  "...\Mods\BloonsTD6 Mod Helper\Mod Settings\Ultimate Crosspathing.json" file to `false`.
+
 # Summary
 
 This is a prototype I've been working on for algorithmically generating more crosspathing combinations.
