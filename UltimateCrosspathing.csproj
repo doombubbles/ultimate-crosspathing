@@ -140,8 +140,8 @@
     </Target>
     -->
     <Target Name="AfterBuild">
-        <Exec Command="copy /Y &quot;C:\Users\James\RiderProjects\$(MSBuildProjectName)\obj\Debug\$(MSBuildProjectName).dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\$(MSBuildProjectName).dll&quot;" />
-        <Exec Command="copy /Y &quot;C:\Users\James\RiderProjects\$(MSBuildProjectName)\obj\Debug\$(MSBuildProjectName).dll&quot; &quot;C:\Users\James\RiderProjects\$(MSBuildProjectName)\$(MSBuildProjectName).dll&quot;" />
+        <Exec Command="copy /Y &quot;C:\Users\jpgale\RiderProjects\$(MSBuildProjectName)\bin\Debug\$(MSBuildProjectName).dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\$(MSBuildProjectName).dll&quot;" />
+        <Exec Command="copy /Y &quot;C:\Users\jpgale\RiderProjects\$(MSBuildProjectName)\bin\Debug\$(MSBuildProjectName).dll&quot; &quot;C:\Users\jpgale\RiderProjects\$(MSBuildProjectName)\$(MSBuildProjectName).dll&quot;" />
     </Target>
 
 </Project>

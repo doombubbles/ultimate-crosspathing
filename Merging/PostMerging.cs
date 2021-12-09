@@ -211,6 +211,11 @@ namespace UltimateCrosspathing.Merging
         {
             if (model.appliedUpgrades.Contains(UpgradeType.AircraftCarrier))
             {
+                if (model.appliedUpgrades.Contains(UpgradeType.MonkeyPirates))
+                {
+                    model.GetAbility().GetDescendant<AttackModel>().RemoveBehavior<RotateToTargetModel>();
+                }
+                
                 model.GetDescendants<SubTowerFilterModel>().ForEach(filterModel =>
                 {
                     if (!filterModel.baseSubTowerIds.Contains(filterModel.baseSubTowerId))
@@ -218,46 +223,46 @@ namespace UltimateCrosspathing.Merging
                         filterModel.baseSubTowerId = filterModel.baseSubTowerIds[0];
                     }
                 });
-
-                model.GetDescendants<RotateToTargetModel>().ForEach(targetModel => targetModel.rotateTower = false);
-
-                model.GetDescendants<EmissionModel>().ForEach(emissionModel =>
-                {
-                    if (emissionModel.behaviors == null)
-                    {
-                        return;
-                    }
-
-                    var behaviors = emissionModel.behaviors.ToList();
-
-                    foreach (var emission in emissionModel.behaviors
-                        .GetItemsOfType<EmissionBehaviorModel, EmissionRotationOffTowerDirectionModel>())
-                    {
-                        behaviors.RemoveAll(behaviorModel => behaviorModel.name == emission.name);
-                        emissionModel.RemoveChildDependant(emission);
-                        var behavior = new EmissionRotationOffDisplayModel("EmissionRotationOffDisplayModel_",
-                            emission.offsetRotation);
-                        behaviors.Add(behavior);
-                        emissionModel.AddChildDependant(behavior);
-                    }
-
-                    foreach (var emission in emissionModel.behaviors
-                        .GetItemsOfType<EmissionBehaviorModel, EmissionArcRotationOffTowerDirectionModel>())
-                    {
-                        behaviors.RemoveAll(behaviorModel => behaviorModel.name == emission.name);
-                        emissionModel.RemoveChildDependant(emission);
-                        var behavior =
-                            new EmissionArcRotationOffDisplayDirectionModel(
-                                "EmissionArcRotationOffDisplayDirectionModel_", emission.offsetRotation);
-                        behaviors.Add(behavior);
-                        emissionModel.AddChildDependant(behavior);
-                    }
-
-                    emissionModel.behaviors = behaviors.ToIl2CppReferenceArray();
-                });
-
+                
                 model.GetAttackModels().ForEach(attackModel =>
                 {
+                    attackModel.GetDescendants<RotateToTargetModel>().ForEach(targetModel => targetModel.rotateTower = false);
+
+                    attackModel.GetDescendants<EmissionModel>().ForEach(emissionModel =>
+                    {
+                        if (emissionModel.behaviors == null)
+                        {
+                            return;
+                        }
+
+                        var behaviors = emissionModel.behaviors.ToList();
+
+                        foreach (var emission in emissionModel.behaviors
+                                     .GetItemsOfType<EmissionBehaviorModel, EmissionRotationOffTowerDirectionModel>())
+                        {
+                            behaviors.RemoveAll(behaviorModel => behaviorModel.name == emission.name);
+                            emissionModel.RemoveChildDependant(emission);
+                            var behavior = new EmissionRotationOffDisplayModel("EmissionRotationOffDisplayModel_",
+                                emission.offsetRotation);
+                            behaviors.Add(behavior);
+                            emissionModel.AddChildDependant(behavior);
+                        }
+
+                        foreach (var emission in emissionModel.behaviors
+                                     .GetItemsOfType<EmissionBehaviorModel, EmissionArcRotationOffTowerDirectionModel>())
+                        {
+                            behaviors.RemoveAll(behaviorModel => behaviorModel.name == emission.name);
+                            emissionModel.RemoveChildDependant(emission);
+                            var behavior =
+                                new EmissionArcRotationOffDisplayDirectionModel(
+                                    "EmissionArcRotationOffDisplayDirectionModel_", emission.offsetRotation);
+                            behaviors.Add(behavior);
+                            emissionModel.AddChildDependant(behavior);
+                        }
+
+                        emissionModel.behaviors = behaviors.ToIl2CppReferenceArray();
+                    });
+                    
                     if (!attackModel.HasBehavior<DisplayModel>())
                     {
                         attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", "", 0));

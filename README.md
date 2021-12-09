@@ -38,6 +38,8 @@ requires a restart.
 
 **Changelog**
 
+v1.2.2 Fixed Buccaneers for v29.0
+
 v1.2.1 Multiple fixes and algorithm improvements
 
 v1.2.0 Fixed for Bloons TD 6 v28.0. Now supports Alchemist crosspathing

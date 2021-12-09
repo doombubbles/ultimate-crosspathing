@@ -1101,6 +1101,7 @@ namespace UltimateCrosspathing.Loaders
 				v.renderHeightOffset = br.ReadSingle();
 				v.ignoreZAxisTowerCollision = br.ReadBoolean();
 				v.destroyTowersOnAreaWhenSold = br.ReadBoolean();
+				v.dontDestroyTowersWhenAreaChanges = br.ReadBoolean();
 			}
 		}
 	
@@ -1184,7 +1185,6 @@ namespace UltimateCrosspathing.Loaders
 			Set_v_EmissionModel_Fields(start, count);
 			for (var i=0; i<count; i++) {
 				var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.GrappleEmissionModel)m[i+start];
-				v.numGrapples = br.ReadSingle();
 			}
 		}
 	
@@ -1205,6 +1205,8 @@ namespace UltimateCrosspathing.Loaders
 				v.multiplier = br.ReadSingle();
 				v.additive = br.ReadSingle();
 				v.increaseWorthTextEffectModel = (Assets.Scripts.Models.Bloons.Behaviors.IncreaseWorthTextEffectModel) m[br.ReadInt32()];
+				v.destroyBloonRadius = br.ReadSingle();
+				v.displayAtEjectId = br.ReadBoolean() ? null : br.ReadString();
 				v.bloonWorthMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel.BloonWorthMutator) m[br.ReadInt32()];
 			}
 		}
@@ -1307,12 +1309,31 @@ namespace UltimateCrosspathing.Loaders
 			}
 		}
 	
+		private void Set_v_LinearTravelModel_Fields(int start, int count) {
+			Set_v_ProjectileBehaviorModel_Fields(start, count);
+			var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel>();
+			var lifespanField = t.GetField("lifespan", bindFlags);
+			var speedField = t.GetField("speed", bindFlags);
+			for (var i=0; i<count; i++) {
+				var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel)m[i+start];
+				lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+				v.lifespanFrames = br.ReadInt32();
+				speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+				v.speedFrames = br.ReadSingle();
+				v.dontDestroyOnTargetLoss = br.ReadBoolean();
+				v.forceCollisionOnSnap = br.ReadBoolean();
+			}
+		}
+	
 		private void Set_v_TargetGrapplableModel_Fields(int start, int count) {
 			Set_v_TargetSupplierModel_Fields(start, count);
 			for (var i=0; i<count; i++) {
 				var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetGrapplableModel)m[i+start];
-				v.canHitZomg = br.ReadBoolean();
+				v.grappleEmissionModel = (Assets.Scripts.Models.Towers.Behaviors.Emissions.GrappleEmissionModel) m[br.ReadInt32()];
 				v.isSelectable = br.ReadBoolean();
+				v.hooks = br.ReadInt32();
+				v.zomgHooksRequired = br.ReadInt32();
+				v.badHooksRequired = br.ReadInt32();
 			}
 		}
 	
@@ -1373,6 +1394,10 @@ namespace UltimateCrosspathing.Loaders
 				var v = (Assets.Scripts.Models.Towers.Behaviors.TradeEmpireBuffModel)m[i+start];
 				v.cashPerRoundPerMechantship = br.ReadSingle();
 				v.maxMerchantmanCapBonus = br.ReadInt32();
+				v.damageBuff = br.ReadInt32();
+				v.ceramicDamageBuff = br.ReadInt32();
+				v.moabDamageBuff = br.ReadInt32();
+				v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			}
 		}
 	
@@ -1536,6 +1561,7 @@ namespace UltimateCrosspathing.Loaders
 					Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelTowardsEmitTowerModel>();
 					Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel>();
 					Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel>();
+					Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel>();
 					Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetGrapplableModel>();
 					Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 					Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
@@ -1630,6 +1656,7 @@ namespace UltimateCrosspathing.Loaders
 					Set_v_TravelTowardsEmitTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 					Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 					Set_v_CreateSoundOnProjectileExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
+					Set_v_LinearTravelModel_Fields(br.ReadInt32(), br.ReadInt32());
 					Set_v_TargetGrapplableModel_Fields(br.ReadInt32(), br.ReadInt32());
 					Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 					Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());

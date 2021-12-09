@@ -32,4 +32,7 @@
 
 .idea/
 obj/
+bin/
+.vs/
+*.user
 *.xml
