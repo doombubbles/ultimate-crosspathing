@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Simulation.Objects;
 using Assets.Scripts.Simulation.Towers.Behaviors;
 using Assets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
 using Assets.Scripts.Unity.UI_New.Popups;
@@ -13,9 +12,8 @@ using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
 using UltimateCrosspathing.Merging;
-using static Assets.Scripts.Models.Towers.TowerType;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.3", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.3.0", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
@@ -30,32 +28,30 @@ namespace UltimateCrosspathing
 
         private static readonly ModSettingBool AffectModdedTowers = false;
 
-        private static readonly ModSettingBool DartMonkeyEnabled = true;
-        private static readonly ModSettingBool BoomerangMonkeyEnabled = true;
-        private static readonly ModSettingBool BombShooterEnabled = true;
-        private static readonly ModSettingBool TackShooterEnabled = true;
-        private static readonly ModSettingBool IceMonkeyEnabled = true;
-        private static readonly ModSettingBool GlueGunnerEnabled = true;
-        private static readonly ModSettingBool SniperMonkeyEnabled = true;
-        private static readonly ModSettingBool MonkeySubEnabled = true;
-        private static readonly ModSettingBool MonkeyBuccaneerEnabled = true;
-        private static readonly ModSettingBool MonkeyAceEnabled = true;
-        private static readonly ModSettingBool HeliPilotEnabled = true;
-        private static readonly ModSettingBool MortarMonkeyEnabled = true;
-        private static readonly ModSettingBool DartlingGunnerEnabled = true;
-        private static readonly ModSettingBool WizardMonkeyEnabled = true;
-        private static readonly ModSettingBool SuperMonkeyEnabled = true;
-        private static readonly ModSettingBool NinjaMonkeyEnabled = true;
+        public static readonly ModSettingBool DartMonkeyEnabled = true;
+        public static readonly ModSettingBool BoomerangMonkeyEnabled = true;
+        public static readonly ModSettingBool BombShooterEnabled = true;
+        public static readonly ModSettingBool TackShooterEnabled = true;
+        public static readonly ModSettingBool IceMonkeyEnabled = true;
+        public static readonly ModSettingBool GlueGunnerEnabled = true;
+        public static readonly ModSettingBool SniperMonkeyEnabled = true;
+        public static readonly ModSettingBool MonkeySubEnabled = true;
+        public static readonly ModSettingBool MonkeyBuccaneerEnabled = true;
+        public static readonly ModSettingBool MonkeyAceEnabled = true;
+        public static readonly ModSettingBool HeliPilotEnabled = true;
+        public static readonly ModSettingBool MortarMonkeyEnabled = true;
+        public static readonly ModSettingBool DartlingGunnerEnabled = true;
+        public static readonly ModSettingBool WizardMonkeyEnabled = true;
+        public static readonly ModSettingBool SuperMonkeyEnabled = true;
+        public static readonly ModSettingBool NinjaMonkeyEnabled = true;
+        public static readonly ModSettingBool AlchemistEnabled = true;
+        public static readonly ModSettingBool DruidEnabled = true;
+        public static readonly ModSettingBool BananaFarmEnabled = true;
+        public static readonly ModSettingBool SpikeFactoryEnabled = true;
+        public static readonly ModSettingBool MonkeyVillageEnabled = true;
+        public static readonly ModSettingBool EngineerMonkeyEnabled = true;
 
-        private static readonly ModSettingBool AlchemistEnabled = false;
-
-        private static readonly ModSettingBool DruidEnabled = true;
-        private static readonly ModSettingBool BananaFarmEnabled = true;
-        private static readonly ModSettingBool SpikeFactoryEnabled = true;
-        private static readonly ModSettingBool MonkeyVillageEnabled = true;
-        private static readonly ModSettingBool EngineerMonkeyEnabled = true;
-
-        private static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
+        public static readonly ModSettingBool RegenerateTowers = new ModSettingBool(false)
         {
             displayName = "DEBUG: Regenerate Towers"
         };
@@ -86,44 +82,18 @@ namespace UltimateCrosspathing
 
         public static int MaxTiers => ExecuteOrder66 ? 15 : 7;
 
-        public static readonly Dictionary<string, ModSettingBool> TowersEnabled = new Dictionary<string, ModSettingBool>
-        {
-            { DartMonkey, DartMonkeyEnabled },
-            { BoomerangMonkey, BoomerangMonkeyEnabled },
-            { BombShooter, BombShooterEnabled },
-            { TackShooter, TackShooterEnabled },
-            { IceMonkey, IceMonkeyEnabled },
-            { GlueGunner, GlueGunnerEnabled },
-            { SniperMonkey, SniperMonkeyEnabled },
-            { MonkeySub, MonkeySubEnabled },
-            { MonkeyBuccaneer, MonkeyBuccaneerEnabled },
-            { MonkeyAce, MonkeyAceEnabled },
-            { HeliPilot, HeliPilotEnabled },
-            { MortarMonkey, MortarMonkeyEnabled },
-            { DartlingGunner, DartlingGunnerEnabled },
-            { WizardMonkey, WizardMonkeyEnabled },
-            { SuperMonkey, SuperMonkeyEnabled },
-            { NinjaMonkey, NinjaMonkeyEnabled },
-            { Alchemist, AlchemistEnabled },
-            { Druid, DruidEnabled },
-            { BananaFarm, BananaFarmEnabled },
-            { SpikeFactory, SpikeFactoryEnabled },
-            { MonkeyVillage, MonkeyVillageEnabled },
-            { EngineerMonkey, EngineerMonkeyEnabled }
-        };
-
         public override void OnTitleScreen()
         {
             ExportTowerBytes.OnInitialized.Add(option =>
             {
-                var buttonOption = (ButtonOption)option;
+                var buttonOption = (ButtonOption) option;
                 buttonOption.ButtonText.text = "Export";
-                buttonOption.Button.AddOnClick(() => { Loading.ExportTowers(); });
+                buttonOption.Button.AddOnClick(Loading.ExportTowers);
             });
 
             ExportTowerJsons.OnInitialized.Add(option =>
             {
-                var buttonOption = (ButtonOption)option;
+                var buttonOption = (ButtonOption) option;
                 buttonOption.ButtonText.text = "Export";
                 buttonOption.Button.AddOnClick(() =>
                 {
@@ -169,36 +139,9 @@ namespace UltimateCrosspathing
             if (RegenerateTowers)
             {
                 StarterMessage();
-                if (TowerBatchSize == 0)
-                {
-                    foreach (var tower in TowersEnabled.Keys.Where(tower => TowersEnabled[tower]))
-                    {
-                        Towers.CreateCrosspathsForTower(tower);
-                    }
-                }
 
                 AsyncMerging.GetNextTowerBatch();
                 AsyncMerging.AsyncCreateCrosspaths();
-            }
-            else
-            {
-                MelonLogger.Msg("Loading Towers...");
-
-                foreach (var (tower, enabled) in TowersEnabled)
-                {
-                    MelonLogger.Msg($"{tower}s loading...");
-                    var resource = Assembly.GetManifestResourceStream($"UltimateCrosspathing.Bytes.{tower}s.bytes");
-                    if (resource == null)
-                    {
-                        MelonLogger.Warning($"No bytes for {tower}!");
-                        continue;
-                    }
-
-                    Loading.LoadTower(resource, tower);
-                }
-
-
-                MelonLogger.Msg("All Done!");
             }
         }
 
@@ -243,8 +186,10 @@ namespace UltimateCrosspathing
 
         private static void StarterMessage()
         {
-            var enabled = TowersEnabled.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToArray();
-            var disabled = TowersEnabled.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToArray();
+            var enabled = ModContent.GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name)
+                .ToArray();
+            var disabled = ModContent.GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name)
+                .ToArray();
 
             if (enabled.Any())
             {
@@ -276,9 +221,10 @@ namespace UltimateCrosspathing
             [HarmonyPostfix]
             internal static void Postfix(TowerSelectionMenu __instance, ref bool __result)
             {
-                if (TowersEnabled.TryGetValue(__instance.selectedTower.Def.baseId, out var enabled)
-                    ? (bool)enabled
-                    : AffectModdedTowers && __instance.selectedTower.Def.baseId != Alchemist)
+                if (ModContent.GetContent<LoadInfo>().Where(info => info.Enabled)
+                        .FirstOrDefault(info => info.Name == __instance.selectedTower.Def.baseId) is LoadInfo loadInfo
+                        ? loadInfo.Enabled
+                        : (bool) AffectModdedTowers)
                 {
                     __result = __instance.selectedTower.Def.tiers.Sum() >= MaxTiers;
                 }
@@ -303,9 +249,10 @@ namespace UltimateCrosspathing
             [HarmonyPostfix]
             internal static void Postfix(UpgradeObject __instance, ref int __result)
             {
-                if (TowersEnabled.TryGetValue(__instance.tts.Def.baseId, out var enabled)
-                    ? (bool)enabled
-                    : AffectModdedTowers && __instance.tts.Def.baseId != Alchemist)
+                if (ModContent.GetContent<LoadInfo>().Where(info => info.Enabled)
+                        .FirstOrDefault(info => info.Name == __instance.tts.Def.baseId) is LoadInfo loadInfo
+                        ? loadInfo.Enabled
+                        : (bool) AffectModdedTowers)
                 {
                     var tier = __instance.tier;
                     var tiers = __instance.tts.Def.tiers;
@@ -332,8 +279,5 @@ namespace UltimateCrosspathing
                 }
             }
         }
-
-
-
     }
 }

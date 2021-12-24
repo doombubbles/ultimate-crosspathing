@@ -1,5 +1,7 @@
 using System.IO;
+using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Simulation.SMath;
+using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Extensions;
 using Il2CppSystem;
 using Il2CppSystem.Collections.Generic;
@@ -10,12 +12,13 @@ using UnhollowerRuntimeLib;
 
 namespace UltimateCrosspathing.Loaders
 {
-	public class IceMonkeyLoader : ITowersLoader {
+	public class IceMonkeyLoader : ModByteLoader<TowerModel> {
 	
 		BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 		BinaryReader br = null;
 	
 		// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
+		protected override string BytesFileName => "IceMonkeys.bytes";
 		object[] m;
 		int mIndex = 1; // first element is null
 		#region Read array
@@ -1134,7 +1137,7 @@ namespace UltimateCrosspathing.Loaders
 	
 		#endregion
 	
-		public Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+		protected override TowerModel Load(byte[] bytes) {
 			using (var s = new MemoryStream(bytes)) {
 				using (var reader = new BinaryReader(s)) {
 					this.br = reader;

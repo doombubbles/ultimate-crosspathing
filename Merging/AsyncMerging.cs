@@ -4,13 +4,12 @@ using System.Linq;
 using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
+using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using Il2CppSystem;
 using MelonLoader;
-using Console = System.Console;
 using Exception = System.Exception;
-using IntPtr = System.IntPtr;
 using Task = Il2CppSystem.Threading.Tasks.Task;
 
 
@@ -33,9 +32,9 @@ namespace UltimateCrosspathing.Merging
         public static void GetNextTowerBatch()
         {
             FinishedTowers.AddRange(CurrentTowers);
-            CurrentTowers = Main.TowersEnabled
-                .Where(pair => pair.Value && !FinishedTowers.Contains(pair.Key))
-                .Select(pair => pair.Key)
+            CurrentTowers = ModContent.GetContent<LoadInfo>()
+                .Where(info => info.Enabled && !FinishedTowers.Contains(info.Name))
+                .Select(info => info.Name)
                 .Take(Main.TowerBatchSize)
                 .ToList();
             if (CurrentTowers.Any())

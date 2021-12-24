@@ -9,7 +9,6 @@ using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
 using UltimateCrosspathing.Merging;
-using static Assets.Scripts.Models.Towers.TowerType;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
 
@@ -23,20 +22,20 @@ namespace UltimateCrosspathing
         public static readonly Dictionary<string, (int, int, int)> PathPriorities =
             new Dictionary<string, (int, int, int)>
             {
-                { DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
-                { TackShooter, (0, 1, 2) },
-                { BoomerangMonkey, (1, 2, 0) },
-                { BombShooter, (2, 1, 0) },
-                { MonkeyBuccaneer, (0, 1, 2) },
-                { NinjaMonkey, (0, 2, 1) },
-                { SniperMonkey, (1, 2, 0) },
-                { DartlingGunner, (2, 0, 1) },
-                { IceMonkey, (2, 0, 1) },
-                { SuperMonkey, (0, 1, 2) },
-                { GlueGunner, (2, 0, 1) },
-                { WizardMonkey, (2, 1, 0) },
-                { BananaFarm, (1, 2, 0) },
-                { SpikeFactory, (2, 1, 0) }
+                { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
+                { TowerType.TackShooter, (0, 1, 2) },
+                { TowerType.BoomerangMonkey, (1, 2, 0) },
+                { TowerType.BombShooter, (2, 1, 0) },
+                { TowerType.MonkeyBuccaneer, (0, 1, 2) },
+                { TowerType.NinjaMonkey, (0, 2, 1) },
+                { TowerType.SniperMonkey, (1, 2, 0) },
+                { TowerType.DartlingGunner, (2, 0, 1) },
+                { TowerType.IceMonkey, (2, 0, 1) },
+                { TowerType.SuperMonkey, (0, 1, 2) },
+                { TowerType.GlueGunner, (2, 0, 1) },
+                { TowerType.WizardMonkey, (2, 1, 0) },
+                { TowerType.BananaFarm, (1, 2, 0) },
+                { TowerType.SpikeFactory, (2, 1, 0) }
             };
 
         /// <summary>
@@ -55,7 +54,7 @@ namespace UltimateCrosspathing
         {
             var (high, medium, low) = PathPriorities.ContainsKey(baseId)
                 ? PathPriorities[baseId]
-                : PathPriorities[DartMonkey];
+                : PathPriorities[TowerType.DartMonkey];
             var tiers = new[] { top, mid, bot };
             leftTiers = new[] { top, mid, bot };
             rightTiers = new[] { top, mid, bot };

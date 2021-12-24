@@ -36,8 +36,8 @@
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
-        <Reference Include="BloonsTD6 Mod Helper, Version=2.1.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
+        <Reference Include="BloonsTD6 Mod Helper, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\steamapps\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
         </Reference>
         <Reference Include="Il2Cppmscorlib, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
@@ -76,7 +76,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CrosspathingPatchMod.cs" />
-        <Compile Include="ITowersLoader.cs" />
+        <Compile Include="LoadInfo.cs" />
         <Compile Include="Loading.cs" />
         <Compile Include="Loaders\AlchemistLoader.cs" />
         <Compile Include="Loaders\BananaFarmLoader.cs" />

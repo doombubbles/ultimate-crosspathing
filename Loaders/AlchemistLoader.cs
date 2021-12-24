@@ -7,14 +7,16 @@ using Il2CppSystem.Reflection;
 using Il2CppSystem;
 using Assets.Scripts.Simulation.SMath;
 using System.IO;
-using UltimateCrosspathing;
+using Assets.Scripts.Models.Towers;
+using BTD_Mod_Helper.Api;
 
-public class AlchemistLoader : ITowersLoader {
+public class AlchemistLoader : ModByteLoader<TowerModel> {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
+	protected override string BytesFileName => "Alchemists.bytes";
 	object[] m;
 	int mIndex = 1; // first element is null
 	#region Read array
@@ -1313,7 +1315,7 @@ public class AlchemistLoader : ITowersLoader {
 	
 	#endregion
 	
-	public Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
