@@ -26,7 +26,7 @@ namespace UltimateCrosspathing.Merging
         public static void FixHomingProjectiles(TowerModel model)
         {
             foreach (var projectileModel in model.GetDescendants<ProjectileModel>().ToList()
-                .Where(projectileModel => projectileModel.GetBehavior<RetargetOnContactModel>() != null))
+                         .Where(projectileModel => projectileModel.GetBehavior<RetargetOnContactModel>() != null))
             {
                 projectileModel.RemoveBehavior<FollowPathModel>();
             }
@@ -215,18 +215,22 @@ namespace UltimateCrosspathing.Merging
                 {
                     model.GetAbility().GetDescendant<AttackModel>().RemoveBehavior<RotateToTargetModel>();
                 }
-                
-                model.GetDescendants<SubTowerFilterModel>().ForEach(filterModel =>
+
+                model.GetDescendants<WeaponModel>().ForEach(weaponModel =>
                 {
-                    if (!filterModel.baseSubTowerIds.Contains(filterModel.baseSubTowerId))
+                    var createTowerModel = weaponModel.GetDescendant<CreateTowerModel>();
+                    var filter = weaponModel.GetDescendant<SubTowerFilterModel>();
+                    if (createTowerModel != null && filter != null)
                     {
-                        filterModel.baseSubTowerId = filterModel.baseSubTowerIds[0];
+                        filter.baseSubTowerId = createTowerModel.tower.baseId;
+                        filter.baseSubTowerIds = new[] { filter.baseSubTowerId };
                     }
                 });
-                
+
                 model.GetAttackModels().ForEach(attackModel =>
                 {
-                    attackModel.GetDescendants<RotateToTargetModel>().ForEach(targetModel => targetModel.rotateTower = false);
+                    attackModel.GetDescendants<RotateToTargetModel>()
+                        .ForEach(targetModel => targetModel.rotateTower = false);
 
                     attackModel.GetDescendants<EmissionModel>().ForEach(emissionModel =>
                     {
@@ -249,7 +253,8 @@ namespace UltimateCrosspathing.Merging
                         }
 
                         foreach (var emission in emissionModel.behaviors
-                                     .GetItemsOfType<EmissionBehaviorModel, EmissionArcRotationOffTowerDirectionModel>())
+                                     .GetItemsOfType<EmissionBehaviorModel,
+                                         EmissionArcRotationOffTowerDirectionModel>())
                         {
                             behaviors.RemoveAll(behaviorModel => behaviorModel.name == emission.name);
                             emissionModel.RemoveChildDependant(emission);
@@ -262,7 +267,7 @@ namespace UltimateCrosspathing.Merging
 
                         emissionModel.behaviors = behaviors.ToIl2CppReferenceArray();
                     });
-                    
+
                     if (!attackModel.HasBehavior<DisplayModel>())
                     {
                         attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", "", 0));
@@ -274,7 +279,7 @@ namespace UltimateCrosspathing.Merging
         public static void FixAbilities(TowerModel model)
         {
             foreach (var ability in model.GetAbilites().Where(abilityModel =>
-                abilityModel.displayName == "Supply Drop" || abilityModel.displayName == "Bomb Blitz"))
+                         abilityModel.displayName == "Supply Drop" || abilityModel.displayName == "Bomb Blitz"))
             {
                 var activateAttackModel = ability.GetBehavior<ActivateAttackModel>();
                 activateAttackModel.isOneShot = true;
@@ -330,7 +335,7 @@ namespace UltimateCrosspathing.Merging
                 var ceramage = damageModifierForTagModels.FirstOrDefault(m => m.tag == "Ceramic");
 
                 foreach (var projectileModel in model.GetDescendants<ProjectileModel>().ToList()
-                    .Where(p => p.id == "Explosion"))
+                             .Where(p => p.id == "Explosion"))
                 {
                     projectileModel.RemoveBehaviors<DamageModifierForTagModel>();
                     if (moabage != null)
