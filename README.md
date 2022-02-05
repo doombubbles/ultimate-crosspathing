@@ -38,6 +38,8 @@ requires a restart.
 
 **Changelog**
 
+v1.3.0 Update to Mod Helper 3.0, making use of ModByteLoaders and fixing the lag spike issues
+
 v1.2.3 Re-fix Buccaneer infinite planes
 
 v1.2.2 Fixed Buccaneers for v29.0

@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
+using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Extensions;
 using MelonLoader;
@@ -14,15 +15,15 @@ namespace UltimateCrosspathing
 
         public override IEnumerator Coroutine()
         {
-            if (!Main.RegenerateTowers)
+            if (!UltimateCrosspathingMod.RegenerateTowers)
             {
-                var loadInfos = GetContent<LoadInfo>();
+                var loadInfos = GetContent<LoadInfo>().Where(info => info.Enabled).ToList();
                 while (loadInfos.Any(info => !info.loaded))
                 {
                     while (loadInfos.FirstOrDefault(info => !info.loaded && info.Loader.Loaded) is LoadInfo loadInfo)
                     {
                         yield return null;
-                        var dummy = loadInfo.Loader.Load();
+                        var dummy = loadInfo.Loader.LoadResult();
                         yield return null;
 
                         var towers = dummy.behaviors
@@ -63,7 +64,7 @@ namespace UltimateCrosspathing
                         }
 
                         loadInfo.loaded = true;
-                        MelonLogger.Msg($"Finished loading {loadInfo.Name}s!");
+                        ModHelper.Msg<UltimateCrosspathingMod>($"Finished loading {loadInfo.Name}s!");
                     }
 
                     yield return null;
@@ -78,7 +79,7 @@ namespace UltimateCrosspathing
                 info.Export();
             }
 
-            MelonLogger.Msg("Finished exporting!");
+            ModHelper.Msg<UltimateCrosspathingMod>("Finished exporting!");
         }
     }
 }

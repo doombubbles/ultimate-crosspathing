@@ -17,7 +17,7 @@ public class AlchemistLoader : ModByteLoader<TowerModel> {
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
 	protected override string BytesFileName => "Alchemists.bytes";
-	object[] m;
+	
 	int mIndex = 1; // first element is null
 	#region Read array
 	

@@ -11,6 +11,7 @@ using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 using Assets.Scripts.Models.Towers.Filters;
 using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Weapons;
+using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
 using Il2CppSystem.Reflection;
 using MelonLoader;
@@ -561,21 +562,21 @@ namespace UltimateCrosspathing.Merging
                 rightModel.IsType<ProjectileModel>(out var rightProjectile) &&
                 ancestorModel.IsType<ProjectileModel>(out var ancestorProjectile))
             {
-                // Try out a shalllow merge
+                // Try out a shallow merge
                 return DeepMerge(leftModel, rightModel, ancestor, history, true);
 
-                if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
+                /*if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
                                                                ancestorProjectile.display
                                                                && rightProjectile.id != ancestorProjectile.id &&
                                                                rightProjectile.display !=
                                                                ancestorProjectile.display)
                 {
-                    MelonLogger.Msg("overriding projectile hmmmm");
+                    ModHelper.Msg<UltimateCrosspathingMod>("overriding projectile hmmmm");
                     return rightModel;
-                }
+                }*/
             }
 
-            //MelonLogger.Msg($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
+            //ModHelper.Msg<UltimateCrosspathingMod>($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
             return leftModel;
         }
 
@@ -656,7 +657,7 @@ namespace UltimateCrosspathing.Merging
             {
                 msg = "|  " + msg;
             }
-            //MelonLogger.Msg(msg);
+            //ModHelper.Msg<UltimateCrosspathingMod>(msg);
         }
 
         private static bool ModelsAreTheSame(Model leftModel, Model rightModel, bool array, History history)

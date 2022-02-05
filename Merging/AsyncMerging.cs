@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
+using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
@@ -23,7 +24,7 @@ namespace UltimateCrosspathing.Merging
         public static List<TowerModel> FinishedTowerModels = new List<TowerModel>();
         private static ConcurrentBag<TowerModel> CurrentTowerModels = new ConcurrentBag<TowerModel>();
         private static List<string> MergeProgress = new List<string>();
-        
+
         public static int pass;
         public static int middlePass;
         public static int finishedPass;
@@ -35,12 +36,12 @@ namespace UltimateCrosspathing.Merging
             CurrentTowers = ModContent.GetContent<LoadInfo>()
                 .Where(info => info.Enabled && !FinishedTowers.Contains(info.Name))
                 .Select(info => info.Name)
-                .Take(Main.TowerBatchSize)
+                .Take(UltimateCrosspathingMod.TowerBatchSize)
                 .ToList();
             if (CurrentTowers.Any())
             {
-                MelonLogger.Msg("");
-                MelonLogger.Msg("Next Batch of Towers is: " + string.Join(", ", CurrentTowers));
+                ModHelper.Msg<UltimateCrosspathingMod>("");
+                ModHelper.Msg<UltimateCrosspathingMod>("Next Batch of Towers is: " + string.Join(", ", CurrentTowers));
             }
         }
 
@@ -63,24 +64,23 @@ namespace UltimateCrosspathing.Merging
 
             pass++;
 
-            MelonLogger.Msg($"Step {GetStep(1, pass)} Completed, generated MergeInfo for {size} Crosspaths");
+            ModHelper.Msg<UltimateCrosspathingMod>(
+                $"Step {GetStep(1, pass)} Completed, generated MergeInfo for {size} Crosspaths");
 
             var length = mergeInfos.Length - 1;
             var tasks = new Task[length];
 
             PrintProgress(CurrentTowerModels, size);
-            
+
             for (var i = 0; i < length; i++)
             {
                 var (tower, info) = mergeInfos[i];
-                tasks[i] = Task.Run(new System.Action(() =>
-                {
-                    MergeTowerModel(tower, info);
-                }));
+                tasks[i] = Task.Run(new System.Action(() => { MergeTowerModel(tower, info); }));
             }
+
             // do one on the main thread still
             MergeTowerModel(mergeInfos[length].Key, mergeInfos[length].Value);
-            
+
             // is this actually needed?
             /*foreach (var task in tasks)
             {
@@ -103,7 +103,7 @@ namespace UltimateCrosspathing.Merging
                 MergeProgress.Add(tower);
             }
         }
-        
+
         private static int GetStep(int step, int pas)
         {
             for (var i = 1; i < pas; i++)
@@ -119,27 +119,27 @@ namespace UltimateCrosspathing.Merging
             var msg =
                 $"Step {GetStep(2, pass)} Completed, generated TowerModels for {CurrentTowerModels.Count} Crosspaths";
             AddFinishedToMsg(ref msg);
-            MelonLogger.Msg(msg);
+            ModHelper.Msg<UltimateCrosspathingMod>(msg);
 
-            if (Main.PostMergeRegenerate)
+            if (UltimateCrosspathingMod.PostMergeRegenerate)
             {
                 try
                 {
                     CurrentTowerModels.Do(Towers.PostMerge);
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
-                    MelonLogger.Error("Failed at postmerging " + e);
+                    ModHelper.Error<UltimateCrosspathingMod>("Failed at postmerging " + e);
                 }
 
-                MelonLogger.Msg(
+                ModHelper.Msg<UltimateCrosspathingMod>(
                     $"Step {GetStep(3, pass)} Completed, applied PostMerge fixes to {CurrentTowerModels.Count} TowerModels");
-                
             }
 
             Game.instance.model.AddTowersToGame(CurrentTowerModels);
 
-            MelonLogger.Msg($"Step {GetStep(4, pass)} Completed, added {CurrentTowerModels.Count} TowerModels to the game");
+            ModHelper.Msg<UltimateCrosspathingMod>(
+                $"Step {GetStep(4, pass)} Completed, added {CurrentTowerModels.Count} TowerModels to the game");
 
 
             Task.Run(new System.Action(() =>
@@ -156,7 +156,7 @@ namespace UltimateCrosspathing.Merging
                         // ignored
                     }
                 });
-                MelonLogger.Msg(
+                ModHelper.Msg<UltimateCrosspathingMod>(
                     $"Step {GetStep(5, pass)} Completed, saved {CurrentTowerModels.Count} TowerModels as JSONs in {FileIOUtil.sandboxRoot}MergedTowers");
                 OnFinishCrosspathing();
             }));
@@ -172,8 +172,9 @@ namespace UltimateCrosspathing.Merging
                     Towers.AddUpgradeToPrevs(towerModel);
                 }
 
-                MelonLogger.Msg($"All Steps Completed! Added {totalTowerModelsAdded} total TowerModels.");
-                Main.ShowFinishedPopup();
+                ModHelper.Msg<UltimateCrosspathingMod>(
+                    $"All Steps Completed! Added {totalTowerModelsAdded} total TowerModels.");
+                UltimateCrosspathingMod.ShowFinishedPopup();
             }
         }
 
@@ -187,7 +188,7 @@ namespace UltimateCrosspathing.Merging
                 {
                     var msg = $"Step {GetStep(2, pass)} Progress: {bagCount} / {size} TowerModels created";
                     AddFinishedToMsg(ref msg);
-                    MelonLogger.Msg(msg);
+                    ModHelper.Msg<UltimateCrosspathingMod>(msg);
                     PrintProgress(bag, size);
                 }
                 else

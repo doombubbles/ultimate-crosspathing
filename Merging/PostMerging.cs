@@ -278,7 +278,7 @@ namespace UltimateCrosspathing.Merging
 
         public static void FixAbilities(TowerModel model)
         {
-            foreach (var ability in model.GetAbilites().Where(abilityModel =>
+            foreach (var ability in model.GetAbilities().Where(abilityModel =>
                          abilityModel.displayName == "Supply Drop" || abilityModel.displayName == "Bomb Blitz"))
             {
                 var activateAttackModel = ability.GetBehavior<ActivateAttackModel>();
