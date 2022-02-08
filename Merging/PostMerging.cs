@@ -13,6 +13,7 @@ using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 using Assets.Scripts.Models.Towers.Weapons;
 using Assets.Scripts.Models.Towers.Weapons.Behaviors;
+using Assets.Scripts.Simulation.Towers.Behaviors.Attack.Behaviors;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
 using Il2CppSystem;
@@ -223,7 +224,7 @@ namespace UltimateCrosspathing.Merging
                     if (createTowerModel != null && filter != null)
                     {
                         filter.baseSubTowerId = createTowerModel.tower.baseId;
-                        filter.baseSubTowerIds = new[] { filter.baseSubTowerId };
+                        filter.baseSubTowerIds = new[] {filter.baseSubTowerId};
                     }
                 });
 
@@ -346,6 +347,60 @@ namespace UltimateCrosspathing.Merging
                     if (ceramage != null)
                     {
                         projectileModel.AddBehavior(ceramage.Duplicate());
+                    }
+                }
+            }
+        }
+
+        public static void FixRightHandStuff(TowerModel model)
+        {
+            if (model.baseId == TowerType.SuperMonkey && model.appliedUpgrades.Contains(UpgradeType.RoboMonkey))
+            {
+                var rightHandAttack = model.GetAttackModels()
+                    .FirstOrDefault(attackModel => attackModel.targetProvider.IsType<TargetRightHandModel>());
+                if (rightHandAttack != null)
+                {
+                    var targetSupplierModels = rightHandAttack.behaviors
+                        .OfType<TargetSupplierModel>()
+                        .Where(supplierModel => !supplierModel.IsType<TargetRightHandModel>())
+                        .ToList();
+
+                    var lefts = 0;
+                    var rights = 0;
+
+                    foreach (var attackModel in model.GetAttackModels())
+                    {
+                        if (attackModel.targetProvider.IsType<TargetRightHandModel>())
+                        {
+                            if (rights > 0)
+                            {
+                                attackModel.RemoveBehavior<TargetRightHandModel>();
+                                foreach (var targetSupplierModel in targetSupplierModels)
+                                {
+                                    var supplierModel = targetSupplierModel.Duplicate();
+                                    attackModel.AddBehavior(supplierModel);
+                                    attackModel.targetProvider = supplierModel;
+                                }
+                            }
+
+                            rights++;
+                        }
+                        
+                        if (attackModel.targetProvider.IsType<TargetLeftHandModel>())
+                        {
+                            if (lefts > 0)
+                            {
+                                attackModel.RemoveBehavior<TargetLeftHandModel>();
+                                foreach (var targetSupplierModel in targetSupplierModels)
+                                {
+                                    var supplierModel = targetSupplierModel.Duplicate();
+                                    attackModel.AddBehavior(supplierModel);
+                                    attackModel.targetProvider = supplierModel;
+                                }
+                            }
+
+                            lefts++;
+                        }
                     }
                 }
             }

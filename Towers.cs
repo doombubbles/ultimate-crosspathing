@@ -457,6 +457,8 @@ namespace UltimateCrosspathing
             PostMerging.FixClusterMauling(model);
 
             PostMerging.FixBehaviorNames(model);
+
+            PostMerging.FixRightHandStuff(model);
         }
     }
 }

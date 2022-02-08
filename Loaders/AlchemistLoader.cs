@@ -9,13 +9,13 @@ using Assets.Scripts.Simulation.SMath;
 using System.IO;
 using UltimateCrosspathing;
 
-public class AlchemistLoader : ITowersLoader {
+public class AlchemistLoader : TowersLoader {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
-	object[] m;
+	
 	int mIndex = 1; // first element is null
 	#region Read array
 	
@@ -1313,7 +1313,7 @@ public class AlchemistLoader : ITowersLoader {
 	
 	#endregion
 	
-	public Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;

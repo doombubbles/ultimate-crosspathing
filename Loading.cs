@@ -8,7 +8,6 @@ using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
 using BTD_Mod_Helper.Extensions;
 using MelonLoader;
-using UltimateCrosspathing.Loaders;
 using UltimateCrosspathing.Merging;
 using UnhollowerBaseLib;
 using static Assets.Scripts.Models.Towers.TowerType;
@@ -32,7 +31,7 @@ namespace UltimateCrosspathing
             "Assets.Scripts.Models.Towers.TowerModel.TowerSize"
         };
 
-        public static readonly Dictionary<string, ITowersLoader> Loaders = new Dictionary<string, ITowersLoader>
+        public static readonly Dictionary<string, TowersLoader> Loaders = new Dictionary<string, TowersLoader>
         {
             { DartMonkey, new DartMonkeyLoader() },
             { BoomerangMonkey, new BoomerangMonkeyLoader() },
@@ -123,6 +122,8 @@ namespace UltimateCrosspathing
             {
                 Towers.AddUpgradeToPrevs(towerModel);
             }
+
+            towerModelLoader.m = null;
         }
 
         private static void ConvertLoader(string loaderPath, string fixPath, string className)
@@ -135,7 +136,7 @@ namespace UltimateCrosspathing
                          "using UnhollowerRuntimeLib;\n" +
                          "using BTD_Mod_Helper.Extensions;\n" +
                          "using UltimateCrosspathing;\n" + loader;
-                loader = loader.Replace("TowerModelLoader : IGameModelLoader", className + " : ITowersLoader");
+                loader = loader.Replace("TowerModelLoader : IGameModelLoader", className + " : TowersLoader");
                 loader = loader.Replace("using System", "using Il2CppSystem");
                 loader = loader.Replace("using Il2CppSystem.IO", "using System.IO");
                 loader = Regex.Replace(loader, @"private void (.*)<T>\(\) {", @"private void $1<T>() where T : Il2CppObjectBase {");
@@ -154,6 +155,9 @@ namespace UltimateCrosspathing
                 loader = Regex.Replace(loader, @"typeof\(([A-Z].*)\)", @"Il2CppType.Of<$1>()");
                 loader = loader.Replace("arr[j] = new Assets.Scripts.Models.Towers.TargetType(br.ReadString(), br.ReadBoolean())", "arr[j] = new Assets.Scripts.Models.Towers.TargetType {id = br.ReadString(), isActionable = br.ReadBoolean()}");
                 loader = loader.Replace("v.targetType = new Assets.Scripts.Models.Towers.TargetType(br.ReadString(), br.ReadBoolean());", "v.targetType.id = br.ReadString();\n\t\t\tv.targetType.actionOnCreate = br.ReadBoolean();");
+                loader = loader.Replace("public Assets.Scripts.Models.Towers.TowerModel Load",
+                    "public override Assets.Scripts.Models.Towers.TowerModel Load");
+                loader = loader.Replace("object[] m;", "");
 
                 
                 foreach (var reference in References)

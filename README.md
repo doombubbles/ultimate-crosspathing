@@ -38,6 +38,8 @@ requires a restart.
 
 **Changelog**
 
+v1.2.4 Updated for v30.0, also lessened the lag spiking issue and fixed 233 Supers
+
 v1.2.3 Re-fix Buccaneer infinite planes
 
 v1.2.2 Fixed Buccaneers for v29.0

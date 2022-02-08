@@ -1,7 +1,8 @@
 ﻿namespace UltimateCrosspathing
 {
-    public interface ITowersLoader
+    public abstract class TowersLoader
     {
-        Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes);
+        public object[] m;
+        public abstract Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes);
     }
 }

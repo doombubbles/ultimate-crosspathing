@@ -15,7 +15,7 @@ using MelonLoader;
 using UltimateCrosspathing.Merging;
 using static Assets.Scripts.Models.Towers.TowerType;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.3", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.4", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
@@ -46,9 +46,7 @@ namespace UltimateCrosspathing
         private static readonly ModSettingBool WizardMonkeyEnabled = true;
         private static readonly ModSettingBool SuperMonkeyEnabled = true;
         private static readonly ModSettingBool NinjaMonkeyEnabled = true;
-
-        private static readonly ModSettingBool AlchemistEnabled = false;
-
+        private static readonly ModSettingBool AlchemistEnabled = true;
         private static readonly ModSettingBool DruidEnabled = true;
         private static readonly ModSettingBool BananaFarmEnabled = true;
         private static readonly ModSettingBool SpikeFactoryEnabled = true;
@@ -77,7 +75,7 @@ namespace UltimateCrosspathing
             displayName = "DEBUG: Export Tower Bytes"
         };
 
-        public const int TowerBatchSize = 8;
+        public const int TowerBatchSize = 5;
 
         private static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
         {

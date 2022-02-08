@@ -1,21 +1,21 @@
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using BTD_Mod_Helper.Extensions;
+using UltimateCrosspathing;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppSystem.Reflection;
 using Il2CppSystem;
 using Assets.Scripts.Simulation.SMath;
 using System.IO;
-using UltimateCrosspathing;
 
-public class EngineerMonkeyLoader : ITowersLoader {
+public class EngineerMonkeyLoader : TowersLoader {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
-	object[] m;
+	
 	int mIndex = 1; // first element is null
 	#region Read array
 	
@@ -228,6 +228,7 @@ public class EngineerMonkeyLoader : ITowersLoader {
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
 			v.sellbackModifierAdd = br.ReadSingle();
+			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
 			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
@@ -826,6 +827,15 @@ public class EngineerMonkeyLoader : ITowersLoader {
 		}
 	}
 	
+	private void Set_v_RandomTargetSpreadModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomTargetSpreadModel)m[i+start];
+			v.spread = br.ReadSingle();
+			v.throwMarkerOffsets = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_CreateProjectileOnExhaustFractionModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -877,13 +887,19 @@ public class EngineerMonkeyLoader : ITowersLoader {
 		}
 	}
 	
-	private void Set_v_TargetTrackModel_Fields(int start, int count) {
+	private void Set_v_TargetSelectedPointModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetTrackModel)m[i+start];
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
-			v.maxOffset = br.ReadSingle();
-			v.onlyTargetPathsWithBloons = br.ReadBoolean();
+			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.scale = br.ReadSingle();
+			v.customName = br.ReadBoolean() ? null : br.ReadString();
+			v.lockToInsideTowerRange = br.ReadBoolean();
+			v.startWithClosestTrackPoint = br.ReadBoolean();
+			v.displayInvalid = br.ReadBoolean() ? null : br.ReadString();
+			v.alwaysShowTarget = br.ReadBoolean();
+			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1124,6 +1140,7 @@ public class EngineerMonkeyLoader : ITowersLoader {
 			v.salvage = br.ReadSingle();
 			v.noTransformCash = br.ReadBoolean();
 			v.distributeSalvage = br.ReadBoolean();
+			v.forceCreateProjectile = br.ReadBoolean();
 		}
 	}
 	
@@ -1334,6 +1351,7 @@ public class EngineerMonkeyLoader : ITowersLoader {
 			v.removeMutatorIfNotMatching = br.ReadBoolean();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutationFilter = br.ReadBoolean() ? null : br.ReadString();
+			v.countGlueAchievement = br.ReadBoolean();
 		}
 	}
 	
@@ -1357,7 +1375,7 @@ public class EngineerMonkeyLoader : ITowersLoader {
 	
 	#endregion
 	
-	public Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
@@ -1429,11 +1447,12 @@ public class EngineerMonkeyLoader : ITowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomTargetSpreadModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExhaustModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetTrackModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.OverclockModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
@@ -1519,11 +1538,12 @@ public class EngineerMonkeyLoader : ITowersLoader {
 				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_HeightOffsetProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomPositionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RandomTargetSpreadModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveBloonModifiersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileExhaustModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TargetSelectedPointModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_OverclockModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
