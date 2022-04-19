@@ -202,7 +202,11 @@ public class BananaFarmLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -351,13 +355,6 @@ public class BananaFarmLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -403,7 +400,6 @@ public class BananaFarmLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -503,6 +499,7 @@ public class BananaFarmLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -683,8 +680,6 @@ public class BananaFarmLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EmissionsPerRoundFilterModel)m[i+start];
 			v.count = br.ReadInt32();
-			v.allowSpawnOnInitialise = br.ReadBoolean();
-			v.ignoreInSandbox = br.ReadBoolean();
 		}
 	}
 	
@@ -801,6 +796,21 @@ public class BananaFarmLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_CollectCashZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CollectCashZoneModel)m[i+start];
+			v.attractRange = br.ReadSingle();
+			v.collectRange = br.ReadSingle();
+			v.speed = br.ReadSingle();
+			v.towerFilter = br.ReadBoolean() ? null : br.ReadString();
+			v.useTowerRange = br.ReadBoolean();
+			v.countCollectedCash = br.ReadBoolean();
+			v.animateTower = br.ReadBoolean();
+			v.rotate = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_CentralMarketBuffModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorBuffModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -868,7 +878,6 @@ public class BananaFarmLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.ShowCashIconInsteadModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BankModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -898,6 +907,7 @@ public class BananaFarmLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CollectCashZoneModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CentralMarketBuffModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel>();
@@ -914,7 +924,6 @@ public class BananaFarmLoader : TowersLoader {
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ShowCashIconInsteadModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BankModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -944,6 +953,7 @@ public class BananaFarmLoader : TowersLoader {
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CollectCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CentralMarketBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusLivesPerRoundModel_Fields(br.ReadInt32(), br.ReadInt32());

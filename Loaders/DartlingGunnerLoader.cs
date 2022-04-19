@@ -202,7 +202,11 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -309,13 +313,6 @@ public class DartlingGunnerLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_CreateSoundOnSellModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -390,6 +387,7 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -418,16 +416,10 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.useLengthSpeed = br.ReadBoolean();
 			v.lengthSpeed = br.ReadSingle();
 			v.lengthPerFrame = br.ReadSingle();
+			v.projectileInitialHitModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.projectileAtEndModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emissionAtEndModel = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.endProjectileSharesPierce = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_SingleEmissionModel_Fields(int start, int count) {
-		Set_v_EmissionModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
 		}
 	}
 	
@@ -492,6 +484,7 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.overrideDistributeBlocker = br.ReadBoolean();
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -517,28 +510,16 @@ public class DartlingGunnerLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
-		Set_v_DamageModifierModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
-			v.damageMultiplier = br.ReadSingle();
-			v.damageAddative = br.ReadSingle();
-			v.mustIncludeAllTags = br.ReadBoolean();
-			v.applyOverMaxDamage = br.ReadBoolean();
+			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
 	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
@@ -548,8 +529,6 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
 			v.isUnique = br.ReadBoolean();
 			v.lastAppliesFirst = br.ReadBoolean();
 			v.collideThisFrame = br.ReadBoolean();
@@ -597,11 +576,10 @@ public class DartlingGunnerLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_AssetPathModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
-			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
+			var v = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
 		}
 	}
 	
@@ -633,6 +611,26 @@ public class DartlingGunnerLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_SingleEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAddative = br.ReadSingle();
+			v.mustIncludeAllTags = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -656,6 +654,14 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.useRotateToPointer = br.ReadBoolean();
 			v.ignoreBlockers = br.ReadBoolean();
 			v.useLineProjectileEmissionShowEffect = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_AssetPathModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
+			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -851,7 +857,6 @@ public class DartlingGunnerLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -1076,15 +1081,14 @@ public class DartlingGunnerLoader : TowersLoader {
 				CreateArraySet<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Filters.FilterModel>();
-				Read_a_String_Array();
 				CreateArraySet<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
+				Read_a_String_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_TargetType_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
-				CreateDictionarySet<System.String, Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
@@ -1096,26 +1100,25 @@ public class DartlingGunnerLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.DartlingMaintainLastPosModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
 				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
-				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel>();
+				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetPointerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToPointerModel>();
@@ -1157,26 +1160,25 @@ public class DartlingGunnerLoader : TowersLoader {
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DartlingMaintainLastPosModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LineProjectileEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForBloonStateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LineEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetPointerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSelectedPointModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToPointerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1220,7 +1222,6 @@ public class DartlingGunnerLoader : TowersLoader {
 				LinkArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkList<Assets.Scripts.Models.Model>();
-				LinkDictionary<Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				var resIndex = br.ReadInt32();
 				UnityEngine.Debug.Assert(br.BaseStream.Position == br.BaseStream.Length);

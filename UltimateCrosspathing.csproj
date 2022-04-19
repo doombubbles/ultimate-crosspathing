@@ -46,7 +46,6 @@
     <ItemGroup>
         <Compile Include="CrosspathingPatchMod.cs" />
         <Compile Include="ITowersLoader.cs" />
-        <Compile Include="Loading.cs" />
         <Compile Include="Loaders\AlchemistLoader.cs" />
         <Compile Include="Loaders\BananaFarmLoader.cs" />
         <Compile Include="Loaders\BombShooterLoader.cs" />
@@ -69,6 +68,7 @@
         <Compile Include="Loaders\SuperMonkeyLoader.cs" />
         <Compile Include="Loaders\TackShooterLoader.cs" />
         <Compile Include="Loaders\WizardMonkeyLoader.cs" />
+        <Compile Include="Loading.cs" />
         <Compile Include="Main.cs" />
         <Compile Include="Merging\AsyncMerging.cs" />
         <Compile Include="Merging\Algorithm.cs" />

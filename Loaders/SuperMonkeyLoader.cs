@@ -214,7 +214,11 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -362,13 +366,6 @@ public class SuperMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_FootprintModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -439,6 +436,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -516,8 +514,16 @@ public class SuperMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_WindModel_Fields(int start, int count) {
+	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_WindModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel)m[i+start];
 			v.distanceMin = br.ReadSingle();
@@ -527,8 +533,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.distanceScaleForTags = br.ReadSingle();
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
+			v.speedMultiplier = br.ReadSingle();
 		}
 	}
 	
@@ -542,6 +547,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.overrideDistributeBlocker = br.ReadBoolean();
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -1084,6 +1090,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.rotated = br.ReadBoolean();
 			v.display = br.ReadBoolean() ? null : br.ReadString();
 			v.displayCount = br.ReadInt32();
+			v.useTowerPosition = br.ReadBoolean();
 		}
 	}
 	
@@ -1121,6 +1128,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.takeOffScaleExponent = br.ReadSingle();
 			v.takeOffPitch = br.ReadSingle();
 			v.takeOffPitchExponent = br.ReadSingle();
+			v.fixedPathSupplierId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1205,6 +1213,7 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.expireOnDefeatScreen = br.ReadBoolean();
 			v.lifespanFrames = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.rounds = br.ReadInt32();
 		}
 	}
 	
@@ -1476,7 +1485,6 @@ public class SuperMonkeyLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -1697,7 +1705,6 @@ public class SuperMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.RectangleFootprintModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
@@ -1812,7 +1819,6 @@ public class SuperMonkeyLoader : TowersLoader {
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RectangleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());

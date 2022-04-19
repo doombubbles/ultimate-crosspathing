@@ -214,7 +214,11 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -277,13 +281,6 @@ public class MonkeyVillageLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
 			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
 		}
 	}
 	
@@ -426,6 +423,7 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -490,6 +488,7 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.overrideDistributeBlocker = br.ReadBoolean();
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -684,8 +683,16 @@ public class MonkeyVillageLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_AddBehaviorToBloonInZoneModel_Fields(int start, int count) {
+	private void Set_v_TowerBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.TowerBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_AddBehaviorToBloonInZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.AddBehaviorToBloonInZoneModel)m[i+start];
 			v.zoneRadius = br.ReadSingle();
@@ -693,8 +700,6 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.isUnique = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
 		}
 	}
 	
@@ -722,14 +727,6 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_AssetPathModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
-			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -830,7 +827,6 @@ public class MonkeyVillageLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -1108,8 +1104,6 @@ public class MonkeyVillageLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EmissionsPerRoundFilterModel)m[i+start];
 			v.count = br.ReadInt32();
-			v.allowSpawnOnInitialise = br.ReadBoolean();
-			v.ignoreInSandbox = br.ReadBoolean();
 		}
 	}
 	
@@ -1167,7 +1161,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				Read_a_Single_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateListSet<Assets.Scripts.Models.Model>();
-				CreateDictionarySet<System.String, Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
@@ -1175,7 +1168,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
@@ -1206,7 +1198,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.AddBehaviorToBloonInZoneModel>();
 				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterWithTagModel>();
-				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.PierceSupportModel>();
 				Create_Records<Assets.Scripts.Models.Towers.TowerFilters.FilterInSetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.ProjectileSpeedSupportModel>();
@@ -1246,7 +1237,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1277,7 +1267,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				Set_v_AddBehaviorToBloonInZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterWithTagModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PierceSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInSetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileSpeedSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1323,7 +1312,6 @@ public class MonkeyVillageLoader : TowersLoader {
 				LinkArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkList<Assets.Scripts.Models.Model>();
-				LinkDictionary<Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				var resIndex = br.ReadInt32();
 				UnityEngine.Debug.Assert(br.BaseStream.Position == br.BaseStream.Length);

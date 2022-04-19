@@ -12,10 +12,11 @@ using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using MelonLoader;
+using NinjaKiwi.Common;
 using UltimateCrosspathing.Merging;
 using static Assets.Scripts.Models.Towers.TowerType;
 
-[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.4", "doombubbles")]
+[assembly: MelonInfo(typeof(UltimateCrosspathing.Main), "Ultimate Crosspathing", "1.2.5", "doombubbles")]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
 
 namespace UltimateCrosspathing
@@ -77,7 +78,7 @@ namespace UltimateCrosspathing
 
         public const int TowerBatchSize = 5;
 
-        private static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(false)
+        private static readonly ModSettingBool ExecuteOrder66 = new ModSettingBool(true)
         {
             displayName = "Execute Order 66"
         };
@@ -184,7 +185,7 @@ namespace UltimateCrosspathing
 
                 foreach (var (tower, enabled) in TowersEnabled)
                 {
-                    MelonLogger.Msg($"{tower}s loading...");
+                    MelonLogger.Msg($"{LocalizationManager.Instance.GetText(tower + "s")} loading...");
                     var resource = Assembly.GetManifestResourceStream($"UltimateCrosspathing.Bytes.{tower}s.bytes");
                     if (resource == null)
                     {

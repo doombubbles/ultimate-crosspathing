@@ -226,7 +226,11 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -349,13 +353,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -407,6 +404,7 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -479,6 +477,7 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.overrideDistributeBlocker = br.ReadBoolean();
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -505,8 +504,16 @@ public class NinjaMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_WindModel_Fields(int start, int count) {
+	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_WindModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel)m[i+start];
 			v.distanceMin = br.ReadSingle();
@@ -516,8 +523,7 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.distanceScaleForTags = br.ReadSingle();
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
+			v.speedMultiplier = br.ReadSingle();
 		}
 	}
 	
@@ -714,7 +720,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -847,6 +852,7 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.resetToUnmodified = br.ReadBoolean();
 			v.preventMutation = br.ReadBoolean();
 			v.lifespanOverride = br.ReadSingle();
+			v.makeNotTag = br.ReadBoolean();
 		}
 	}
 	
@@ -870,6 +876,76 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_AbilityBehaviorBuffModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorBuffModel)m[i+start];
+			v.showBuffIcon = br.ReadBoolean();
+			v.isGlobal = br.ReadBoolean();
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_ActivateRangeSupportZoneModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateRangeSupportZoneModel)m[i+start];
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.isUnique = br.ReadBoolean();
+			v.multiplier = br.ReadSingle();
+			v.additive = br.ReadSingle();
+			v.range = br.ReadSingle();
+			v.maxNumTowersModified = br.ReadSingle();
+			v.canAffectThisTower = br.ReadBoolean();
+			v.lifespan = br.ReadSingle();
+			v.lifespanFrames = br.ReadSingle();
+			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_FilterInTowerTiersModel_Fields(int start, int count) {
+		Set_v_TowerFilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.TowerFilters.FilterInTowerTiersModel)m[i+start];
+			v.path1MinTier = br.ReadInt32();
+			v.path1MaxTier = br.ReadInt32();
+			v.path2MinTier = br.ReadInt32();
+			v.path2MaxTier = br.ReadInt32();
+			v.path3MinTier = br.ReadInt32();
+			v.path3MaxTier = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_ActivateDamageModifierSupportZoneModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateDamageModifierSupportZoneModel)m[i+start];
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.isUnique = br.ReadBoolean();
+			v.range = br.ReadSingle();
+			v.maxNumTowersModified = br.ReadSingle();
+			v.canAffectThisTower = br.ReadBoolean();
+			v.lifespan = br.ReadSingle();
+			v.lifespanFrames = br.ReadSingle();
+			v.damageModifierModel = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel) m[br.ReadInt32()];
+			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAddative = br.ReadSingle();
+			v.mustIncludeAllTags = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
 		}
 	}
 	
@@ -994,13 +1070,12 @@ public class NinjaMonkeyLoader : TowersLoader {
 	}
 	
 	private void Set_v_SlowModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
 		var multiplierField = t.GetField("multiplier", bindFlags);
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel)m[i+start];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1013,16 +1088,7 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.cascadeMutators = br.ReadBoolean();
 			v.removeMutatorIfNotMatching = br.ReadBoolean();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.mutationFilter = br.ReadBoolean() ? null : br.ReadString();
 			v.countGlueAchievement = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_AssetPathModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
-			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1053,8 +1119,16 @@ public class NinjaMonkeyLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_FilterMoabModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Filters.FilterMoabModel)m[i+start];
+			v.flip = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
@@ -1064,8 +1138,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
 			v.isUnique = br.ReadBoolean();
 			v.lastAppliesFirst = br.ReadBoolean();
 			v.collideThisFrame = br.ReadBoolean();
@@ -1142,14 +1214,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_FilterMoabModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterMoabModel)m[i+start];
-			v.flip = br.ReadBoolean();
-		}
-	}
-	
 	#endregion
 	
 	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
@@ -1176,7 +1240,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 				CreateArraySet<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				Read_l_String_List();
-				CreateDictionarySet<System.String, Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
@@ -1189,7 +1252,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
@@ -1223,6 +1285,10 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateRangeSupportZoneModel>();
+				Create_Records<Assets.Scripts.Models.Towers.TowerFilters.FilterInTowerTiersModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateDamageModifierSupportZoneModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetWithinTimeModel>();
@@ -1233,15 +1299,14 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.AlternateProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
-				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterMoabModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
 				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.ProjectileOverTimeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterMoabModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1253,7 +1318,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1287,6 +1351,10 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Set_v_SlowModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateRangeSupportZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterInTowerTiersModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateDamageModifierSupportZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetWithinTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1297,15 +1365,14 @@ public class NinjaMonkeyLoader : TowersLoader {
 				Set_v_AlternateProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCollisionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterAllExceptTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();
@@ -1318,7 +1385,6 @@ public class NinjaMonkeyLoader : TowersLoader {
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				LinkList<Assets.Scripts.Models.Model>();
-				LinkDictionary<Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				var resIndex = br.ReadInt32();
 				UnityEngine.Debug.Assert(br.BaseStream.Position == br.BaseStream.Length);

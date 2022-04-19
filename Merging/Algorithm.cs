@@ -37,7 +37,8 @@ namespace UltimateCrosspathing.Merging
             "ejectZ",
             "rate",
             "rateFrames",
-            "isPowerTower"
+            "isPowerTower",
+            "isGeraldoItem"
         };
 
         private static readonly HashSet<string> Multiplicative = new HashSet<string>

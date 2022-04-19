@@ -226,7 +226,11 @@ public class DruidLoader : TowersLoader {
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
+			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
+			v.ignoreMaxSellPercent = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
+			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
 			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
@@ -349,13 +353,6 @@ public class DruidLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_BlankSoundModel_Fields(int start, int count) {
-		Set_v_SoundModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.BlankSoundModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -407,6 +404,7 @@ public class DruidLoader : TowersLoader {
 			v.customStartCooldown = br.ReadSingle();
 			v.customStartCooldownFrames = br.ReadInt32();
 			v.animateOnMainAttack = br.ReadBoolean();
+			v.isStunned = br.ReadBoolean();
 		}
 	}
 	
@@ -494,6 +492,7 @@ public class DruidLoader : TowersLoader {
 			v.overrideDistributeBlocker = br.ReadBoolean();
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -587,8 +586,16 @@ public class DruidLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_WindModel_Fields(int start, int count) {
+	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_WindModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel)m[i+start];
 			v.distanceMin = br.ReadSingle();
@@ -598,8 +605,7 @@ public class DruidLoader : TowersLoader {
 			v.distanceScaleForTags = br.ReadSingle();
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
+			v.speedMultiplier = br.ReadSingle();
 		}
 	}
 	
@@ -668,6 +674,40 @@ public class DruidLoader : TowersLoader {
 			v.splitRange = br.ReadSingle();
 			v.delay = br.ReadSingle();
 			v.delayFrames = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_FreezeModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel)m[i+start];
+			v.speed = br.ReadSingle();
+			v.layers = br.ReadInt32();
+			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
+			v.percentChanceToFreeze = br.ReadSingle();
+			v.enablePercentChanceToFreeze = br.ReadBoolean();
+			v.damageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.canFreezeMoabs = br.ReadBoolean();
+			v.cascadeMutators = br.ReadBoolean();
+			v.growBlockModel = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.lifespanFrames = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_BloonBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_GrowBlockModel_Fields(int start, int count) {
+		Set_v_BloonBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel)m[i+start];
 		}
 	}
 	
@@ -854,13 +894,6 @@ public class DruidLoader : TowersLoader {
 		Set_v_BloonBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModelWithTowerTracking)m[i+start];
-		}
-	}
-	
-	private void Set_v_BloonBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -1071,7 +1104,6 @@ public class DruidLoader : TowersLoader {
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.disabledByAnotherTower = br.ReadBoolean();
 			v.activateOnLivesLost = br.ReadBoolean();
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
@@ -1244,42 +1276,6 @@ public class DruidLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_FreezeModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel)m[i+start];
-			v.speed = br.ReadSingle();
-			v.layers = br.ReadInt32();
-			v.overlays = (Dictionary<System.String, Assets.Scripts.Models.Effects.AssetPathModel>) m[br.ReadInt32()];
-			v.overlayLayer = br.ReadInt32();
-			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.percentChanceToFreeze = br.ReadSingle();
-			v.enablePercentChanceToFreeze = br.ReadBoolean();
-			v.damageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
-			v.cascadeMutators = br.ReadBoolean();
-			v.growBlockModel = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_AssetPathModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
-			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_GrowBlockModel_Fields(int start, int count) {
-		Set_v_BloonBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel)m[i+start];
-		}
-	}
-	
 	#endregion
 	
 	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
@@ -1304,7 +1300,6 @@ public class DruidLoader : TowersLoader {
 				Read_a_TargetType_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				Read_l_String_List();
-				CreateDictionarySet<System.String, Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
@@ -1317,7 +1312,6 @@ public class DruidLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Audio.BlankSoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
@@ -1340,6 +1334,8 @@ public class DruidLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnIntervalModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateLightningEffectModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.LightningModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
+				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.CreateSoundOnProjectileCreatedModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.IgnoreInsufficientPierceModel>();
@@ -1381,9 +1377,6 @@ public class DruidLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.DamageBasedAttackSpeedModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.DruidVengeanceEffectModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
-				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
-				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1395,7 +1388,6 @@ public class DruidLoader : TowersLoader {
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BlankSoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1418,6 +1410,8 @@ public class DruidLoader : TowersLoader {
 				Set_v_CreateProjectileOnIntervalModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateLightningEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LightningModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FreezeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCreatedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CollideExtraPierceReductionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreInsufficientPierceModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1459,9 +1453,6 @@ public class DruidLoader : TowersLoader {
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageBasedAttackSpeedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DruidVengeanceEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FreezeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();
@@ -1472,7 +1463,6 @@ public class DruidLoader : TowersLoader {
 				LinkArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkList<Assets.Scripts.Models.Model>();
-				LinkDictionary<Assets.Scripts.Models.Effects.AssetPathModel>();
 				
 				var resIndex = br.ReadInt32();
 				UnityEngine.Debug.Assert(br.BaseStream.Position == br.BaseStream.Length);
