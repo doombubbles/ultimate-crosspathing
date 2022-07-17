@@ -1,0 +1,123 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - '*'
+
+env:
+  PROJECT_NAME: UltimateCrosspathing
+  MOD_HELPER_BRANCH: 3.0_Features
+  MELONLOADER_BRANCH: alpha-development
+  
+  MOD_HELPER_NAME: Btd6ModHelper
+  BLOONSTD6: ./BloonsTD6
+
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@master
+        with:
+          path: ${{ env.PROJECT_NAME }}
+
+
+      - name: Download Latest MelonLoader
+        if: env.MELONLOADER_BRANCH == ''
+        uses: robinraju/release-downloader@v1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: LavaGang/MelonLoader
+          fileName: MelonLoader.x64.zip
+          tarBall: false
+          zipBall: false
+          latest: true
+      - name: Extract Latest MelonLoader
+        if: env.MELONLOADER_BRANCH == ''
+        shell: bash
+        run: unzip MelonLoader.x64.zip -d ${{ env.BLOONSTD6 }}
+
+
+      - name: Download Specific MelonLoader
+        if: env.MELONLOADER_BRANCH != ''
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: build.yml
+          branch: ${{ env.MELONLOADER_BRANCH }}
+          name: MelonLoader.x64.CI.Release
+          repo: LavaGang/MelonLoader
+          path: ${{ env.BLOONSTD6 }}
+
+
+      - name: Clone Dependencies Repo
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: doombubbles/btd6-ci-dependencies
+          ref: main
+          path: ${{ env.BLOONSTD6 }}/MelonLoader/Managed
+
+
+      - name: Download Latest Mod Helper
+        uses: dsaltares/fetch-gh-release-asset@master
+        if: env.MOD_HELPER_BRANCH == ''
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: gurrenm3/BTD-Mod-Helper
+          fileName: ${{ env.MOD_HELPER_NAME }}.dll
+          out-file-path: ${{ env.BLOONSTD6 }}/Mods/
+          tarBall: false
+          zipBall: false
+          latest: true
+
+
+      - name: Download Specific Mod Helper
+        uses: dawidd6/action-download-artifact@v2
+        if: env.MOD_HELPER_BRANCH != ''
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: build.yml
+          name: ${{ env.MOD_HELPER_NAME }}.dll
+          branch: ${{ env.MOD_HELPER_BRANCH }}
+          repo: gurrenm3/BTD-Mod-Helper
+          path: ${{ env.BLOONSTD6 }}/Mods/
+
+
+      - name: Download btd6.targets
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            choco install -y wget
+          fi
+          wget https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/${{ env.MOD_HELPER_BRANCH }}/BloonsTD6%20Mod%20Helper/btd6.targets
+
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x # net6 can still build older as well
+          
+          
+      - name: Build
+        run: dotnet build -c Release -p:BloonsTD6="../${{ env.BLOONSTD6 }}" "${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+
+
+      - name: Upload Mod DLL
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: ${{ env.PROJECT_NAME }}.dll
+          path: ${{ env.BLOONSTD6 }}/Mods/${{ env.PROJECT_NAME }}.dll
+          
+          
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with: 
+          files: ${{ env.BLOONSTD6 }}/Mods/${{ env.PROJECT_NAME }}.dll
+          body_path: ${{ env.PROJECT_NAME }}/LATEST.md
+          fail_on_unmatched_files: true

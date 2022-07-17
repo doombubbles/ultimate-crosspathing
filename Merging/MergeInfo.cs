@@ -25,5 +25,7 @@ namespace UltimateCrosspathing.Merging
             right = this.right;
             commonAncestor = this.commonAncestor;
         }
+
+        public string SucessMessage => $"Successfully made {result.name} from {left.name} and {right.name}";
     }
 }

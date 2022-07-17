@@ -8,7 +8,6 @@ using Assets.Scripts.Utils;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
-using MelonLoader;
 using UltimateCrosspathing.Merging;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
@@ -21,7 +20,7 @@ namespace UltimateCrosspathing
         /// Determines which paths takes precedence when determining for visuals and certain other behavior
         /// </summary>
         public static readonly Dictionary<string, (int, int, int)> PathPriorities =
-            new Dictionary<string, (int, int, int)>
+            new()
             {
                 { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
                 { TowerType.TackShooter, (0, 1, 2) },
@@ -228,7 +227,7 @@ namespace UltimateCrosspathing
 
                                     try
                                     {
-                                        var newTowerModel = Merge(leftTowerModel, rightTowerModel);
+                                        var newTowerModel = OldMerge(leftTowerModel, rightTowerModel);
                                         Game.instance.model.AddTowerToGame(newTowerModel);
                                     }
                                     catch (Exception e)
@@ -257,7 +256,7 @@ namespace UltimateCrosspathing
             }
         }
 
-        public static TowerModel Merge(TowerModel first, TowerModel second)
+        public static TowerModel OldMerge(TowerModel first, TowerModel second)
         {
             var towerModel = first.Duplicate();
             for (var i = 0; i < 3; i++)
@@ -306,7 +305,7 @@ namespace UltimateCrosspathing
             return towerModel;
         }
 
-        public static TowerModel AsyncMerge(MergeInfo mergeInfo)
+        public static TowerModel NewMerge(MergeInfo mergeInfo)
         {
             var (result, left, right, commonAncestor) = mergeInfo;
             for (var i = 0; i < 3; i++)
