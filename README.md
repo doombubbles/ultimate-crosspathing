@@ -35,26 +35,3 @@ The default mode is keep the restriction of just 7 total upgrades so you can do 
 you're really adventurous, there's a setting at the bottom of the options list you can enable to allow for all 15
 Upgrades. You can also individually toggle which Towers get Ultimate Crosspathing, and changing any settings no longer
 requires a restart.
-
-**Changelog**
-
-v1.3.0 Update to Mod Helper 3.0, making use of ModByteLoaders and fixing the lag spike issues
-
-v1.2.3 Re-fix Buccaneer infinite planes
-
-v1.2.2 Fixed Buccaneers for v29.0
-
-v1.2.1 Multiple fixes and algorithm improvements
-
-v1.2.0 Fixed for Bloons TD 6 v28.0. Now supports Alchemist crosspathing
-
-v1.1.0 Crosspath Data is now bundled into the .dll. It's now a bigger download, but instead of taking minutes to load on
-startup it's ~15s. Also some misc algorithm improvements
-
-v1.0.0 Execute order 66
-
-v0.1.2 Fix Monkey Knowledge inconsistencies, allow Community Crosspathing Patches
-
-v0.1.1 Fixed Buccaneer and Dartling crashes
-
-v0.1.0 Prototype
