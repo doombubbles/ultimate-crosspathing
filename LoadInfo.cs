@@ -37,10 +37,9 @@ namespace UltimateCrosspathing
         public void Export()
         {
             var towerModels = GenerateTask.TowerModels.Where(model => model.baseId == Name).ToList();
-            var dummy = new TowerModel
-            {
-                behaviors = new Il2CppReferenceArray<Model>(towerModels.Count)
-            };
+            var dummy = new TowerModel("dummy","","PRIMARY", display: CreatePrefabReference(""),
+                behaviors: new Il2CppReferenceArray<Model>(towerModels.Count));
+           
 
             for (var i = 0; i < towerModels.Count; i++)
             {

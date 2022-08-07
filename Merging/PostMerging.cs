@@ -270,7 +270,7 @@ namespace UltimateCrosspathing.Merging
 
                     if (!attackModel.HasBehavior<DisplayModel>())
                     {
-                        attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", "", 0));
+                        attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", new Assets.Scripts.Utils.PrefabReference(""), 0));
                     }
                 });
             }
