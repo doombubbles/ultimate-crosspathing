@@ -1,15 +1,15 @@
-using System.IO;
-using Assets.Scripts.Simulation.SMath;
-using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Extensions;
-using Il2CppSystem;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Reflection;
-using Il2CppSystem.Runtime.Serialization;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
+using BTD_Mod_Helper.Extensions;
+using BTD_Mod_Helper.Api;
 
 namespace UltimateCrosspathing.Loaders;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Runtime.Serialization;
+using Il2CppSystem.Reflection;
+using Il2CppSystem;
+using Assets.Scripts.Simulation.SMath;
+using System.IO;
 
 public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
@@ -188,12 +188,9 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -205,16 +202,16 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -235,31 +232,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -291,7 +263,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -332,7 +304,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -385,26 +357,25 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -451,7 +422,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -515,14 +486,12 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -565,7 +534,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -678,7 +647,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
@@ -709,14 +677,11 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_SlowModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
-		var multiplierField = t.GetField("multiplier", bindFlags);
 		var lifespanField = t.GetField("lifespan", bindFlags);
+		var multiplierField = t.GetField("multiplier", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			v.layers = br.ReadInt32();
 			v.overlayLayer = br.ReadInt32();
 			v.glueLevel = br.ReadInt32();
@@ -726,6 +691,8 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.removeMutatorIfNotMatching = br.ReadBoolean();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.countGlueAchievement = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -779,7 +746,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.fraction = br.ReadSingle();
@@ -806,12 +773,12 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.customName = br.ReadBoolean() ? null : br.ReadString();
 			v.lockToInsideTowerRange = br.ReadBoolean();
 			v.startWithClosestTrackPoint = br.ReadBoolean();
-			v.displayInvalid = br.ReadBoolean() ? null : br.ReadString();
+			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
 			v.alwaysShowTarget = br.ReadBoolean();
 			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 		}
@@ -857,6 +824,8 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_EatBloonModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.EatBloonModel>();
+		var timeUntilCloseField = t.GetField("timeUntilClose", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EatBloonModel)m[i+start];
 			v.rbeCapacity = br.ReadSingle();
@@ -865,8 +834,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.animationStateOpen = br.ReadInt32();
 			v.animationStateClosed = br.ReadInt32();
-			v.timeUntilClose = br.ReadSingle();
-			v.timeUntilCloseFrames = br.ReadInt32();
+			timeUntilCloseField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.effectOnEatModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.bloonTrapOpenSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.bloonTrapCloseSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
@@ -890,11 +858,12 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_PickupModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
+		var delayField = t.GetField("delay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
-			v.delay = br.ReadSingle();
-			v.delayFrames = br.ReadSingle();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -909,6 +878,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.noTransformCash = br.ReadBoolean();
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
+			v.isDoubleable = br.ReadBoolean();
 		}
 	}
 	
@@ -916,7 +886,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.useTowerPosition = br.ReadBoolean();
 		}
@@ -990,16 +960,14 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -1031,10 +999,9 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutatorSaveId = br.ReadBoolean() ? null : br.ReadString();
 			v.maxStacks = br.ReadInt32();
-			v.selectionObjectPath = br.ReadBoolean() ? null : br.ReadString();
-			v.buffDisplayPath = br.ReadBoolean() ? null : br.ReadString();
+			v.selectionObjectPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.buffDisplayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.initialEffect = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			v.buffDisplayModel = (Assets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
 			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
 			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
 			v.tierBasedDurationMultiplier = (Il2CppStructArray<float>) m[br.ReadInt32()];
@@ -1043,8 +1010,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-		var _fullNameField = t.GetField("_fullName", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
 			v.buffName = br.ReadBoolean() ? null : br.ReadString();
@@ -1053,7 +1018,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			_fullNameField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -1096,7 +1060,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.maxStacks = br.ReadInt32();
 			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
 			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
-			v.mutatorsByStack = (Dictionary<System.Int32, Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.OverclockPermanentModel.OverclockPermanentMutator>) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1122,7 +1085,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			var v = (Assets.Scripts.Models.Towers.Behaviors.TowerExpireModel)m[i+start];
 			v.expireOnRoundComplete = br.ReadBoolean();
 			v.expireOnDefeatScreen = br.ReadBoolean();
-			v.lifespanFrames = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.rounds = br.ReadInt32();
 		}
@@ -1195,10 +1157,10 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.boomTower = (Assets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
 			v.coldTower = (Assets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
 			v.energyTower = (Assets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
-			v.crushingDisplay = br.ReadBoolean() ? null : br.ReadString();
-			v.boomDisplay = br.ReadBoolean() ? null : br.ReadString();
-			v.coldDisplay = br.ReadBoolean() ? null : br.ReadString();
-			v.energyDisplay = br.ReadBoolean() ? null : br.ReadString();
+			v.crushingDisplay = ModContent.CreatePrefabReference(br.ReadString());
+			v.boomDisplay = ModContent.CreatePrefabReference(br.ReadString());
+			v.coldDisplay = ModContent.CreatePrefabReference(br.ReadString());
+			v.energyDisplay = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -1294,7 +1256,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 		}
 	}
 	
@@ -1344,7 +1305,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.randomRotation = br.ReadBoolean();
@@ -1379,7 +1340,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.LinkDisplayScaleToTowerRangeModel)m[i+start];
-			v.displayPath = br.ReadBoolean() ? null : br.ReadString();
+			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseTowerRange = br.ReadSingle();
 			v.displayRadius = br.ReadSingle();
 		}
@@ -1412,7 +1373,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
@@ -1502,7 +1462,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.LinkDisplayScaleToTowerRangeModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());

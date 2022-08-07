@@ -2,7 +2,7 @@
 {
     public static class ModHelperData
     {
-        public const string Version = "1.3.0";
+        public const string Version = "1.3.1";
         public const string Name = "Ultimate Crosspathing";
 
         public const string Description =

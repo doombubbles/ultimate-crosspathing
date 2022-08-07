@@ -12,15 +12,17 @@ namespace UltimateCrosspathing
         [HarmonyPostfix]
         internal static void Postfix(UpgradeObject __instance, ref int __result)
         {
+            if (!UltimateCrosspathingMod.SuccessfullyLoaded) return;
+            
             if (ModContent.GetContent<LoadInfo>().Where(info => info.Enabled)
                     .FirstOrDefault(info => info.Name == __instance.tts.Def.baseId) is LoadInfo loadInfo
                     ? (bool) loadInfo.Enabled
-                    : (bool) UltimateCrosspathingMod.AffectModdedTowers)
+                    : (bool) Settings.AffectModdedTowers)
             {
                 var tier = __instance.tier;
                 var tiers = __instance.tts.Def.tiers;
                 var sum = tiers.Sum();
-                var remainingTiers = UltimateCrosspathingMod.MaxTiers - sum;
+                var remainingTiers = Settings.MaxTiers - sum;
                 __result = tier + remainingTiers;
                 if (__result > 5)
                 {
@@ -49,12 +51,14 @@ namespace UltimateCrosspathing
         [HarmonyPostfix]
         internal static void Postfix(TowerSelectionMenu __instance, ref bool __result)
         {
+            if (!UltimateCrosspathingMod.SuccessfullyLoaded) return;
+            
             if (ModContent.GetContent<LoadInfo>().Where(info => info.Enabled)
                     .FirstOrDefault(info => info.Name == __instance.selectedTower.Def.baseId) is LoadInfo loadInfo
                     ? (bool) loadInfo.Enabled
-                    : (bool) UltimateCrosspathingMod.AffectModdedTowers)
+                    : (bool) Settings.AffectModdedTowers)
             {
-                __result = __instance.selectedTower.Def.tiers.Sum() >= UltimateCrosspathingMod.MaxTiers;
+                __result = __instance.selectedTower.Def.tiers.Sum() >= Settings.MaxTiers;
             }
         }
     }

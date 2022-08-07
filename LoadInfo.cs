@@ -1,10 +1,14 @@
 ﻿using System.Linq;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.Towers;
+using Assets.Scripts.Utils;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
+using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
+using BTD_Mod_Helper.Api.Towers;
 using UltimateCrosspathing.Merging;
+using UltimateCrosspathing.Tasks;
 using UnhollowerBaseLib;
 using Path = System.IO.Path;
 
@@ -23,7 +27,7 @@ namespace UltimateCrosspathing
         public sealed override void Register()
         {
         }
-        
+
 #if DEBUG
         public static void ExportTowers()
         {
@@ -31,16 +35,15 @@ namespace UltimateCrosspathing
             {
                 info.Export();
             }
+
             ModHelper.Msg<UltimateCrosspathingMod>("Finished exporting!");
         }
 
         public void Export()
         {
             var towerModels = GenerateTask.TowerModels.Where(model => model.baseId == Name).ToList();
-            var dummy = new TowerModel
-            {
-                behaviors = new Il2CppReferenceArray<Model>(towerModels.Count)
-            };
+            var dummy = ModTowerHelper.CreateTowerModel(Id);
+            dummy.behaviors = new Il2CppReferenceArray<Model>(towerModels.Count);
 
             for (var i = 0; i < towerModels.Count; i++)
             {
@@ -50,13 +53,13 @@ namespace UltimateCrosspathing
 
             ModByteLoader.Generate(dummy,
                 Path.Combine(GetInstance<UltimateCrosspathingMod>().ModSourcesPath, "Loaders", Name + "Loader.cs"),
-                Path.Combine(GetInstance<UltimateCrosspathingMod>().ModSourcesPath, "Bytes", Name + "s.bytes")
+                Path.Combine(GetInstance<UltimateCrosspathingMod>().ModSourcesPath, "Bytes", Name + "s.bytes"),
+                "UltimateCrosspathing.Loaders"
             );
         }
 #else
         public bool loaded;
 #endif
-        
     }
 
     public class Alchemist : LoadInfo
@@ -65,7 +68,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<AlchemistLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.AlchemistEnabled;
+        public override ModSettingBool Enabled => TowerSettings.AlchemistEnabled;
     }
 
     public class BananaFarm : LoadInfo
@@ -74,7 +77,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<BananaFarmLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.BananaFarmEnabled;
+        public override ModSettingBool Enabled => TowerSettings.BananaFarmEnabled;
     }
 
     public class BombShooter : LoadInfo
@@ -83,7 +86,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<BombShooterLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.BombShooterEnabled;
+        public override ModSettingBool Enabled => TowerSettings.BombShooterEnabled;
     }
 
     public class BoomerangMonkey : LoadInfo
@@ -92,7 +95,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<BoomerangMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.BoomerangMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.BoomerangMonkeyEnabled;
     }
 
     public class DartlingGunner : LoadInfo
@@ -101,7 +104,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<DartlingGunnerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.DartlingGunnerEnabled;
+        public override ModSettingBool Enabled => TowerSettings.DartlingGunnerEnabled;
     }
 
     public class DartMonkey : LoadInfo
@@ -110,7 +113,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<DartMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.DartMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.DartMonkeyEnabled;
     }
 
     public class Druid : LoadInfo
@@ -119,7 +122,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<DruidLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.DruidEnabled;
+        public override ModSettingBool Enabled => TowerSettings.DruidEnabled;
     }
 
     public class EngineerMonkey : LoadInfo
@@ -128,7 +131,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<EngineerMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.EngineerMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.EngineerMonkeyEnabled;
     }
 
     public class GlueGunner : LoadInfo
@@ -137,7 +140,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<GlueGunnerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.GlueGunnerEnabled;
+        public override ModSettingBool Enabled => TowerSettings.GlueGunnerEnabled;
     }
 
     public class HeliPilot : LoadInfo
@@ -146,7 +149,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<HeliPilotLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.HeliPilotEnabled;
+        public override ModSettingBool Enabled => TowerSettings.HeliPilotEnabled;
     }
 
     public class IceMonkey : LoadInfo
@@ -155,7 +158,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<IceMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.IceMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.IceMonkeyEnabled;
     }
 
     public class MonkeyAce : LoadInfo
@@ -164,7 +167,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyAceLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.MonkeyAceEnabled;
+        public override ModSettingBool Enabled => TowerSettings.MonkeyAceEnabled;
     }
 
     public class MonkeyBuccaneer : LoadInfo
@@ -173,7 +176,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyBuccaneerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.MonkeyBuccaneerEnabled;
+        public override ModSettingBool Enabled => TowerSettings.MonkeyBuccaneerEnabled;
     }
 
     public class MonkeySub : LoadInfo
@@ -182,7 +185,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeySubLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.MonkeySubEnabled;
+        public override ModSettingBool Enabled => TowerSettings.MonkeySubEnabled;
     }
 
     public class MonkeyVillage : LoadInfo
@@ -191,7 +194,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyVillageLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.MonkeyVillageEnabled;
+        public override ModSettingBool Enabled => TowerSettings.MonkeyVillageEnabled;
     }
 
     public class MortarMonkey : LoadInfo
@@ -200,7 +203,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<MortarMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.MortarMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.MortarMonkeyEnabled;
     }
 
     public class NinjaMonkey : LoadInfo
@@ -209,7 +212,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<NinjaMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.NinjaMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.NinjaMonkeyEnabled;
     }
 
     public class SniperMonkey : LoadInfo
@@ -218,7 +221,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<SniperMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.SniperMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.SniperMonkeyEnabled;
     }
 
     public class SpikeFactory : LoadInfo
@@ -227,7 +230,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<SpikeFactoryLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.SpikeFactoryEnabled;
+        public override ModSettingBool Enabled => TowerSettings.SpikeFactoryEnabled;
     }
 
     public class SuperMonkey : LoadInfo
@@ -236,7 +239,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<SuperMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.SuperMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.SuperMonkeyEnabled;
     }
 
     public class TackShooter : LoadInfo
@@ -245,7 +248,7 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<TackShooterLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.TackShooterEnabled;
+        public override ModSettingBool Enabled => TowerSettings.TackShooterEnabled;
     }
 
     public class WizardMonkey : LoadInfo
@@ -254,6 +257,6 @@ namespace UltimateCrosspathing
         public override ModByteLoader<TowerModel> Loader => GetInstance<WizardMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => UltimateCrosspathingMod.WizardMonkeyEnabled;
+        public override ModSettingBool Enabled => TowerSettings.WizardMonkeyEnabled;
     }
 }

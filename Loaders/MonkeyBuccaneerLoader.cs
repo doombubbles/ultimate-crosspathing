@@ -1,15 +1,15 @@
-using System.IO;
-using Assets.Scripts.Simulation.SMath;
-using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Extensions;
-using Il2CppSystem;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Reflection;
-using Il2CppSystem.Runtime.Serialization;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
+using BTD_Mod_Helper.Extensions;
+using BTD_Mod_Helper.Api;
 
 namespace UltimateCrosspathing.Loaders;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Runtime.Serialization;
+using Il2CppSystem.Reflection;
+using Il2CppSystem;
+using Assets.Scripts.Simulation.SMath;
+using System.IO;
 
 public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
@@ -176,12 +176,9 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -193,16 +190,16 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -223,31 +220,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -287,7 +259,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -322,7 +294,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -373,26 +345,25 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -432,7 +403,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -496,14 +467,12 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -519,7 +488,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -570,10 +539,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
 			v.angle = br.ReadSingle();
-			v.offsetStart = br.ReadSingle();
 			v.offset = br.ReadSingle();
-			v.sliceSize = br.ReadSingle();
-			v.ignoreTowerRotation = br.ReadBoolean();
 			v.useProjectileRotation = br.ReadBoolean();
 			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
 		}
@@ -597,12 +563,13 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	
 	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.lifespan = br.ReadSingle();
 			v.layers = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
@@ -634,19 +601,18 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_BloonBehaviorModelWithTowerTracking_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 		var intervalField = t.GetField("interval", bindFlags);
+		var initialDelayField = t.GetField("initialDelay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
 			v.damage = br.ReadSingle();
 			v.payloadCount = br.ReadInt32();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
-			v.intervalFrames = br.ReadInt32();
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.displayPath = br.ReadBoolean() ? null : br.ReadString();
+			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayLifetime = br.ReadSingle();
 			v.triggerImmediate = br.ReadBoolean();
 			v.rotateEffectWithBloon = br.ReadBoolean();
-			v.initialDelay = br.ReadSingle();
-			v.initialDelayFrames = br.ReadInt32();
+			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
@@ -672,7 +638,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
@@ -781,7 +746,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.cashPerRound = br.ReadSingle();
 			v.cashRoundBonusMultiplier = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.distributeCash = br.ReadBoolean();
 		}
 	}
@@ -912,8 +877,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	
 	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-		var _fullNameField = t.GetField("_fullName", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
 			v.buffName = br.ReadBoolean() ? null : br.ReadString();
@@ -922,7 +885,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			_fullNameField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -936,16 +898,14 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -973,8 +933,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			v.attacks = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
 			v.processOnActivate = br.ReadBoolean();
 			v.cancelIfNoTargets = br.ReadBoolean();
@@ -982,6 +940,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1001,17 +960,17 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	
 	private void Set_v_MoabTakedownModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel>();
+		var speedField = t.GetField("speed", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel)m[i+start];
-			v.speed = br.ReadSingle();
-			v.speedFrames = br.ReadSingle();
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.increaseMoabBloonWorth = br.ReadBoolean();
 			v.multiplier = br.ReadSingle();
 			v.additive = br.ReadSingle();
 			v.increaseWorthTextEffectModel = (Assets.Scripts.Models.Bloons.Behaviors.IncreaseWorthTextEffectModel) m[br.ReadInt32()];
 			v.destroyBloonRadius = br.ReadSingle();
-			v.displayAtEjectId = br.ReadBoolean() ? null : br.ReadString();
-			v.bloonWorthMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel.BloonWorthMutator) m[br.ReadInt32()];
+			v.displayAtEjectId = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -1019,47 +978,9 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_BloonBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Bloons.Behaviors.IncreaseWorthTextEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.displayFullPayout = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_BehaviorMutator_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Simulation.Objects.BehaviorMutator>();
-		var usesSplitIdField = t.GetField("usesSplitId", bindFlags);
-		var idMajorField = t.GetField("idMajor", bindFlags);
-		var idMajorMinorField = t.GetField("idMajorMinor", bindFlags);
-		var resultCacheField = t.GetField("resultCache", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Simulation.Objects.BehaviorMutator)m[i+start];
-			v.id = br.ReadBoolean() ? null : br.ReadString();
-			usesSplitIdField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
-			idMajorField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			idMajorMinorField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			v.isExclusiveInMutationList = br.ReadBoolean();
-			v.priority = br.ReadInt32();
-			v.glueLevel = br.ReadInt32();
-			v.isFreeze = br.ReadBoolean();
-			v.dontCopy = br.ReadBoolean();
-			v.buffIndicator = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel) m[br.ReadInt32()];
-			v.includesSubTowers = br.ReadBoolean();
-			v.saveId = br.ReadBoolean() ? null : br.ReadString();
-			resultCacheField.SetValue(v,(Dictionary<Assets.Scripts.Models.Model, Assets.Scripts.Models.Model>) m[br.ReadInt32()]);
-		}
-	}
-	
-	private void Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_MoabTakedownModel_BloonWorthMutator_Fields(int start, int count) {
-		Set_v_BehaviorMutator_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel.BloonWorthMutator>();
-		var multiplierField = t.GetField("multiplier", bindFlags);
-		var additiveField = t.GetField("additive", bindFlags);
-		var behaviorField = t.GetField("behavior", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel.BloonWorthMutator)m[i+start];
-			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			additiveField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			behaviorField.SetValue(v,(Assets.Scripts.Models.Bloons.Behaviors.IncreaseWorthTextEffectModel) m[br.ReadInt32()]);
 		}
 	}
 	
@@ -1067,8 +988,8 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateRopeEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.endAssetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.endAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.spriteSpacing = br.ReadSingle();
 			v.spriteOffset = br.ReadSingle();
 			v.spriteRadius = br.ReadSingle();
@@ -1077,14 +998,15 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	
 	private void Set_v_TravelTowardsEmitTowerModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelTowardsEmitTowerModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		var speedField = t.GetField("speed", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelTowardsEmitTowerModel)m[i+start];
 			v.lockRotation = br.ReadBoolean();
-			v.lifespan = br.ReadSingle();
-			v.lifespanFrames = br.ReadInt32();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.range = br.ReadSingle();
-			v.speed = br.ReadSingle();
-			v.speedFrames = br.ReadSingle();
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.delayedActivation = br.ReadBoolean();
 		}
 	}
@@ -1093,7 +1015,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.randomRotation = br.ReadBoolean();
@@ -1116,16 +1038,14 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 	private void Set_v_LinearTravelModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
-			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
 			v.dontDestroyOnTargetLoss = br.ReadBoolean();
 			v.forceCollisionOnSnap = br.ReadBoolean();
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1222,7 +1142,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			var v = (Assets.Scripts.Models.Towers.Behaviors.TowerExpireModel)m[i+start];
 			v.expireOnRoundComplete = br.ReadBoolean();
 			v.expireOnDefeatScreen = br.ReadBoolean();
-			v.lifespanFrames = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.rounds = br.ReadInt32();
 		}
@@ -1350,23 +1269,23 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.ignoreSeekAngle = br.ReadBoolean();
 			v.overrideRotation = br.ReadBoolean();
 			v.useLifetimeAsDistance = br.ReadBoolean();
-			v.turnRatePerFrame = br.ReadSingle();
 			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
 	private void Set_v_AccelerateModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AccelerateModel>();
+		var accelerationField = t.GetField("acceleration", bindFlags);
+		var maxSpeedField = t.GetField("maxSpeed", bindFlags);
+		var turnRateChangeField = t.GetField("turnRateChange", bindFlags);
+		var maxTurnRateField = t.GetField("maxTurnRate", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AccelerateModel)m[i+start];
-			v.acceleration = br.ReadSingle();
-			v.accelerationFrames = br.ReadSingle();
-			v.maxSpeed = br.ReadSingle();
-			v.maxSpeedFrames = br.ReadSingle();
-			v.turnRateChange = br.ReadSingle();
-			v.turnRateChangeFrames = br.ReadSingle();
-			v.maxTurnRate = br.ReadSingle();
-			v.maxTurnRateFrames = br.ReadSingle();
+			accelerationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			maxSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			turnRateChangeField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			maxTurnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.decelerate = br.ReadBoolean();
 		}
 	}
@@ -1384,7 +1303,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.AirUnitModel)m[i+start];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -1485,7 +1404,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
@@ -1540,7 +1458,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel>();
 				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.IncreaseWorthTextEffectModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.MoabTakedownModel.BloonWorthMutator>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateRopeEffectModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelTowardsEmitTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel>();
@@ -1578,7 +1495,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.AddMakeshiftAreaModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1633,7 +1549,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 				Set_v_FilterAllExceptTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MoabTakedownModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IncreaseWorthTextEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_MoabTakedownModel_BloonWorthMutator_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateRopeEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TravelTowardsEmitTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());

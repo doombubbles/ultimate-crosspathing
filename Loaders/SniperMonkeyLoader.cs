@@ -1,15 +1,15 @@
-using System.IO;
-using Assets.Scripts.Simulation.SMath;
-using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Extensions;
-using Il2CppSystem;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Reflection;
-using Il2CppSystem.Runtime.Serialization;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
+using BTD_Mod_Helper.Extensions;
+using BTD_Mod_Helper.Api;
 
 namespace UltimateCrosspathing.Loaders;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Runtime.Serialization;
+using Il2CppSystem.Reflection;
+using Il2CppSystem;
+using Assets.Scripts.Simulation.SMath;
+using System.IO;
 
 public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
@@ -164,12 +164,9 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -181,16 +178,16 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -211,31 +208,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -270,7 +242,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -286,7 +258,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -361,26 +333,25 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -405,7 +376,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -482,7 +453,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
@@ -515,14 +485,12 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -550,7 +518,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -567,10 +535,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
 			v.angle = br.ReadSingle();
-			v.offsetStart = br.ReadSingle();
 			v.offset = br.ReadSingle();
-			v.sliceSize = br.ReadSingle();
-			v.ignoreTowerRotation = br.ReadBoolean();
 			v.useProjectileRotation = br.ReadBoolean();
 			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
 		}
@@ -585,7 +550,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.distance = br.ReadSingle();
 			v.maxBounces = br.ReadInt32();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.delayFrames = br.ReadInt32();
 			v.targetType.id = br.ReadString();
 			v.targetType.actionOnCreate = br.ReadBoolean();
 			v.expireIfNoTargetFound = br.ReadBoolean();
@@ -620,7 +584,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -752,8 +716,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	
 	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-		var _fullNameField = t.GetField("_fullName", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
 			v.buffName = br.ReadBoolean() ? null : br.ReadString();
@@ -762,7 +724,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			_fullNameField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -776,16 +737,14 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -813,7 +772,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel)m[i+start];
-			v.lifespanFrames = br.ReadInt32();
 			v.multiplier = br.ReadSingle();
 			v.projectileDisplay = (Assets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -829,8 +787,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			v.attacks = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
 			v.processOnActivate = br.ReadBoolean();
 			v.cancelIfNoTargets = br.ReadBoolean();
@@ -838,6 +794,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -869,11 +826,12 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	
 	private void Set_v_PickupModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
+		var delayField = t.GetField("delay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
-			v.delay = br.ReadSingle();
-			v.delayFrames = br.ReadSingle();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -896,6 +854,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.noTransformCash = br.ReadBoolean();
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
+			v.isDoubleable = br.ReadBoolean();
 		}
 	}
 	
@@ -903,7 +862,7 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.useTowerPosition = br.ReadBoolean();
 		}
@@ -988,47 +947,10 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	
 	private void Set_v_TargetSupplierSupportModel_Fields(int start, int count) {
 		Set_v_SupportModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel>();
-		var mutatorField = t.GetField("mutator", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel)m[i+start];
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.targetSupplier = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel) m[br.ReadInt32()];
-			mutatorField.SetValue(v,(Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel.MutatorTower) m[br.ReadInt32()]);
-		}
-	}
-	
-	private void Set_v_BehaviorMutator_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Simulation.Objects.BehaviorMutator>();
-		var usesSplitIdField = t.GetField("usesSplitId", bindFlags);
-		var idMajorField = t.GetField("idMajor", bindFlags);
-		var idMajorMinorField = t.GetField("idMajorMinor", bindFlags);
-		var resultCacheField = t.GetField("resultCache", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Simulation.Objects.BehaviorMutator)m[i+start];
-			v.id = br.ReadBoolean() ? null : br.ReadString();
-			usesSplitIdField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
-			idMajorField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			idMajorMinorField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			v.isExclusiveInMutationList = br.ReadBoolean();
-			v.priority = br.ReadInt32();
-			v.glueLevel = br.ReadInt32();
-			v.isFreeze = br.ReadBoolean();
-			v.dontCopy = br.ReadBoolean();
-			v.buffIndicator = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel) m[br.ReadInt32()];
-			v.includesSubTowers = br.ReadBoolean();
-			v.saveId = br.ReadBoolean() ? null : br.ReadString();
-			resultCacheField.SetValue(v,(Dictionary<Assets.Scripts.Models.Model, Assets.Scripts.Models.Model>) m[br.ReadInt32()]);
-		}
-	}
-	
-	private void Set_v_MutatorTower_Fields(int start, int count) {
-		Set_v_BehaviorMutator_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel.MutatorTower>();
-		var supportModelField = t.GetField("supportModel", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel.MutatorTower)m[i+start];
-			supportModelField.SetValue(v,(Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel) m[br.ReadInt32()]);
 		}
 	}
 	
@@ -1068,35 +990,20 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 	
 	private void Set_v_SlowMaimMoabModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel>();
+		var moabDurationField = t.GetField("moabDuration", bindFlags);
+		var bfbDurationField = t.GetField("bfbDuration", bindFlags);
+		var zomgDurationField = t.GetField("zomgDuration", bindFlags);
+		var ddtDurationField = t.GetField("ddtDuration", bindFlags);
+		var badDurationField = t.GetField("badDuration", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel)m[i+start];
-			v.moabDuration = br.ReadSingle();
-			v.bfbDuration = br.ReadSingle();
-			v.zomgDuration = br.ReadSingle();
-			v.ddtDuration = br.ReadSingle();
-			v.badDuration = br.ReadSingle();
-			v.moabDurationFrames = br.ReadInt32();
-			v.bfbDurationFrames = br.ReadInt32();
-			v.zomgDurationFrames = br.ReadInt32();
-			v.ddtDurationFrames = br.ReadInt32();
-			v.badDurationFrames = br.ReadInt32();
+			moabDurationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			bfbDurationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			zomgDurationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			ddtDurationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			badDurationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.multiplier = br.ReadSingle();
-			v.moabMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator) m[br.ReadInt32()];
-			v.bfbMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator) m[br.ReadInt32()];
-			v.zomgMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator) m[br.ReadInt32()];
-			v.ddtMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator) m[br.ReadInt32()];
-			v.badMutator = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator) m[br.ReadInt32()];
-			v.bloonPerHitDamageAddition = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_SlowMaimMoabModel_Mutator_Fields(int start, int count) {
-		Set_v_BehaviorMutator_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator)m[i+start];
-			v.multiplier = br.ReadSingle();
-			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
 			v.bloonPerHitDamageAddition = br.ReadSingle();
 		}
 	}
@@ -1127,7 +1034,6 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
@@ -1184,14 +1090,11 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetEliteTargettingModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel.MutatorTower>();
 				Create_Records<Assets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel.Mutator>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1248,11 +1151,9 @@ public class SniperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetEliteTargettingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSupplierSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_MutatorTower_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowMaimMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_SlowMaimMoabModel_Mutator_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();

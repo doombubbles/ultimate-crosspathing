@@ -1,15 +1,15 @@
-using System.IO;
-using Assets.Scripts.Simulation.SMath;
-using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Extensions;
-using Il2CppSystem;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Reflection;
-using Il2CppSystem.Runtime.Serialization;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
+using BTD_Mod_Helper.Extensions;
+using BTD_Mod_Helper.Api;
 
 namespace UltimateCrosspathing.Loaders;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Runtime.Serialization;
+using Il2CppSystem.Reflection;
+using Il2CppSystem;
+using Assets.Scripts.Simulation.SMath;
+using System.IO;
 
 public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
@@ -115,6 +115,18 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			m[mIndex++] = arr;
 		}
 	}
+	private void Read_a_PrefabReference_Array() {
+		var arrSetCount = br.ReadInt32();
+		var count = arrSetCount;
+		for (var i = 0; i < count; i++) {
+			var arrCount = br.ReadInt32();
+			var arr = new Assets.Scripts.Utils.PrefabReference[arrCount];
+			for (var j = 0; j < arr.Length; j++) {
+				arr[j] = ModContent.CreatePrefabReference(br.ReadString());
+			}
+			m[mIndex++] = arr;
+		}
+	}
 	private void Read_a_AreaType_Array() {
 		var arrSetCount = br.ReadInt32();
 		var count = arrSetCount;
@@ -188,12 +200,9 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -205,16 +214,16 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -235,31 +244,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -291,7 +275,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -327,7 +311,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -396,26 +380,25 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -448,7 +431,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -512,14 +495,12 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -548,7 +529,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -673,8 +654,8 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.JungleVineEffectModel)m[i+start];
-			v.displayFrontAssetId = br.ReadBoolean() ? null : br.ReadString();
-			v.displayBackAssetId = br.ReadBoolean() ? null : br.ReadString();
+			v.displayFrontAssetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.displayBackAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.fullscreen = br.ReadBoolean();
 			v.destroyAfterPopTime = br.ReadSingle();
 			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
@@ -693,7 +674,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Behaviors.AgeingDestroyModel)m[i+start];
 			v.time = br.ReadSingle();
-			v.timeFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 		}
 	}
@@ -720,7 +700,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
@@ -753,19 +732,21 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	
 	private void Set_v_RefreshPierceModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RefreshPierceModel>();
+		var intervalField = t.GetField("interval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.RefreshPierceModel)m[i+start];
-			v.interval = br.ReadSingle();
-			v.intervalFrames = br.ReadInt32();
+			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
 	private void Set_v_ClearHitBloonsModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
+		var intervalField = t.GetField("interval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel)m[i+start];
-			v.interval = br.ReadSingle();
-			v.intervalFrames = br.ReadInt32();
+			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -785,10 +766,11 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	
 	private void Set_v_FadeProjectileModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FadeProjectileModel>();
+		var startFadingAtField = t.GetField("startFadingAt", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.FadeProjectileModel)m[i+start];
-			v.startFadingAt = br.ReadSingle();
-			v.startFadingAtFrames = br.ReadInt32();
+			startFadingAtField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -812,7 +794,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -884,8 +866,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 	
 	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-		var _fullNameField = t.GetField("_fullName", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
 			v.buffName = br.ReadBoolean() ? null : br.ReadString();
@@ -894,7 +874,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			_fullNameField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -906,10 +885,10 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.smallGlowEffectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.mediumGlowEffectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.epicGlowEffectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			v.defaultProjectilePath = br.ReadBoolean() ? null : br.ReadString();
-			v.weakProjectilePath = br.ReadBoolean() ? null : br.ReadString();
-			v.mediumProjectilePath = br.ReadBoolean() ? null : br.ReadString();
-			v.epicProjectilePath = br.ReadBoolean() ? null : br.ReadString();
+			v.defaultProjectilePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.weakProjectilePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.mediumProjectilePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.epicProjectilePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.smallGlowEffectStacks = br.ReadInt32();
 			v.mediumGlowEffectStacks = br.ReadInt32();
 			v.epicGlowEffectStacks = br.ReadInt32();
@@ -943,16 +922,14 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -991,30 +968,32 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.baseCash = br.ReadSingle();
 			v.cash = br.ReadSingle();
 			v.rangeIncrease = br.ReadSingle();
-			v.textAssetId = br.ReadBoolean() ? null : br.ReadString();
+			v.textAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.textLifespan = br.ReadSingle();
 		}
 	}
 	
 	private void Set_v_SpiritOfTheForestModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel>();
+		var timeField = t.GetField("time", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel)m[i+start];
-			v.objectToPlace1FarPath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace2FarPath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace3FarPath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace4FarPath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectsToPlaceFarPath = (Il2CppStringArray) m[br.ReadInt32()];
-			v.objectToPlace1MiddlePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace2MiddlePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace3MiddlePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace4MiddlePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectsToPlaceMiddlePath = (Il2CppStringArray) m[br.ReadInt32()];
-			v.objectToPlace1ClosePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace2ClosePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace3ClosePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectToPlace4ClosePath = br.ReadBoolean() ? null : br.ReadString();
-			v.objectsToPlaceClosePath = (Il2CppStringArray) m[br.ReadInt32()];
+			v.objectToPlace1FarPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace2FarPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace3FarPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace4FarPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectsToPlaceFarPath = (Assets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectToPlace1MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace2MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace3MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace4MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectsToPlaceMiddlePath = (Assets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectToPlace1ClosePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace2ClosePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace3ClosePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectToPlace4ClosePath = ModContent.CreatePrefabReference(br.ReadString());
+			v.objectsToPlaceClosePath = (Assets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelFar = (Assets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelMiddle = (Assets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelClose = (Assets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
@@ -1030,8 +1009,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.offsetMax = br.ReadSingle();
 			v.circleRadius = br.ReadSingle();
 			v.generateRadius = br.ReadSingle();
-			v.time = br.ReadSingle();
-			v.timeFrames = br.ReadInt32();
+			timeField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.amountPerFrame = br.ReadSingle();
 			v.minScale = br.ReadSingle();
 			v.maxScale = br.ReadSingle();
@@ -1058,19 +1036,18 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_BloonBehaviorModelWithTowerTracking_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 		var intervalField = t.GetField("interval", bindFlags);
+		var initialDelayField = t.GetField("initialDelay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
 			v.damage = br.ReadSingle();
 			v.payloadCount = br.ReadInt32();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
-			v.intervalFrames = br.ReadInt32();
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.displayPath = br.ReadBoolean() ? null : br.ReadString();
+			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayLifetime = br.ReadSingle();
 			v.triggerImmediate = br.ReadBoolean();
 			v.rotateEffectWithBloon = br.ReadBoolean();
-			v.initialDelay = br.ReadSingle();
-			v.initialDelayFrames = br.ReadInt32();
+			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
@@ -1108,7 +1085,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.cashPerRound = br.ReadSingle();
 			v.cashRoundBonusMultiplier = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.distributeCash = br.ReadBoolean();
 		}
 	}
@@ -1126,20 +1103,21 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateLightningEffectModel)m[i+start];
 			v.lifeSpan = br.ReadSingle();
-			v.displayPaths = (Il2CppStringArray) m[br.ReadInt32()];
+			v.displayPaths = (Assets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
 			v.displayLengths = (Il2CppStructArray<float>) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_LightningModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.LightningModel>();
+		var delayField = t.GetField("delay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.LightningModel)m[i+start];
 			v.splits = br.ReadInt32();
 			v.emissionModel = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.splitRange = br.ReadSingle();
-			v.delay = br.ReadSingle();
-			v.delayFrames = br.ReadInt32();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1210,7 +1188,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.fraction = br.ReadSingle();
@@ -1250,7 +1228,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Assets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 		}
 	}
 	
@@ -1298,6 +1275,7 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 				Read_a_String_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_TargetType_Array();
+				Read_a_PrefabReference_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				Read_a_Single_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
@@ -1305,7 +1283,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
@@ -1381,7 +1358,6 @@ public class DruidLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.IgnoreInsufficientPierceModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());

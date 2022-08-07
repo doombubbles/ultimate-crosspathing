@@ -157,7 +157,7 @@ namespace UltimateCrosspathing
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
                         if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            i + j + k <= UltimateCrosspathingMod.MaxTiers && i + j + k > 0)
+                            i + j + k <= Settings.MaxTiers && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
                             {
@@ -207,7 +207,7 @@ namespace UltimateCrosspathing
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
                         if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            i + j + k <= UltimateCrosspathingMod.MaxTiers && i + j + k > 0)
+                            i + j + k <= Settings.MaxTiers && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
                             {
@@ -363,7 +363,7 @@ namespace UltimateCrosspathing
                     Math.Max(int.Parse(tierString[1].ToString()), towerModel.tiers[1]),
                     Math.Max(int.Parse(tierString[2].ToString()), towerModel.tiers[2])
                 };
-                if (upgradeTiers.Sum() <= UltimateCrosspathingMod.MaxTiers)
+                if (upgradeTiers.Sum() <= Settings.MaxTiers)
                 {
                     upgradePathModel.tower = $"{towerModel.baseId}-{upgradeTiers[0]}{upgradeTiers[1]}{upgradeTiers[2]}";
                     //upgradePathModel.numberOfPathsUsed = upgradeTiers.Count(i => i > 0);

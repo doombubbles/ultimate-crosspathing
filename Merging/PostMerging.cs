@@ -13,6 +13,7 @@ using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 using Assets.Scripts.Models.Towers.Weapons;
 using Assets.Scripts.Models.Towers.Weapons.Behaviors;
+using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
 using Il2CppSystem;
@@ -270,7 +271,7 @@ namespace UltimateCrosspathing.Merging
 
                     if (!attackModel.HasBehavior<DisplayModel>())
                     {
-                        attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", "", 0));
+                        attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay", ModContent.CreatePrefabReference(""), 0));
                     }
                 });
             }
