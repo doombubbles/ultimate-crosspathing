@@ -7,6 +7,8 @@
 
 ### An exprimental BTD6 mod enabling more crosspathing combinations through algorithmic generation.
 
+## NOTE: Requires Mod Helper v3.0, which is in still in alpha and hasn't been officially released. [See here for more info.](https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Mod-Helper-3.0-Alpha)
+
 <img alt="Screenshot" height="400" src="screenshot.png"/>
 
 # Summary

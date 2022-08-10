@@ -21,7 +21,25 @@ public class GenerateTask : ModLoadTask
 
     public override IEnumerator Coroutine()
     {
-        UltimateCrosspathingMod.StarterMessage();
+        var enabled = ModContent.GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name)
+            .ToArray();
+        var disabled = ModContent.GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name)
+            .ToArray();
+
+        if (enabled.Any())
+        {
+            ModHelper.Msg<UltimateCrosspathingMod>("Enabled Towers: ");
+            ModHelper.Msg<UltimateCrosspathingMod>(string.Join(", ", enabled));
+
+            ModHelper.Msg<UltimateCrosspathingMod>("");
+
+            ModHelper.Msg<UltimateCrosspathingMod>("Disabled Towers: ");
+            ModHelper.Msg<UltimateCrosspathingMod>(string.Join(", ", disabled));
+
+            ModHelper.Msg<UltimateCrosspathingMod>("");
+
+            ModHelper.Msg<UltimateCrosspathingMod>("Beginning Crosspath Creation");
+        }
 
         var loadInfo = GetContent<LoadInfo>()
             .Where(info => info.Enabled)

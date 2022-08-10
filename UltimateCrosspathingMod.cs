@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
 using Assets.Scripts.Unity.UI_New.Popups;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Extensions;
 using MelonLoader;
 using UltimateCrosspathing;
 
@@ -16,42 +16,67 @@ namespace UltimateCrosspathing
     {
         public static bool SuccessfullyLoaded { get; set; }
 
-        private const string FailedLoadingMessage = "Ultimate Crosspathing failed to load. " +
-                                                    "An update to the mod may be required, check the Mod Browser or the GitHub page for details.";
-
-
         public override void OnMainMenu()
         {
-            if (!SuccessfullyLoaded)
+            var modHelper3 = false;
+            try
+            {
+                modHelper3 = ModHelperData.CheckModHelper3();
+            }
+            catch (Exception)
+            {
+            }
+
+            var melonLoader55 = false;
+            try
+            {
+                melonLoader55 = ModHelperData.CheckMelonLoader055();
+            }
+            catch (Exception)
+            {
+            }
+            
+            if (!modHelper3)
             {
                 TaskScheduler.ScheduleTask(
-                    () => PopupScreen.instance.ShowOkPopup(FailedLoadingMessage),
+                    () => PopupScreen.instance.ShowPopup(PopupScreen.Placement.menuCenter, "Not On Mod Helper 3.0",
+                        "Ultimate Crosspathing failed to load. You are not using Mod Helper 3.0. Click ok to be taken to the page with info about it.",
+                        new Action(() =>
+                        {
+                            Process.Start(
+                                new ProcessStartInfo(
+                                    "https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Mod-Helper-3.0-Alpha")
+                                {
+                                    UseShellExecute = true
+                                });
+                        }), "Ok", null, "Cancel", Popup.TransitionAnim.Scale),
                     () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
                 );
             }
-        }
-
-
-        public static void StarterMessage()
-        {
-            var enabled = ModContent.GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name)
-                .ToArray();
-            var disabled = ModContent.GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name)
-                .ToArray();
-
-            if (enabled.Any())
+            else if (!melonLoader55)
             {
-                ModHelper.Msg<UltimateCrosspathingMod>("Enabled Towers: ");
-                ModHelper.Msg<UltimateCrosspathingMod>(string.Join(", ", enabled));
-
-                ModHelper.Msg<UltimateCrosspathingMod>("");
-
-                ModHelper.Msg<UltimateCrosspathingMod>("Disabled Towers: ");
-                ModHelper.Msg<UltimateCrosspathingMod>(string.Join(", ", disabled));
-
-                ModHelper.Msg<UltimateCrosspathingMod>("");
-
-                ModHelper.Msg<UltimateCrosspathingMod>("Beginning Crosspath Creation");
+                TaskScheduler.ScheduleTask(
+                    () => PopupScreen.instance.ShowPopup(PopupScreen.Placement.menuCenter, "Not On MelonLoader 0.5.5",
+                        "Ultimate Crosspathing failed to load. Not On MelonLoader 0.5.5. Click ok to be taken to the page with info about it.",
+                        new Action(() =>
+                        {
+                            Process.Start(
+                                new ProcessStartInfo(
+                                    "https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Mod-Helper-3.0-Alpha")
+                                {
+                                    UseShellExecute = true
+                                });
+                        }), "Ok", null, "Cancel", Popup.TransitionAnim.Scale),
+                    () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
+                );
+            }
+            else if (!SuccessfullyLoaded)
+            {
+                TaskScheduler.ScheduleTask(
+                    () => PopupScreen.instance.ShowOkPopup(
+                        "Ultimate Crosspathing failed to load, see the log for more details. An update to the mod or the Mod Helper may be required, check the Mod Browser or the GitHub page for details."),
+                    () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
+                );
             }
         }
     }
