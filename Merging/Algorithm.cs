@@ -11,6 +11,7 @@ using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 using Assets.Scripts.Models.Towers.Filters;
 using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Weapons;
+using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
 using Il2CppSystem.Reflection;
 using MelonLoader;
@@ -26,7 +27,7 @@ namespace UltimateCrosspathing.Merging
 {
     public static class DeepMerging
     {
-        private static readonly HashSet<string> DontMerge = new HashSet<string>
+        private static readonly HashSet<string> DontMerge = new()
         {
             "animation",
             "offsetX",
@@ -41,19 +42,19 @@ namespace UltimateCrosspathing.Merging
             "isGeraldoItem"
         };
 
-        private static readonly HashSet<string> Multiplicative = new HashSet<string>
+        private static readonly HashSet<string> Multiplicative = new()
         {
             "pierce",
             "range"
         };
 
-        private static readonly Dictionary<string, string> StringOverrides = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> StringOverrides = new()
         {
             { "fcddee8a92f5d2e4d8605a8924566620", "69bf8d5932f2bea4f9ce36f861240d2e" }, //DartMonkey-340
             { "0ddd8752be0d3554cb0db6abe6686e8e", "69bf8d5932f2bea4f9ce36f861240d2e" } //DartMonkey-043
         };
 
-        private static readonly Dictionary<(string, Type), bool> BetterBooleans = new Dictionary<(string, Type), bool>
+        private static readonly Dictionary<(string, Type), bool> BetterBooleans = new()
         {
             { ("isActive", Il2CppType.Of<FilterModel>()), false },
             { ("ignoreBlockers", Il2CppType.Of<ProjectileModel>()), true },
@@ -562,21 +563,21 @@ namespace UltimateCrosspathing.Merging
                 rightModel.IsType<ProjectileModel>(out var rightProjectile) &&
                 ancestorModel.IsType<ProjectileModel>(out var ancestorProjectile))
             {
-                // Try out a shalllow merge
+                // Try out a shallow merge
                 return DeepMerge(leftModel, rightModel, ancestor, history, true);
 
-                if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
+                /*if (leftProjectile.id == ancestorProjectile.id && leftProjectile.display ==
                                                                ancestorProjectile.display
                                                                && rightProjectile.id != ancestorProjectile.id &&
                                                                rightProjectile.display !=
                                                                ancestorProjectile.display)
                 {
-                    MelonLogger.Msg("overriding projectile hmmmm");
+                    ModHelper.Msg<UltimateCrosspathingMod>("overriding projectile hmmmm");
                     return rightModel;
-                }
+                }*/
             }
 
-            //MelonLogger.Msg($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
+            //ModHelper.Msg<UltimateCrosspathingMod>($"Default merge for {leftModel.GetIl2CppType().Name} and {rightModel.GetIl2CppType().Name}");
             return leftModel;
         }
 
@@ -657,7 +658,7 @@ namespace UltimateCrosspathing.Merging
             {
                 msg = "|  " + msg;
             }
-            //MelonLogger.Msg(msg);
+            //ModHelper.Msg<UltimateCrosspathingMod>(msg);
         }
 
         private static bool ModelsAreTheSame(Model leftModel, Model rightModel, bool array, History history)

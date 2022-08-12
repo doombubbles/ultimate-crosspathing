@@ -1,7 +1,9 @@
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using BTD_Mod_Helper.Extensions;
-using UltimateCrosspathing;
+using BTD_Mod_Helper.Api;
+
+namespace UltimateCrosspathing.Loaders;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppSystem.Reflection;
@@ -9,13 +11,13 @@ using Il2CppSystem;
 using Assets.Scripts.Simulation.SMath;
 using System.IO;
 
-public class HeliPilotLoader : TowersLoader {
+public class HeliPilotLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
-	
+	protected override string BytesFileName => "HeliPilots.bytes";
 	int mIndex = 1; // first element is null
 	#region Read array
 	
@@ -162,12 +164,9 @@ public class HeliPilotLoader : TowersLoader {
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -179,16 +178,16 @@ public class HeliPilotLoader : TowersLoader {
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -209,31 +208,6 @@ public class HeliPilotLoader : TowersLoader {
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -265,7 +239,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -298,7 +272,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -378,26 +352,25 @@ public class HeliPilotLoader : TowersLoader {
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -444,7 +417,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -508,14 +481,12 @@ public class HeliPilotLoader : TowersLoader {
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
 		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -531,7 +502,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -548,42 +519,11 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_SetTriggerOnAirUnitFireModel_Fields(int start, int count) {
-		Set_v_WeaponBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.SetTriggerOnAirUnitFireModel)m[i+start];
-			v.triggerState = br.ReadInt32();
-		}
-	}
-	
 	private void Set_v_AnimateAirUnitOnFireModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.AnimateAirUnitOnFireModel)m[i+start];
 			v.animationState = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_ResetRateOnInitialiseModel_Fields(int start, int count) {
-		Set_v_WeaponBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.ResetRateOnInitialiseModel)m[i+start];
-			v.weaponModel = (Assets.Scripts.Models.Towers.Weapons.WeaponModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_RandomEmissionModel_Fields(int start, int count) {
-		Set_v_EmissionModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel)m[i+start];
-			v.angle = br.ReadSingle();
-			v.count = br.ReadInt32();
-			v.startOffset = br.ReadSingle();
-			v.useSpeedMultiplier = br.ReadBoolean();
-			v.speedMultiplierMin = br.ReadSingle();
-			v.speedMultiplierMax = br.ReadSingle();
-			v.ejectPointRandomness = br.ReadSingle();
-			v.useMainAttackRotation = br.ReadBoolean();
 		}
 	}
 	
@@ -615,12 +555,14 @@ public class HeliPilotLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.LockInPlaceSettingModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
 	private void Set_v_PatrolPointsSettingModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PatrolPointsSettingModel>();
+		var lineDelayField = t.GetField("lineDelay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PatrolPointsSettingModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
@@ -630,10 +572,9 @@ public class HeliPilotLoader : TowersLoader {
 			v.minimumPointDistanceSquared = br.ReadSingle();
 			v.dotSpacing = br.ReadSingle();
 			v.dotOffset = br.ReadSingle();
-			v.display = br.ReadBoolean() ? null : br.ReadString();
-			v.lineDisplay = br.ReadBoolean() ? null : br.ReadString();
-			v.lineDelayFrames = br.ReadInt32();
-			v.lineDelay = br.ReadSingle();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.lineDisplay = ModContent.CreatePrefabReference(br.ReadString());
+			lineDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -652,19 +593,18 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_PursuitSettingModel_Fields(int start, int count) {
-		Set_v_TargetSupplierModel_Fields(start, count);
+	private void Set_v_AttackAirUnitModel_Fields(int start, int count) {
+		Set_v_AttackModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PursuitSettingModel)m[i+start];
-			v.isSelectable = br.ReadBoolean();
-			v.pursuitDistance = br.ReadSingle();
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.AttackAirUnitModel)m[i+start];
+			v.displayAirUnitModel = (Assets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
 		}
 	}
 	
-	private void Set_v_PrioritiseRotationModel_Fields(int start, int count) {
-		Set_v_AttackBehaviorModel_Fields(start, count);
+	private void Set_v_SingleEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PrioritiseRotationModel)m[i+start];
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
 		}
 	}
 	
@@ -681,7 +621,6 @@ public class HeliPilotLoader : TowersLoader {
 			v.ignoreSeekAngle = br.ReadBoolean();
 			v.overrideRotation = br.ReadBoolean();
 			v.useLifetimeAsDistance = br.ReadBoolean();
-			v.turnRatePerFrame = br.ReadSingle();
 			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -705,7 +644,6 @@ public class HeliPilotLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
@@ -732,10 +670,14 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_SingleEmissionModel_Fields(int start, int count) {
-		Set_v_EmissionModel_Fields(start, count);
+	private void Set_v_DamageModifierForBloonTypeModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonTypeModel)m[i+start];
+			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAdditive = br.ReadSingle();
+			v.includeChildren = br.ReadBoolean();
 		}
 	}
 	
@@ -767,12 +709,24 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_MoabShoveZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.MoabShoveZoneModel)m[i+start];
+			v.range = br.ReadSingle();
+			v.moabPushSpeedScaleCap = br.ReadSingle();
+			v.bfbPushSpeedScaleCap = br.ReadSingle();
+			v.zomgPushSpeedScaleCap = br.ReadSingle();
+			v.filterInvisibleModel = (Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_AirUnitModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.AirUnitModel)m[i+start];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -859,6 +813,68 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_UpgradePathModel_Fields(int start, int count) {
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+		var towerField = t.GetField("tower", bindFlags);
+		var upgradeField = t.GetField("upgrade", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
+			towerField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
+			upgradeField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
+		}
+	}
+	
+	private void Set_v_ComancheDefenceModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel)m[i+start];
+			v.towerModel = (Assets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
+			v.reinforcementCount = br.ReadInt32();
+			v.durationFrames = br.ReadInt32();
+			v.cooldownFrames = br.ReadInt32();
+			v.maxActivationsPerRound = br.ReadInt32();
+			v.immediate = br.ReadBoolean();
+			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_CreditPopsToParentTowerModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_PursuitSettingModel_Fields(int start, int count) {
+		Set_v_TargetSupplierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PursuitSettingModel)m[i+start];
+			v.isSelectable = br.ReadBoolean();
+			v.pursuitDistance = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_RotateToTargetModel_Fields(int start, int count) {
+		Set_v_AttackBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel)m[i+start];
+			v.onlyRotateDuringThrow = br.ReadBoolean();
+			v.useThrowMarkerHeight = br.ReadBoolean();
+			v.rotateOnlyOnThrow = br.ReadBoolean();
+			v.additionalRotation = br.ReadInt32();
+			v.rotateTower = br.ReadBoolean();
+			v.useMainAttackRotation = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CircleFootprintModel_Fields(int start, int count) {
+		Set_v_FootprintModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
+			v.radius = br.ReadSingle();
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -869,16 +885,14 @@ public class HeliPilotLoader : TowersLoader {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -904,8 +918,8 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.RedeployModel)m[i+start];
-			v.selectionObjectPath = br.ReadBoolean() ? null : br.ReadString();
-			v.isSelectableGameObject = br.ReadBoolean() ? null : br.ReadString();
+			v.selectionObjectPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.isSelectableGameObject = ModContent.CreatePrefabReference(br.ReadString());
 			v.activateSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.pickupSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.dropOffSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
@@ -919,8 +933,6 @@ public class HeliPilotLoader : TowersLoader {
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
 			v.attacks = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
 			v.processOnActivate = br.ReadBoolean();
 			v.cancelIfNoTargets = br.ReadBoolean();
@@ -928,6 +940,7 @@ public class HeliPilotLoader : TowersLoader {
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -965,11 +978,12 @@ public class HeliPilotLoader : TowersLoader {
 	
 	private void Set_v_PickupModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
+		var delayField = t.GetField("delay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
-			v.delay = br.ReadSingle();
-			v.delayFrames = br.ReadSingle();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -984,6 +998,7 @@ public class HeliPilotLoader : TowersLoader {
 			v.noTransformCash = br.ReadBoolean();
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
+			v.isDoubleable = br.ReadBoolean();
 		}
 	}
 	
@@ -991,7 +1006,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.useTowerPosition = br.ReadBoolean();
 		}
@@ -1001,7 +1016,7 @@ public class HeliPilotLoader : TowersLoader {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.randomRotation = br.ReadBoolean();
@@ -1059,7 +1074,6 @@ public class HeliPilotLoader : TowersLoader {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.TowerExpireModel)m[i+start];
 			v.expireOnRoundComplete = br.ReadBoolean();
 			v.expireOnDefeatScreen = br.ReadBoolean();
-			v.lifespanFrames = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.rounds = br.ReadInt32();
 		}
@@ -1073,30 +1087,10 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_CreditPopsToParentTowerModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_SavedSubTowerModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_RotateToTargetModel_Fields(int start, int count) {
-		Set_v_AttackBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel)m[i+start];
-			v.onlyRotateDuringThrow = br.ReadBoolean();
-			v.useThrowMarkerHeight = br.ReadBoolean();
-			v.rotateOnlyOnThrow = br.ReadBoolean();
-			v.additionalRotation = br.ReadInt32();
-			v.rotateTower = br.ReadBoolean();
-			v.useMainAttackRotation = br.ReadBoolean();
 		}
 	}
 	
@@ -1132,14 +1126,6 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_CircleFootprintModel_Fields(int start, int count) {
-		Set_v_FootprintModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
-			v.radius = br.ReadSingle();
-		}
-	}
-	
 	private void Set_v_CreateTowerModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1171,65 +1157,47 @@ public class HeliPilotLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_UpgradePathModel_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-		var towerField = t.GetField("tower", bindFlags);
-		var upgradeField = t.GetField("upgrade", bindFlags);
+	private void Set_v_ResetRateOnInitialiseModel_Fields(int start, int count) {
+		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
-			towerField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			upgradeField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
+			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.ResetRateOnInitialiseModel)m[i+start];
+			v.weaponModel = (Assets.Scripts.Models.Towers.Weapons.WeaponModel) m[br.ReadInt32()];
 		}
 	}
 	
-	private void Set_v_ComancheDefenceModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
+	private void Set_v_SetTriggerOnAirUnitFireModel_Fields(int start, int count) {
+		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel)m[i+start];
-			v.towerModel = (Assets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
-			v.reinforcementCount = br.ReadInt32();
-			v.durationFrames = br.ReadInt32();
-			v.cooldownFrames = br.ReadInt32();
-			v.maxActivationsPerRound = br.ReadInt32();
-			v.immediate = br.ReadBoolean();
-			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.SetTriggerOnAirUnitFireModel)m[i+start];
+			v.triggerState = br.ReadInt32();
 		}
 	}
 	
-	private void Set_v_AttackAirUnitModel_Fields(int start, int count) {
-		Set_v_AttackModel_Fields(start, count);
+	private void Set_v_RandomEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.AttackAirUnitModel)m[i+start];
-			v.displayAirUnitModel = (Assets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel)m[i+start];
+			v.angle = br.ReadSingle();
+			v.count = br.ReadInt32();
+			v.startOffset = br.ReadSingle();
+			v.useSpeedMultiplier = br.ReadBoolean();
+			v.speedMultiplierMin = br.ReadSingle();
+			v.speedMultiplierMax = br.ReadSingle();
+			v.ejectPointRandomness = br.ReadSingle();
+			v.useMainAttackRotation = br.ReadBoolean();
 		}
 	}
 	
-	private void Set_v_DamageModifierForBloonTypeModel_Fields(int start, int count) {
-		Set_v_DamageModifierModel_Fields(start, count);
+	private void Set_v_PrioritiseRotationModel_Fields(int start, int count) {
+		Set_v_AttackBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonTypeModel)m[i+start];
-			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
-			v.damageMultiplier = br.ReadSingle();
-			v.damageAdditive = br.ReadSingle();
-			v.includeChildren = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_MoabShoveZoneModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.MoabShoveZoneModel)m[i+start];
-			v.range = br.ReadSingle();
-			v.moabPushSpeedScaleCap = br.ReadSingle();
-			v.bfbPushSpeedScaleCap = br.ReadSingle();
-			v.zomgPushSpeedScaleCap = br.ReadSingle();
-			v.filterInvisibleModel = (Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel) m[br.ReadInt32()];
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PrioritiseRotationModel)m[i+start];
 		}
 	}
 	
 	#endregion
 	
-	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
@@ -1247,14 +1215,13 @@ public class HeliPilotLoader : TowersLoader {
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				Read_a_String_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.TowerBehaviorModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_TargetType_Array();
+				CreateArraySet<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
@@ -1276,25 +1243,23 @@ public class HeliPilotLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.FireFromAirUnitModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.SetTriggerOnAirUnitFireModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.AnimateAirUnitOnFireModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.ResetRateOnInitialiseModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FollowTouchSettingModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.LockInPlaceSettingModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PatrolPointsSettingModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetAirUnitModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PursuitSettingModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PrioritiseRotationModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackAirUnitModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonTypeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstAirUnitModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.MoabShoveZoneModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.AirUnitModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.HeliMovementModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnAirUnitModel>();
@@ -1302,6 +1267,12 @@ public class HeliPilotLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.IgnoreThrowMarkerModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PursuitSettingModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.RedeployModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
@@ -1319,25 +1290,20 @@ public class HeliPilotLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FindDeploymentLocationModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.TowerExpireModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnExpireModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.UsePresetTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackAirUnitModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonTypeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.MoabShoveZoneModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.ResetRateOnInitialiseModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.SetTriggerOnAirUnitFireModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PrioritiseRotationModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1359,25 +1325,23 @@ public class HeliPilotLoader : TowersLoader {
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireFromAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SetTriggerOnAirUnitFireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AnimateAirUnitOnFireModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ResetRateOnInitialiseModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RandomEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FollowTouchSettingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LockInPlaceSettingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PatrolPointsSettingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToTargetAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PursuitSettingModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PrioritiseRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AttackAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForBloonTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCollisionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MoabShoveZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_HeliMovementModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1385,6 +1349,12 @@ public class HeliPilotLoader : TowersLoader {
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreThrowMarkerModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ComancheDefenceModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PursuitSettingModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RotateToTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RedeployModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1402,22 +1372,18 @@ public class HeliPilotLoader : TowersLoader {
 				Set_v_FindDeploymentLocationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TowerExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Assets_Scripts_Models_Towers_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SavedSubTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RotateToTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetLastModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetCloseModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetStrongModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UsePresetTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ComancheDefenceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AttackAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForBloonTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_MoabShoveZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ResetRateOnInitialiseModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SetTriggerOnAirUnitFireModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RandomEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PrioritiseRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();
@@ -1427,8 +1393,8 @@ public class HeliPilotLoader : TowersLoader {
 				LinkArray<Assets.Scripts.Models.Towers.Filters.FilterModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				LinkArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkList<Assets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();

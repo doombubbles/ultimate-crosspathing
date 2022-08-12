@@ -5,11 +5,10 @@ using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Models.Towers.Upgrades;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
+using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
-using MelonLoader;
 using UltimateCrosspathing.Merging;
-using static Assets.Scripts.Models.Towers.TowerType;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
 
@@ -21,22 +20,22 @@ namespace UltimateCrosspathing
         /// Determines which paths takes precedence when determining for visuals and certain other behavior
         /// </summary>
         public static readonly Dictionary<string, (int, int, int)> PathPriorities =
-            new Dictionary<string, (int, int, int)>
+            new()
             {
-                { DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
-                { TackShooter, (0, 1, 2) },
-                { BoomerangMonkey, (1, 2, 0) },
-                { BombShooter, (2, 1, 0) },
-                { MonkeyBuccaneer, (0, 1, 2) },
-                { NinjaMonkey, (0, 2, 1) },
-                { SniperMonkey, (1, 2, 0) },
-                { DartlingGunner, (2, 0, 1) },
-                { IceMonkey, (2, 0, 1) },
-                { SuperMonkey, (0, 1, 2) },
-                { GlueGunner, (2, 0, 1) },
-                { WizardMonkey, (2, 1, 0) },
-                { BananaFarm, (1, 2, 0) },
-                { SpikeFactory, (2, 1, 0) }
+                { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
+                { TowerType.TackShooter, (0, 1, 2) },
+                { TowerType.BoomerangMonkey, (1, 2, 0) },
+                { TowerType.BombShooter, (2, 1, 0) },
+                { TowerType.MonkeyBuccaneer, (0, 1, 2) },
+                { TowerType.NinjaMonkey, (0, 2, 1) },
+                { TowerType.SniperMonkey, (1, 2, 0) },
+                { TowerType.DartlingGunner, (2, 0, 1) },
+                { TowerType.IceMonkey, (2, 0, 1) },
+                { TowerType.SuperMonkey, (0, 1, 2) },
+                { TowerType.GlueGunner, (2, 0, 1) },
+                { TowerType.WizardMonkey, (2, 1, 0) },
+                { TowerType.BananaFarm, (1, 2, 0) },
+                { TowerType.SpikeFactory, (2, 1, 0) }
             };
 
         /// <summary>
@@ -46,7 +45,6 @@ namespace UltimateCrosspathing
         /// <param name="top">Top path tier</param>
         /// <param name="mid">Mid Path tier</param>
         /// <param name="bot">Bot path tier</param>
-        /// <param name="aboveThree">Whether to allow cross pathing involving third tier or higher towers</param>
         /// <param name="leftTiers">The outputed tiers for the left merge tower</param>
         /// <param name="rightTiers">The outputed tiers for the right merge tower</param>
         /// <returns>Whether this new tower should even be created</returns>
@@ -55,7 +53,7 @@ namespace UltimateCrosspathing
         {
             var (high, medium, low) = PathPriorities.ContainsKey(baseId)
                 ? PathPriorities[baseId]
-                : PathPriorities[DartMonkey];
+                : PathPriorities[TowerType.DartMonkey];
             var tiers = new[] { top, mid, bot };
             leftTiers = new[] { top, mid, bot };
             rightTiers = new[] { top, mid, bot };
@@ -159,7 +157,7 @@ namespace UltimateCrosspathing
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
                         if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            i + j + k <= Main.MaxTiers && i + j + k > 0)
+                            i + j + k <= Settings.MaxTiers && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
                             {
@@ -188,7 +186,7 @@ namespace UltimateCrosspathing
                                 var commonAncestor = Game.instance.model.GetTowerWithName(commonAncestorName);
                                 if (commonAncestor != null)
                                 {
-                                    MelonLogger.Msg($"Creating {newTowerName} from {leftName} and {rightName}");
+                                    ModHelper.Msg<UltimateCrosspathingMod>($"Creating {newTowerName} from {leftName} and {rightName}");
                                     yield return new MergeInfo(result, left, right, commonAncestor);
                                 }
                             }
@@ -209,7 +207,7 @@ namespace UltimateCrosspathing
                     {
                         var newTowerName = $"{baseId}-{i}{j}{k}";
                         if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            i + j + k <= Main.MaxTiers && i + j + k > 0)
+                            i + j + k <= Settings.MaxTiers && i + j + k > 0)
                         {
                             if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
                             {
@@ -229,7 +227,7 @@ namespace UltimateCrosspathing
 
                                     try
                                     {
-                                        var newTowerModel = Merge(leftTowerModel, rightTowerModel);
+                                        var newTowerModel = OldMerge(leftTowerModel, rightTowerModel);
                                         Game.instance.model.AddTowerToGame(newTowerModel);
                                     }
                                     catch (Exception e)
@@ -238,18 +236,18 @@ namespace UltimateCrosspathing
                                             $"MergedTowers/{leftTowerModel.baseId}/{newTowerName}.txt",
                                             e.ToString());
 
-                                        MelonLogger.Warning($"Failed making {newTowerName}");
+                                        ModHelper.Warning<UltimateCrosspathingMod>($"Failed making {newTowerName}");
                                     }
                                 }
                                 catch (Exception)
                                 {
-                                    MelonLogger.Warning(
+                                    ModHelper.Warning<UltimateCrosspathingMod>(
                                         $"Failed finding right tower for {(rightTiers[0], rightTiers[1], rightTiers[2])}");
                                 }
                             }
                             catch (Exception)
                             {
-                                MelonLogger.Warning(
+                                ModHelper.Warning<UltimateCrosspathingMod>(
                                     $"Failed finding left tower for {(leftTiers[0], leftTiers[1], leftTiers[2])}");
                             }
                         }
@@ -258,7 +256,7 @@ namespace UltimateCrosspathing
             }
         }
 
-        public static TowerModel Merge(TowerModel first, TowerModel second)
+        public static TowerModel OldMerge(TowerModel first, TowerModel second)
         {
             var towerModel = first.Duplicate();
             for (var i = 0; i < 3; i++)
@@ -299,7 +297,7 @@ namespace UltimateCrosspathing
                     // ignored
                 }
 
-                MelonLogger.Msg($"Successfully made {towerModel.name} from {first.name} and {second.name}");
+                ModHelper.Msg<UltimateCrosspathingMod>($"Successfully made {towerModel.name} from {first.name} and {second.name}");
             }
 
             AddUpgradeToPrevs(towerModel);
@@ -307,7 +305,7 @@ namespace UltimateCrosspathing
             return towerModel;
         }
 
-        public static TowerModel AsyncMerge(MergeInfo mergeInfo)
+        public static TowerModel NewMerge(MergeInfo mergeInfo)
         {
             var (result, left, right, commonAncestor) = mergeInfo;
             for (var i = 0; i < 3; i++)
@@ -365,7 +363,7 @@ namespace UltimateCrosspathing
                     Math.Max(int.Parse(tierString[1].ToString()), towerModel.tiers[1]),
                     Math.Max(int.Parse(tierString[2].ToString()), towerModel.tiers[2])
                 };
-                if (upgradeTiers.Sum() <= Main.MaxTiers)
+                if (upgradeTiers.Sum() <= Settings.MaxTiers)
                 {
                     upgradePathModel.tower = $"{towerModel.baseId}-{upgradeTiers[0]}{upgradeTiers[1]}{upgradeTiers[2]}";
                     //upgradePathModel.numberOfPathsUsed = upgradeTiers.Count(i => i > 0);
@@ -457,8 +455,6 @@ namespace UltimateCrosspathing
             PostMerging.FixClusterMauling(model);
 
             PostMerging.FixBehaviorNames(model);
-
-            PostMerging.FixRightHandStuff(model);
         }
     }
 }

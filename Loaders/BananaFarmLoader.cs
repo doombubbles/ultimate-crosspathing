@@ -1,7 +1,9 @@
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using BTD_Mod_Helper.Extensions;
-using UltimateCrosspathing;
+using BTD_Mod_Helper.Api;
+
+namespace UltimateCrosspathing.Loaders;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppSystem.Reflection;
@@ -9,13 +11,13 @@ using Il2CppSystem;
 using Assets.Scripts.Simulation.SMath;
 using System.IO;
 
-public class BananaFarmLoader : TowersLoader {
+public class BananaFarmLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
-	
+	protected override string BytesFileName => "BananaFarms.bytes";
 	int mIndex = 1; // first element is null
 	#region Read array
 	
@@ -162,12 +164,9 @@ public class BananaFarmLoader : TowersLoader {
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -179,16 +178,16 @@ public class BananaFarmLoader : TowersLoader {
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -209,31 +208,6 @@ public class BananaFarmLoader : TowersLoader {
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -265,7 +239,7 @@ public class BananaFarmLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -298,7 +272,7 @@ public class BananaFarmLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -369,90 +343,11 @@ public class BananaFarmLoader : TowersLoader {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.BankModel)m[i+start];
 			v.capacity = br.ReadSingle();
 			v.interest = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.fullBankAssetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.fullBankAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.autoCollect = br.ReadBoolean();
 			v.collectAnimation = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_AbilityModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
-		var cooldownSpeedScaleField = t.GetField("cooldownSpeedScale", bindFlags);
-		var animationOffsetField = t.GetField("animationOffset", bindFlags);
-		var cooldownField = t.GetField("cooldown", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
-			v.displayName = br.ReadBoolean() ? null : br.ReadString();
-			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
-			v.activateOnPreLeak = br.ReadBoolean();
-			v.activateOnLeak = br.ReadBoolean();
-			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
-			v.livesCost = br.ReadInt32();
-			v.maxActivationsPerRound = br.ReadInt32();
-			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
-			v.enabled = br.ReadBoolean();
-			v.canActivateBetweenRounds = br.ReadBoolean();
-			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
-			v.activateOnLivesLost = br.ReadBoolean();
-			v.sharedCooldown = br.ReadBoolean();
-			v.dontShowStacked = br.ReadBoolean();
-			v.animateOnMainAttackDisplay = br.ReadBoolean();
-			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
-			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_ImfLoanModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImfLoanModel)m[i+start];
-			v.amount = br.ReadSingle();
-			v.incomeRecoveryRate = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.lifespan = br.ReadSingle();
-			v.imfLoanCollection = (Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_SimulationBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.SimulationBehaviors.SimulationBehaviorModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_ImfLoanCollectionModel_Fields(int start, int count) {
-		Set_v_SimulationBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel)m[i+start];
-			v.collectionRate = br.ReadSingle();
-			v.amount = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_CreateSoundOnAbilityModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel)m[i+start];
-			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -478,26 +373,25 @@ public class BananaFarmLoader : TowersLoader {
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -522,7 +416,7 @@ public class BananaFarmLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -564,40 +458,7 @@ public class BananaFarmLoader : TowersLoader {
 			v.noTransformCash = br.ReadBoolean();
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_CreateTextEffectModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.lifespan = br.ReadSingle();
-			v.useTowerPosition = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_DisplayModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
-			v.layer = br.ReadInt32();
-			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
-			v.scale = br.ReadSingle();
-			v.ignoreRotation = br.ReadBoolean();
-			v.animationChanges = (List<Assets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
-			v.delayedReveal = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_PickupModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
-			v.collectRadius = br.ReadSingle();
-			v.delay = br.ReadSingle();
-			v.delayFrames = br.ReadSingle();
+			v.isDoubleable = br.ReadBoolean();
 		}
 	}
 	
@@ -608,63 +469,33 @@ public class BananaFarmLoader : TowersLoader {
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
 		}
 	}
 	
-	private void Set_v_ScaleProjectileModel_Fields(int start, int count) {
+	private void Set_v_CreateTextEffectModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ScaleProjectileModel)m[i+start];
-			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_Curve_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
-		var samplesField = t.GetField("samples", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve)m[i+start];
-			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
-			v.fullscreen = br.ReadBoolean();
-			v.randomRotation = br.ReadBoolean();
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.useTowerPosition = br.ReadBoolean();
 		}
 	}
 	
-	private void Set_v_ArriveAtTargetModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
+	private void Set_v_DisplayModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel)m[i+start];
-			v.timeToTake = br.ReadSingle();
-			v.curveSamples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-			v.filterCollisionWhileMoving = br.ReadBoolean();
-			v.expireOnArrival = br.ReadBoolean();
-			v.altSpeed = br.ReadSingle();
-			v.stopOnTargetReached = br.ReadBoolean();
-			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_HeightOffsetProjectileModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel)m[i+start];
-			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.layer = br.ReadInt32();
+			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
+			v.scale = br.ReadSingle();
+			v.ignoreRotation = br.ReadBoolean();
+			v.animationChanges = (List<Assets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
+			v.delayedReveal = br.ReadSingle();
 		}
 	}
 	
@@ -741,42 +572,6 @@ public class BananaFarmLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
-			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
-			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
-			v.maxStackSize = br.ReadInt32();
-			v.isGlobalRange = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_BananaCentralBuffModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorBuffModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.BananaCentralBuffModel)m[i+start];
-			v.multiplier = br.ReadSingle();
-			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-		var _fullNameField = t.GetField("_fullName", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
-			v.buffName = br.ReadBoolean() ? null : br.ReadString();
-			v.iconName = br.ReadBoolean() ? null : br.ReadString();
-			v.stackable = br.ReadBoolean();
-			v.maxStackSize = br.ReadInt32();
-			v.globalRange = br.ReadBoolean();
-			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			_fullNameField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-		}
-	}
-	
 	private void Set_v_UpgradePathModel_Fields(int start, int count) {
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 		var towerField = t.GetField("tower", bindFlags);
@@ -796,6 +591,52 @@ public class BananaFarmLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.isGlobalRange = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CentralMarketBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CentralMarketBuffModel)m[i+start];
+			v.multiplier = br.ReadSingle();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackCount = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
+			v.buffName = br.ReadBoolean() ? null : br.ReadString();
+			v.iconName = br.ReadBoolean() ? null : br.ReadString();
+			v.stackable = br.ReadBoolean();
+			v.maxStackSize = br.ReadInt32();
+			v.globalRange = br.ReadBoolean();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_PerRoundCashBonusTowerModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel)m[i+start];
+			v.cashPerRound = br.ReadSingle();
+			v.cashRoundBonusMultiplier = br.ReadSingle();
+			v.lifespan = br.ReadSingle();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.distributeCash = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_CollectCashZoneModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -811,41 +652,169 @@ public class BananaFarmLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_CentralMarketBuffModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorBuffModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CentralMarketBuffModel)m[i+start];
-			v.multiplier = br.ReadSingle();
-			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
-			v.maxStackCount = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_PerRoundCashBonusTowerModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel)m[i+start];
-			v.cashPerRound = br.ReadSingle();
-			v.cashRoundBonusMultiplier = br.ReadSingle();
-			v.lifespan = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.distributeCash = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_BonusLivesPerRoundModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel)m[i+start];
 			v.amount = br.ReadInt32();
 			v.lifespan = br.ReadSingle();
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+		}
+	}
+	
+	private void Set_v_AbilityModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
+		var cooldownSpeedScaleField = t.GetField("cooldownSpeedScale", bindFlags);
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
+		var cooldownField = t.GetField("cooldown", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
+			v.displayName = br.ReadBoolean() ? null : br.ReadString();
+			v.description = br.ReadBoolean() ? null : br.ReadString();
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
+			v.activateOnPreLeak = br.ReadBoolean();
+			v.activateOnLeak = br.ReadBoolean();
+			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
+			v.livesCost = br.ReadInt32();
+			v.maxActivationsPerRound = br.ReadInt32();
+			v.animation = br.ReadInt32();
+			v.enabled = br.ReadBoolean();
+			v.canActivateBetweenRounds = br.ReadBoolean();
+			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
+			v.activateOnLivesLost = br.ReadBoolean();
+			v.sharedCooldown = br.ReadBoolean();
+			v.dontShowStacked = br.ReadBoolean();
+			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_ImfLoanModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImfLoanModel)m[i+start];
+			v.amount = br.ReadSingle();
+			v.incomeRecoveryRate = br.ReadSingle();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.lifespan = br.ReadSingle();
+			v.imfLoanCollection = (Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_SimulationBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.SimulationBehaviors.SimulationBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_ImfLoanCollectionModel_Fields(int start, int count) {
+		Set_v_SimulationBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel)m[i+start];
+			v.collectionRate = br.ReadSingle();
+			v.amount = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_CreateSoundOnAbilityModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel)m[i+start];
+			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_PickupModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
+		var delayField = t.GetField("delay", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
+			v.collectRadius = br.ReadSingle();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_ScaleProjectileModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ScaleProjectileModel)m[i+start];
+			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_Curve_Fields(int start, int count) {
+		var t = Il2CppType.Of<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
+		var samplesField = t.GetField("samples", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve)m[i+start];
+			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.lifespan = br.ReadSingle();
+			v.fullscreen = br.ReadBoolean();
+			v.randomRotation = br.ReadBoolean();
+			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_ArriveAtTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel)m[i+start];
+			v.timeToTake = br.ReadSingle();
+			v.curveSamples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+			v.filterCollisionWhileMoving = br.ReadBoolean();
+			v.expireOnArrival = br.ReadBoolean();
+			v.altSpeed = br.ReadSingle();
+			v.stopOnTargetReached = br.ReadBoolean();
+			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_HeightOffsetProjectileModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel)m[i+start];
+			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_BananaCentralBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.BananaCentralBuffModel)m[i+start];
+			v.multiplier = br.ReadSingle();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
 	#endregion
 	
-	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
@@ -858,16 +827,15 @@ public class BananaFarmLoader : TowersLoader {
 				Read_a_AreaType_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				Read_a_Single_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Filters.FilterModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_String_Array();
+				Read_a_Single_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
@@ -880,40 +848,39 @@ public class BananaFarmLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BankModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImfLoanModel>();
-				Create_Records<Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SendToBankModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CashModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ScaleProjectileModel>();
-				Create_Records<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.EmissionsPerRoundFilterModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.WeaponRateMinModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionBasicModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BananaCentralBuffModel>();
-				Create_Records<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CollectCashZoneModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CentralMarketBuffModel>();
+				Create_Records<Assets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CollectCashZoneModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImfLoanModel>();
+				Create_Records<Assets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ScaleProjectileModel>();
+				Create_Records<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.BananaCentralBuffModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -926,37 +893,37 @@ public class BananaFarmLoader : TowersLoader {
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BankModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ImfLoanModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ImfLoanCollectionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SendToBankModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateTextEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PickupModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ScaleProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_HeightOffsetProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionsPerRoundFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponRateMinModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomPositionBasicModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BananaCentralBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CollectCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CentralMarketBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CollectCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusLivesPerRoundModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ImfLoanModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ImfLoanCollectionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PickupModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ScaleProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_HeightOffsetProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BananaCentralBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();

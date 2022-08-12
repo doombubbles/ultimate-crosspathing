@@ -1,7 +1,9 @@
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using BTD_Mod_Helper.Extensions;
-using UltimateCrosspathing;
+using BTD_Mod_Helper.Api;
+
+namespace UltimateCrosspathing.Loaders;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppSystem.Reflection;
@@ -9,13 +11,13 @@ using Il2CppSystem;
 using Assets.Scripts.Simulation.SMath;
 using System.IO;
 
-public class BoomerangMonkeyLoader : TowersLoader {
+public class BoomerangMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
 	
 	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
-	
+	protected override string BytesFileName => "BoomerangMonkeys.bytes";
 	int mIndex = 1; // first element is null
 	#region Read array
 	
@@ -186,12 +188,9 @@ public class BoomerangMonkeyLoader : TowersLoader {
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.TowerModel>();
-		var towerSizeField = t.GetField("towerSize", bindFlags);
-		var cachedThrowMarkerHeightField = t.GetField("cachedThrowMarkerHeight", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -203,16 +202,16 @@ public class BoomerangMonkeyLoader : TowersLoader {
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.portrait = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.instaIcon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
-			v.emoteSpriteLarge = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
@@ -233,31 +232,6 @@ public class BoomerangMonkeyLoader : TowersLoader {
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
-			towerSizeField.SetValue(v,br.ReadInt32().ToIl2Cpp());
-			cachedThrowMarkerHeightField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_ar_Sprite_Fields(int start, int count) {
-		Set_v_AssetReference_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference<UnityEngine.Sprite>)m[i+start];
-		}
-	}
-	
-	private void Set_v_AssetReference_Fields(int start, int count) {
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.AssetReference)m[i+start];
-		}
-	}
-	
-	private void Set_v_SpriteReference_Fields(int start, int count) {
-		Set_ar_Sprite_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Utils.SpriteReference>();
-		var guidRefField = t.GetField("guidRef", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Utils.SpriteReference)m[i+start];
-			guidRefField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
 	}
 	
@@ -277,17 +251,6 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_RemoveMutatorOnUpgradeModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel)m[i+start];
-			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
-			v.firstPath = br.ReadInt32();
-			v.secondPath = br.ReadInt32();
-			v.thirdPath = br.ReadInt32();
-		}
-	}
-	
 	private void Set_v_CreateSoundOnSellModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -300,7 +263,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -332,7 +295,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -394,26 +357,25 @@ public class BoomerangMonkeyLoader : TowersLoader {
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
+		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
-			v.animationOffset = br.ReadSingle();
-			v.animationOffsetFrames = br.ReadInt32();
+			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
 			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.rateFrames = br.ReadInt32();
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
-			v.customStartCooldown = br.ReadSingle();
-			v.customStartCooldownFrames = br.ReadInt32();
+			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 		}
@@ -438,7 +400,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -507,9 +469,8 @@ public class BoomerangMonkeyLoader : TowersLoader {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel)m[i+start];
 			v.path = (Il2CppStructArray<Assets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
 			v.easePath = (Il2CppStructArray<Assets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
-			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
 			v.destroyAtEndOfPath = br.ReadBoolean();
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -523,10 +484,11 @@ public class BoomerangMonkeyLoader : TowersLoader {
 	
 	private void Set_v_RotateModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel>();
+		var angleField = t.GetField("angle", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel)m[i+start];
-			v.angle = br.ReadSingle();
-			v.rotationFrames = br.ReadSingle();
+			angleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -554,7 +516,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = br.ReadBoolean() ? null : br.ReadString();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -564,140 +526,13 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_RetargetOnContactModel_Fields(int start, int count) {
+	private void Set_v_ClearHitBloonsModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
-		var delayField = t.GetField("delay", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
-			v.distance = br.ReadSingle();
-			v.maxBounces = br.ReadInt32();
-			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.delayFrames = br.ReadInt32();
-			v.targetType.id = br.ReadString();
-			v.targetType.actionOnCreate = br.ReadBoolean();
-			v.expireIfNoTargetFound = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_TravelStraitModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		var speedField = t.GetField("speed", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
-			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.speedFrames = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_CreateProjectileOnExhaustFractionModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel)m[i+start];
-			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
-			v.fraction = br.ReadSingle();
-			v.durationfraction = br.ReadSingle();
-			v.canCreateInBetweenRounds = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_AgeModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
-			v.rounds = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
-			v.useRoundTime = br.ReadBoolean();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
-			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
-			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.lifespan = br.ReadSingle();
-			v.layers = br.ReadInt32();
-			v.lifespanFrames = br.ReadInt32();
-			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
-			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
-			v.isUnique = br.ReadBoolean();
-			v.lastAppliesFirst = br.ReadBoolean();
-			v.collideThisFrame = br.ReadBoolean();
-			v.cascadeMutators = br.ReadBoolean();
-			v.glueLevel = br.ReadInt32();
-			v.applyOnlyIfDamaged = br.ReadBoolean();
-			v.stackCount = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_FilterMoabModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterMoabModel)m[i+start];
-			v.flip = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_BloonBehaviorModelWithTowerTracking_Fields(int start, int count) {
-		Set_v_BloonBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModelWithTowerTracking)m[i+start];
-		}
-	}
-	
-	private void Set_v_BloonBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_DamageOverTimeModel_Fields(int start, int count) {
-		Set_v_BloonBehaviorModelWithTowerTracking_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 		var intervalField = t.GetField("interval", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
-			v.damage = br.ReadSingle();
-			v.payloadCount = br.ReadInt32();
-			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
-			v.intervalFrames = br.ReadInt32();
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel)m[i+start];
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.displayPath = br.ReadBoolean() ? null : br.ReadString();
-			v.displayLifetime = br.ReadSingle();
-			v.triggerImmediate = br.ReadBoolean();
-			v.rotateEffectWithBloon = br.ReadBoolean();
-			v.initialDelay = br.ReadSingle();
-			v.initialDelayFrames = br.ReadInt32();
-			v.damageOnDestroy = br.ReadBoolean();
-			v.overrideDistributionBlocker = br.ReadBoolean();
-			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_CollideOnlyWithTargetModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideOnlyWithTargetModel)m[i+start];
 		}
 	}
 	
@@ -786,6 +621,251 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_FootprintModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel)m[i+start];
+			v.doesntBlockTowerPlacement = br.ReadBoolean();
+			v.ignoresPlacementCheck = br.ReadBoolean();
+			v.ignoresTowerOverlap = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CircleFootprintModel_Fields(int start, int count) {
+		Set_v_FootprintModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
+			v.radius = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_UpgradePathModel_Fields(int start, int count) {
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+		var towerField = t.GetField("tower", bindFlags);
+		var upgradeField = t.GetField("upgrade", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
+			towerField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
+			upgradeField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
+		}
+	}
+	
+	private void Set_v_FilterOutBloonModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Filters.FilterOutBloonModel)m[i+start];
+			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_PushBackModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel)m[i+start];
+			v.pushAmount = br.ReadSingle();
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.multiplierBFB = br.ReadSingle();
+			v.multiplierDDT = br.ReadSingle();
+			v.multiplierZOMG = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_ArriveAtTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel)m[i+start];
+			v.timeToTake = br.ReadSingle();
+			v.curveSamples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+			v.filterCollisionWhileMoving = br.ReadBoolean();
+			v.expireOnArrival = br.ReadBoolean();
+			v.altSpeed = br.ReadSingle();
+			v.stopOnTargetReached = br.ReadBoolean();
+			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_Curve_Fields(int start, int count) {
+		var t = Il2CppType.Of<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
+		var samplesField = t.GetField("samples", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve)m[i+start];
+			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_FilterWithTagModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Filters.FilterWithTagModel)m[i+start];
+			v.moabTag = br.ReadBoolean();
+			v.camoTag = br.ReadBoolean();
+			v.growTag = br.ReadBoolean();
+			v.fortifiedTag = br.ReadBoolean();
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.inclusive = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_FilterOutTagModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Filters.FilterOutTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.disableWhenSupportMutatorIDs = (Il2CppStringArray) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_SlowModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		var multiplierField = t.GetField("multiplier", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel)m[i+start];
+			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.layers = br.ReadInt32();
+			v.overlayLayer = br.ReadInt32();
+			v.glueLevel = br.ReadInt32();
+			v.isUnique = br.ReadBoolean();
+			v.dontRefreshDuration = br.ReadBoolean();
+			v.cascadeMutators = br.ReadBoolean();
+			v.removeMutatorIfNotMatching = br.ReadBoolean();
+			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
+			v.countGlueAchievement = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_SlowForBloonModel_Fields(int start, int count) {
+		Set_v_SlowModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowForBloonModel)m[i+start];
+			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
+			v.bloonIds = (Il2CppStringArray) m[br.ReadInt32()];
+			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
+			v.bloonTags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.excluding = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CreateProjectileOnExhaustFractionModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel)m[i+start];
+			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.fraction = br.ReadSingle();
+			v.durationfraction = br.ReadSingle();
+			v.canCreateInBetweenRounds = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_AgeModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
+			v.rounds = br.ReadInt32();
+			v.useRoundTime = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
+			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
+			v.layers = br.ReadInt32();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
+			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
+			v.isUnique = br.ReadBoolean();
+			v.lastAppliesFirst = br.ReadBoolean();
+			v.collideThisFrame = br.ReadBoolean();
+			v.cascadeMutators = br.ReadBoolean();
+			v.glueLevel = br.ReadInt32();
+			v.applyOnlyIfDamaged = br.ReadBoolean();
+			v.stackCount = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_BloonBehaviorModelWithTowerTracking_Fields(int start, int count) {
+		Set_v_BloonBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModelWithTowerTracking)m[i+start];
+		}
+	}
+	
+	private void Set_v_BloonBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageOverTimeModel_Fields(int start, int count) {
+		Set_v_BloonBehaviorModelWithTowerTracking_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
+		var intervalField = t.GetField("interval", bindFlags);
+		var initialDelayField = t.GetField("initialDelay", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
+			v.damage = br.ReadSingle();
+			v.payloadCount = br.ReadInt32();
+			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
+			v.displayLifetime = br.ReadSingle();
+			v.triggerImmediate = br.ReadBoolean();
+			v.rotateEffectWithBloon = br.ReadBoolean();
+			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.damageOnDestroy = br.ReadBoolean();
+			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_CreateSoundOnProjectileExpireModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel)m[i+start];
+			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound3 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound4 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound5 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_CreateEffectOnExhaustFractionModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.lifespan = br.ReadSingle();
+			v.fullscreen = br.ReadBoolean();
+			v.fraction = br.ReadSingle();
+			v.durationFraction = br.ReadSingle();
+			v.randomRotation = br.ReadBoolean();
+			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -796,16 +876,14 @@ public class BoomerangMonkeyLoader : TowersLoader {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = (Assets.Scripts.Utils.SpriteReference) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
-			v.cooldownFrames = br.ReadInt32();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
 			v.animation = br.ReadInt32();
-			v.animationOffsetFrames = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
 			v.resetCooldownOnTierUpgrade = br.ReadBoolean();
@@ -850,6 +928,40 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_TurboModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel)m[i+start];
+			v.multiplier = br.ReadSingle();
+			v.projectileDisplay = (Assets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.extraDamage = br.ReadInt32();
+			v.projectileRadiusScaleBonus = br.ReadSingle();
+			v.dontRemoveMutatorOnDestroy = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_AssetPathModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
+			v.assetPath = ModContent.CreatePrefabReference(br.ReadString());
+		}
+	}
+	
+	private void Set_v_RemoveMutatorOnUpgradeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel)m[i+start];
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.firstPath = br.ReadInt32();
+			v.secondPath = br.ReadInt32();
+			v.thirdPath = br.ReadInt32();
+		}
+	}
+	
 	private void Set_v_DamageUpModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -860,11 +972,30 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_AssetPathModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+	private void Set_v_RetargetOnContactModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
+		var delayField = t.GetField("delay", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
-			v.assetPath = br.ReadBoolean() ? null : br.ReadString();
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
+			v.distance = br.ReadSingle();
+			v.maxBounces = br.ReadInt32();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.targetType.id = br.ReadString();
+			v.targetType.actionOnCreate = br.ReadBoolean();
+			v.expireIfNoTargetFound = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_TravelStraitModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
+		var speedField = t.GetField("speed", bindFlags);
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -899,6 +1030,21 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
+	private void Set_v_FilterMoabModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Filters.FilterMoabModel)m[i+start];
+			v.flip = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CollideOnlyWithTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideOnlyWithTargetModel)m[i+start];
+		}
+	}
+	
 	private void Set_v_IgnoreThrowMarkerModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -906,189 +1052,9 @@ public class BoomerangMonkeyLoader : TowersLoader {
 		}
 	}
 	
-	private void Set_v_FootprintModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel)m[i+start];
-			v.doesntBlockTowerPlacement = br.ReadBoolean();
-			v.ignoresPlacementCheck = br.ReadBoolean();
-			v.ignoresTowerOverlap = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_CircleFootprintModel_Fields(int start, int count) {
-		Set_v_FootprintModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
-			v.radius = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_UpgradePathModel_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-		var towerField = t.GetField("tower", bindFlags);
-		var upgradeField = t.GetField("upgrade", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
-			towerField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-			upgradeField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
-		}
-	}
-	
-	private void Set_v_TurboModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel)m[i+start];
-			v.lifespanFrames = br.ReadInt32();
-			v.multiplier = br.ReadSingle();
-			v.projectileDisplay = (Assets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.extraDamage = br.ReadInt32();
-			v.projectileRadiusScaleBonus = br.ReadSingle();
-			v.dontRemoveMutatorOnDestroy = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_ClearHitBloonsModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel)m[i+start];
-			v.interval = br.ReadSingle();
-			v.intervalFrames = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_PushBackModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel)m[i+start];
-			v.pushAmount = br.ReadSingle();
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.multiplierBFB = br.ReadSingle();
-			v.multiplierDDT = br.ReadSingle();
-			v.multiplierZOMG = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_ArriveAtTargetModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel)m[i+start];
-			v.timeToTake = br.ReadSingle();
-			v.curveSamples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-			v.filterCollisionWhileMoving = br.ReadBoolean();
-			v.expireOnArrival = br.ReadBoolean();
-			v.altSpeed = br.ReadSingle();
-			v.stopOnTargetReached = br.ReadBoolean();
-			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_Curve_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
-		var samplesField = t.GetField("samples", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve)m[i+start];
-			v.samples = (Il2CppStructArray<float>) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_SlowModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
-		var multiplierField = t.GetField("multiplier", bindFlags);
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel)m[i+start];
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.lifespanFrames = br.ReadInt32();
-			v.layers = br.ReadInt32();
-			v.overlayLayer = br.ReadInt32();
-			v.glueLevel = br.ReadInt32();
-			v.isUnique = br.ReadBoolean();
-			v.dontRefreshDuration = br.ReadBoolean();
-			v.cascadeMutators = br.ReadBoolean();
-			v.removeMutatorIfNotMatching = br.ReadBoolean();
-			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.countGlueAchievement = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_SlowForBloonModel_Fields(int start, int count) {
-		Set_v_SlowModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowForBloonModel)m[i+start];
-			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
-			v.bloonIds = (Il2CppStringArray) m[br.ReadInt32()];
-			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
-			v.bloonTags = (Il2CppStringArray) m[br.ReadInt32()];
-			v.excluding = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_CreateSoundOnProjectileExpireModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel)m[i+start];
-			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound3 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound4 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound5 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_CreateEffectOnExhaustFractionModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = br.ReadBoolean() ? null : br.ReadString();
-			v.lifespan = br.ReadSingle();
-			v.fullscreen = br.ReadBoolean();
-			v.fraction = br.ReadSingle();
-			v.durationFraction = br.ReadSingle();
-			v.randomRotation = br.ReadBoolean();
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_FilterWithTagModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterWithTagModel)m[i+start];
-			v.moabTag = br.ReadBoolean();
-			v.camoTag = br.ReadBoolean();
-			v.growTag = br.ReadBoolean();
-			v.fortifiedTag = br.ReadBoolean();
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.inclusive = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_FilterOutBloonModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterOutBloonModel)m[i+start];
-			v.bloonId = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_FilterOutTagModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterOutTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.disableWhenSupportMutatorIDs = (Il2CppStringArray) m[br.ReadInt32()];
-		}
-	}
-	
 	#endregion
 	
-	public override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
@@ -1104,18 +1070,16 @@ public class BoomerangMonkeyLoader : TowersLoader {
 				CreateArraySet<Assets.Scripts.Models.Towers.Filters.FilterModel>();
 				Read_a_Vector3_Array();
 				Read_a_String_Array();
-				CreateArraySet<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_TargetType_Array();
 				Read_a_Single_Array();
+				CreateArraySet<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Utils.SpriteReference>();
 				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
 				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
@@ -1135,14 +1099,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterMoabModel>();
-				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideOnlyWithTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.FlipFollowPathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
@@ -1150,34 +1107,40 @@ public class BoomerangMonkeyLoader : TowersLoader {
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutBloonModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
+				Create_Records<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
+				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterWithTagModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowForBloonModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
+				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DamageUpModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel>();
 				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DamageUpModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.OrbitModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterAllModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DontDestroyOnContinueModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CantBeReflectedModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterMoabModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideOnlyWithTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.IgnoreThrowMarkerModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
-				Create_Records<Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowForBloonModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterWithTagModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutBloonModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SpriteReference_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RemoveMutatorOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1197,14 +1160,7 @@ public class BoomerangMonkeyLoader : TowersLoader {
 				Set_v_RotateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RetargetOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TravelStraitModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CollideOnlyWithTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FlipFollowPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1212,38 +1168,46 @@ public class BoomerangMonkeyLoader : TowersLoader {
 				Set_v_TargetLastModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetCloseModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetStrongModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterOutBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PushBackModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterWithTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SlowForBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateSoundOnProjectileExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageUpModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TurboModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RemoveMutatorOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageUpModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RetargetOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TravelStraitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_OrbitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterAllModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DontDestroyOnContinueModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CantBeReflectedModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CollideOnlyWithTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreThrowMarkerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TurboModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PushBackModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SlowForBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateSoundOnProjectileExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterWithTagModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterOutBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();
 				LinkArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				LinkArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				LinkList<Assets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();
