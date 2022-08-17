@@ -1,3 +1,5 @@
+name: Manage GitHub Issues
+
 on:
   issues:
     types: [opened, edited, labeled]
