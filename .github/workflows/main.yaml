@@ -2,7 +2,7 @@ name: Manage GitHub Issues
 
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, edited, labeled, unlabeled]
 
 jobs:
   auto_close_issues:
@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Automatically close issues that don't follow an issue template
-        uses: lucasbento/auto-close-issues@v1.0.2
+        uses: ergo720/auto-close-issues@v1.0.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           issue-close-message: "@${issue.user.login}: hello! :wave:\n\nThis issue is being automatically closed because it does not follow one of the new issue templates. You can create a new issue, or edit this issue so that it follows a template and it'll be re-opened."
