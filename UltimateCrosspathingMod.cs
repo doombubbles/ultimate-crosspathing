@@ -27,37 +27,11 @@ namespace UltimateCrosspathing
             {
             }
 
-            var melonLoader55 = false;
-            try
-            {
-                melonLoader55 = ModHelperData.CheckMelonLoader055();
-            }
-            catch (Exception)
-            {
-            }
-            
             if (!modHelper3)
             {
                 TaskScheduler.ScheduleTask(
                     () => PopupScreen.instance.ShowPopup(PopupScreen.Placement.menuCenter, "Not On Mod Helper 3.0",
                         "Ultimate Crosspathing failed to load. You are not using Mod Helper 3.0. Click ok to be taken to the page with info about it.",
-                        new Action(() =>
-                        {
-                            Process.Start(
-                                new ProcessStartInfo(
-                                    "https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Mod-Helper-3.0-Alpha")
-                                {
-                                    UseShellExecute = true
-                                });
-                        }), "Ok", null, "Cancel", Popup.TransitionAnim.Scale),
-                    () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
-                );
-            }
-            else if (!melonLoader55)
-            {
-                TaskScheduler.ScheduleTask(
-                    () => PopupScreen.instance.ShowPopup(PopupScreen.Placement.menuCenter, "Not On MelonLoader 0.5.5",
-                        "Ultimate Crosspathing failed to load. Not On MelonLoader 0.5.5. Click ok to be taken to the page with info about it.",
                         new Action(() =>
                         {
                             Process.Start(
