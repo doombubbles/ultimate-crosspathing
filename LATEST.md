@@ -1,3 +1,4 @@
-## NOTE: Requires Mod Helper v3.0, which is in still in alpha and hasn't been officially released. [See here for more info.](https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Mod-Helper-3.0-Alpha)
-
-- Made things even more clear when Mod Helper 3.0 is not being used
+## See the [BTD Mod Helper Install Guide](https://github.com/gurrenm3/BTD-Mod-Helper/wiki/Install-Guide) if this is your first time downloading
+<!--Mod Browser Message Start-->
+- Fixed Engineer Monkeys for BTD6 v32.2
+- Towers should now fail/break individually rather than collectively

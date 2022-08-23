@@ -6,9 +6,11 @@ using Assets.Scripts.Models.Towers.Upgrades;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
 using BTD_Mod_Helper;
+using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using UltimateCrosspathing.Merging;
+using UltimateCrosspathing.PostMergeFixes;
 using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
 
@@ -424,37 +426,10 @@ namespace UltimateCrosspathing
         /// <param name="model"></param>
         public static void PostMerge(TowerModel model)
         {
-            PostMerging.FixHomingProjectiles(model);
-
-            PostMerging.FixSmallRanges(model);
-
-            PostMerging.FixCannonShips(model);
-
-            PostMerging.FixSpectre(model);
-
-            PostMerging.FixBananas(model);
-
-            PostMerging.FixPlasmaBeams(model);
-
-            PostMerging.FixTemples(model);
-
-            PostMerging.FixIceMonkeyRange(model);
-
-            PostMerging.FixGlueGunnerOverriding(model);
-
-            PostMerging.FixAircraftCarriers(model);
-
-            PostMerging.FixAutoCollecting(model);
-
-            PostMerging.FixAbilities(model);
-
-            PostMerging.FixLifespans(model);
-
-            PostMerging.FixSpikeStorm(model);
-
-            PostMerging.FixClusterMauling(model);
-
-            PostMerging.FixBehaviorNames(model);
+            foreach (var postMergeFix in ModContent.GetContent<PostMergeFix>())
+            {
+                postMergeFix.Apply(model);
+            }
         }
     }
 }

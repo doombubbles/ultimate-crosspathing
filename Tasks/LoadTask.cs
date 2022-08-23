@@ -1,5 +1,7 @@
 ﻿#if RELEASE
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Unity;
@@ -16,27 +18,50 @@ namespace UltimateCrosspathing.Tasks
         public override IEnumerator Coroutine()
         {
             var loadInfos = GetContent<LoadInfo>().Where(info => info.Enabled).ToList();
-            while (loadInfos.Any(info => !info.loaded))
+            while (loadInfos.Any(info => info.loaded == null))
             {
-                while (loadInfos.FirstOrDefault(info => !info.loaded && info.Loader.Loaded) is LoadInfo loadInfo)
+                while (loadInfos.FirstOrDefault(info => info.loaded == null && info.Loader.Loaded) is LoadInfo loadInfo)
                 {
                     yield return null;
 
                     var dummy = loadInfo.Loader.LoadResult();
                     yield return null;
 
-                    var towers = dummy.behaviors
-                        .Where(model => model != null)
-                        .Select(model => model.TryCast<TowerModel>())
-                        .ToList();
-                    var towersByType = towers.GroupBy(model => model.baseId).ToList();
+                    IEnumerable<TowerModel> towers;
+                    IEnumerable<IEnumerable<TowerModel>> towersByType;
+                    try
+                    {
+                        towers = dummy.behaviors
+                            .Where(model => model != null)
+                            .Select(model => model.TryCast<TowerModel>())
+                            .ToList();
+                        towersByType = towers.GroupBy(model => model.baseId).ToList();
+                    }
+                    catch (Exception e)
+                    {
+                        ModHelper.Warning<UltimateCrosspathingMod>(e);
+                        ModHelper.Warning<UltimateCrosspathingMod>($"Failed loading {loadInfo.Name}s :(");
+                        loadInfo.loaded = false;
+                        continue;
+                    }
+
                     yield return null;
 
                     foreach (var towerModels in towersByType)
                     {
-                        foreach (var towerModel in towerModels)
+                        try
                         {
-                            Towers.PostMerge(towerModel);
+                            foreach (var towerModel in towerModels)
+                            {
+                                Towers.PostMerge(towerModel);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ModHelper.Warning<UltimateCrosspathingMod>(e);
+                            ModHelper.Warning<UltimateCrosspathingMod>($"Failed loading {loadInfo.Name}s :(");
+                            loadInfo.loaded = false;
+                            continue;
                         }
 
                         yield return null;
@@ -47,9 +72,19 @@ namespace UltimateCrosspathing.Tasks
 
                     foreach (var towerModels in towersByType)
                     {
-                        foreach (var towerModel in towerModels)
+                        try
                         {
-                            Towers.AddUpgradeToPrevs(towerModel);
+                            foreach (var towerModel in towerModels)
+                            {
+                                Towers.AddUpgradeToPrevs(towerModel);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ModHelper.Warning<UltimateCrosspathingMod>(e);
+                            ModHelper.Warning<UltimateCrosspathingMod>($"Failed loading {loadInfo.Name}s :(");
+                            loadInfo.loaded = false;
+                            continue;
                         }
 
                         yield return null;
@@ -61,9 +96,6 @@ namespace UltimateCrosspathing.Tasks
 
                 yield return null;
             }
-
-
-            UltimateCrosspathingMod.SuccessfullyLoaded = true;
         }
     }
 }

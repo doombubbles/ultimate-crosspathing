@@ -1,8 +1,9 @@
-﻿using System;
+﻿global using System.Linq;
+global using BTD_Mod_Helper;
+global using BTD_Mod_Helper.Api;
+using System;
 using System.Diagnostics;
 using Assets.Scripts.Unity.UI_New.Popups;
-using BTD_Mod_Helper;
-using BTD_Mod_Helper.Api;
 using MelonLoader;
 using UltimateCrosspathing;
 
@@ -14,8 +15,6 @@ namespace UltimateCrosspathing
 {
     public class UltimateCrosspathingMod : BloonsTD6Mod
     {
-        public static bool SuccessfullyLoaded { get; set; }
-
         public override void OnMainMenu()
         {
             var modHelper3 = false;
@@ -43,12 +42,17 @@ namespace UltimateCrosspathing
                         }), "Ok", null, "Cancel", Popup.TransitionAnim.Scale),
                     () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
                 );
+                return;
             }
-            else if (!SuccessfullyLoaded)
+
+
+            var failedTowers = ModContent.GetContent<LoadInfo>().Count(info => info.loaded != true);
+
+            if (failedTowers > 0)
             {
-                TaskScheduler.ScheduleTask(
-                    () => PopupScreen.instance.ShowOkPopup(
-                        "Ultimate Crosspathing failed to load, see the log for more details. An update to the mod or the Mod Helper may be required, check the Mod Browser or the GitHub page for details."),
+                TaskScheduler.ScheduleTask(() => PopupScreen.instance.ShowOkPopup(
+                        $"{failedTowers} tower(s) failed to Ultimately Crosspath. " +
+                        "An update to the mod or the Mod Helper may be required, check the Mod Browser or the GitHub page for details."),
                     () => PopupScreen.instance != null && !PopupScreen.instance.IsPopupActive()
                 );
             }

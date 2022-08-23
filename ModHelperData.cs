@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Linq;
-using BTD_Mod_Helper;
-using MelonLoader;
 
 namespace UltimateCrosspathing
 {
     public static class ModHelperData
     {
-        public const string Version = "1.3.2";
+        public const string Version = "1.3.3";
         public const string Name = "Ultimate Crosspathing";
 
         public const string Description =

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.Towers;
 using Assets.Scripts.Utils;
@@ -7,6 +8,7 @@ using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Api.Towers;
+using MelonLoader.TinyJSON;
 using UltimateCrosspathing.Merging;
 using UltimateCrosspathing.Tasks;
 using UnhollowerBaseLib;
@@ -20,13 +22,22 @@ namespace UltimateCrosspathing
 {
     public abstract class LoadInfo : ModContent
     {
+        private static readonly Dictionary<string, LoadInfo> Cache = new();
+
         public virtual ModByteLoader<TowerModel> Loader { get; }
 
         public abstract ModSettingBool Enabled { get; }
 
         public sealed override void Register()
         {
+            Cache[Name] = this;
         }
+
+        public static bool TryFind(string baseId, out LoadInfo loadInfo) => Cache.TryGetValue(baseId, out loadInfo);
+
+        public static bool ShouldWork(string baseId) => TryFind(baseId, out var loadInfo)
+            ? loadInfo.Enabled && loadInfo.loaded != false
+            : Settings.AffectModdedTowers;
 
 #if DEBUG
         public static void ExportTowers()
@@ -58,7 +69,7 @@ namespace UltimateCrosspathing
             );
         }
 #else
-        public bool loaded;
+        public bool? loaded = null;
 #endif
     }
 

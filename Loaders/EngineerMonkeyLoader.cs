@@ -1056,7 +1056,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.OverclockPermanentModel)m[i+start];
 			v.rateModifier = br.ReadSingle();
 			v.villageRangeModifier = br.ReadSingle();
-			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.maxStacks = br.ReadInt32();
 			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
 			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
