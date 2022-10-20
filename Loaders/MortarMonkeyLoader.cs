@@ -556,6 +556,7 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}
@@ -771,6 +772,7 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
 			v.alwaysShowTarget = br.ReadBoolean();
 			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.useTerrainHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -813,6 +815,7 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	
@@ -1011,6 +1014,62 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		}
 	}
 	
+	private void Set_v_SupportModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.SupportModel)m[i+start];
+			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
+			v.isGlobal = br.ReadBoolean();
+			v.isCustomRadius = br.ReadBoolean();
+			v.customRadius = br.ReadSingle();
+			v.appliesToOwningTower = br.ReadBoolean();
+			v.showBuffIcon = br.ReadBoolean();
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_DamageModifierSupportModel_Fields(int start, int count) {
+		Set_v_SupportModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.DamageModifierSupportModel)m[i+start];
+			v.increase = br.ReadSingle();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.isUnique = br.ReadBoolean();
+			v.damageModifierModel = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_TowerFilterModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_FilterInBaseTowerIdModel_Fields(int start, int count) {
+		Set_v_TowerFilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel)m[i+start];
+			v.baseIds = (Il2CppStringArray) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_FilterInTowerTiersModel_Fields(int start, int count) {
+		Set_v_TowerFilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.TowerFilters.FilterInTowerTiersModel)m[i+start];
+			v.path1MinTier = br.ReadInt32();
+			v.path1MaxTier = br.ReadInt32();
+			v.path2MinTier = br.ReadInt32();
+			v.path2MaxTier = br.ReadInt32();
+			v.path3MinTier = br.ReadInt32();
+			v.path3MaxTier = br.ReadInt32();
+		}
+	}
+	
 	private void Set_v_SlowModifierForTagModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1056,6 +1115,7 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Read_a_TargetType_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
+				CreateArraySet<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				Read_l_String_List();
 				
@@ -1115,6 +1175,9 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.DamageModifierSupportModel>();
+				Create_Records<Assets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
+				Create_Records<Assets.Scripts.Models.Towers.TowerFilters.FilterInTowerTiersModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageInRingRadiusModel>();
 				
@@ -1173,6 +1236,9 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterInTowerTiersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageInRingRadiusModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
@@ -1186,6 +1252,7 @@ public class MortarMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				LinkArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
+				LinkArray<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				LinkList<Assets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();

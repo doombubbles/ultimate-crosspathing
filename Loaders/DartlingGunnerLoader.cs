@@ -564,6 +564,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
 			v.alwaysShowTarget = br.ReadBoolean();
 			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.useTerrainHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -963,6 +964,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}

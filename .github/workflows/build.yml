@@ -8,8 +8,7 @@ on:
 
 env:
   PROJECT_NAME: UltimateCrosspathing
-  MOD_HELPER_BRANCH: 3.0_Features
-  MELONLOADER_BRANCH: alpha-development
+  MOD_HELPER_BRANCH: master
   
   MOD_HELPER_NAME: Btd6ModHelper
   BLOONSTD6: ./BloonsTD6

@@ -781,6 +781,18 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
 			v.alwaysShowTarget = br.ReadBoolean();
 			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.useTerrainHeight = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_StartOfRoundRateBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.StartOfRoundRateBuffModel>();
+		var durationField = t.GetField("duration", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.StartOfRoundRateBuffModel)m[i+start];
+			v.modifier = br.ReadSingle();
+			durationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1412,6 +1424,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExhaustModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.StartOfRoundRateBuffModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
@@ -1501,6 +1514,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileExhaustModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSelectedPointModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_StartOfRoundRateBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());

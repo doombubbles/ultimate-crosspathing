@@ -703,6 +703,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	
@@ -836,6 +837,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}

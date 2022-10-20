@@ -4,7 +4,7 @@ namespace UltimateCrosspathing
 {
     public static class ModHelperData
     {
-        public const string Version = "1.3.3";
+        public const string Version = "1.3.4";
         public const string Name = "Ultimate Crosspathing";
 
         public const string Description =
@@ -13,18 +13,5 @@ namespace UltimateCrosspathing
 
         public const string RepoOwner = "doombubbles";
         public const string RepoName = "ultimate-crosspathing";
-
-        public static bool CheckModHelper3()
-        {
-            try
-            {
-                ModHelper.Msg<UltimateCrosspathingMod>("Yay, you're actually on Mod Helper 3.0");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
     }
 }

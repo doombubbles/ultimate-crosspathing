@@ -28,6 +28,8 @@ namespace UltimateCrosspathing
 
         public abstract ModSettingBool Enabled { get; }
 
+        public bool? loaded = null;
+
         public sealed override void Register()
         {
             Cache[Name] = this;
@@ -68,8 +70,6 @@ namespace UltimateCrosspathing
                 "UltimateCrosspathing.Loaders"
             );
         }
-#else
-        public bool? loaded = null;
 #endif
     }
 

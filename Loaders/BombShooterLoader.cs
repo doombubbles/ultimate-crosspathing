@@ -850,6 +850,7 @@ public class BombShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	
