@@ -17,14 +17,12 @@ public class GenerateTask : ModLoadTask
 {
     public static List<TowerModel> TowerModels { get; } = new();
 
-    public override string DisplayName => "Generating Crosspaths Ultimately";
+    public override string DisplayName => "Generating Crosspaths Ultimately...";
 
     public override IEnumerator Coroutine()
     {
-        var enabled = ModContent.GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name)
-            .ToArray();
-        var disabled = ModContent.GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name)
-            .ToArray();
+        var enabled = GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name).ToArray();
+        var disabled = GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name).ToArray();
 
         if (enabled.Any())
         {
@@ -41,14 +39,21 @@ public class GenerateTask : ModLoadTask
             ModHelper.Msg<UltimateCrosspathingMod>("Beginning Crosspath Creation");
         }
 
-        var loadInfo = GetContent<LoadInfo>()
+        var loadInfos = GetContent<LoadInfo>();
+
+        foreach (var info in loadInfos)
+        {
+            info.loaded = true;
+        }
+
+        var enabledTowers = loadInfos
             .Where(info => info.Enabled)
             .Select(info => info.Name)
             .ToArray();
 
         while (true)
         {
-            var merges = loadInfo
+            var merges = enabledTowers
                 .SelectMany(Towers.GetMergeInfo)
                 .ToArray();
 
@@ -130,8 +135,6 @@ public class GenerateTask : ModLoadTask
 
             TowerModels.AddRange(towerModels);
         }
-
-        UltimateCrosspathingMod.SuccessfullyLoaded = true;
     }
 }
 #endif

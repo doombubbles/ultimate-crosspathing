@@ -7,6 +7,7 @@ using Assets.Scripts.Unity;
 using Assets.Scripts.Utils;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api;
+using BTD_Mod_Helper.Api.Helpers;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using UltimateCrosspathing.Merging;
@@ -196,115 +197,6 @@ namespace UltimateCrosspathing
                     }
                 }
             }
-        }
-
-        public static void CreateCrosspathsForTower(string baseId)
-        {
-            // var (highest, middle, lowest) = PATH_PRIORITIES[baseId];
-            for (var i = 0; i <= 5; i++)
-            {
-                for (var j = 0; j <= 5; j++)
-                {
-                    for (var k = 0; k <= 5; k++)
-                    {
-                        var newTowerName = $"{baseId}-{i}{j}{k}";
-                        if (Game.instance.model.GetTowerWithName(newTowerName) == null &&
-                            i + j + k <= Settings.MaxTiers && i + j + k > 0)
-                        {
-                            if (!GetTiersForMerging(baseId, i, j, k, out var leftTiers, out var rightTiers))
-                            {
-                                // Don't make the tower
-                                continue;
-                            }
-
-                            try
-                            {
-                                var leftName = $"{baseId}-{leftTiers[0]}{leftTiers[1]}{leftTiers[2]}";
-                                var leftTowerModel = Game.instance.model.GetTowerWithName(leftName).Duplicate();
-
-                                try
-                                {
-                                    var rightName = $"{baseId}-{rightTiers[0]}{rightTiers[1]}{rightTiers[2]}";
-                                    var rightTowerModel = Game.instance.model.GetTowerWithName(rightName).Duplicate();
-
-                                    try
-                                    {
-                                        var newTowerModel = OldMerge(leftTowerModel, rightTowerModel);
-                                        Game.instance.model.AddTowerToGame(newTowerModel);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        FileIOUtil.SaveFile(
-                                            $"MergedTowers/{leftTowerModel.baseId}/{newTowerName}.txt",
-                                            e.ToString());
-
-                                        ModHelper.Warning<UltimateCrosspathingMod>($"Failed making {newTowerName}");
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    ModHelper.Warning<UltimateCrosspathingMod>(
-                                        $"Failed finding right tower for {(rightTiers[0], rightTiers[1], rightTiers[2])}");
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                ModHelper.Warning<UltimateCrosspathingMod>(
-                                    $"Failed finding left tower for {(leftTiers[0], leftTiers[1], leftTiers[2])}");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static TowerModel OldMerge(TowerModel first, TowerModel second)
-        {
-            var towerModel = first.Duplicate();
-            for (var i = 0; i < 3; i++)
-            {
-                towerModel.tiers[i] = Math.Max(first.tiers[i], second.tiers[i]);
-            }
-
-            towerModel.tier = Math.Max(first.tier, second.tier);
-            towerModel.name = $"{towerModel.baseId}-{towerModel.tiers[0]}{towerModel.tiers[1]}{towerModel.tiers[2]}";
-
-            TowerModel loaded = null;
-            var fileName = $"MergedTowers/{towerModel.baseId}/{towerModel.name}.json";
-
-            if (loaded == null)
-            {
-                MergeUpgrades(towerModel, first, second);
-                var commonAncestor = Game.instance.model.GetTower(towerModel.baseId,
-                    Math.Min(first.tiers[0], second.tiers[0]),
-                    Math.Min(first.tiers[1], second.tiers[1]),
-                    Math.Min(first.tiers[2], second.tiers[2]));
-                var range = Il2CppType.Of<TowerModel>().GetField("range");
-                DeepMerging.MergeField(range, towerModel, second, commonAncestor);
-
-                var mods = Il2CppType.Of<TowerModel>().GetField("mods");
-                DeepMerging.MergeField(mods, towerModel, second, commonAncestor);
-
-                var behaviorsInfo = Il2CppType.Of<TowerModel>().GetField("behaviors");
-                DeepMerging.MergeField(behaviorsInfo, towerModel, second, commonAncestor);
-
-
-                PostMerge(towerModel);
-                try
-                {
-                    FileIOUtil.SaveObject(fileName, towerModel);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                ModHelper.Msg<UltimateCrosspathingMod>($"Successfully made {towerModel.name} from {first.name} and {second.name}");
-            }
-
-            AddUpgradeToPrevs(towerModel);
-
-            return towerModel;
         }
 
         public static TowerModel NewMerge(MergeInfo mergeInfo)

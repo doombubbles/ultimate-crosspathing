@@ -589,6 +589,7 @@ public class AlchemistLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}
@@ -635,6 +636,7 @@ public class AlchemistLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	

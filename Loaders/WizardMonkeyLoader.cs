@@ -794,6 +794,7 @@ public class WizardMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 			initialDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
+			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}
@@ -1209,6 +1210,23 @@ public class WizardMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 		}
 	}
 	
+	private void Set_v_TargetSelectedPointModel_Fields(int start, int count) {
+		Set_v_TargetSupplierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
+			v.isSelectable = br.ReadBoolean();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.scale = br.ReadSingle();
+			v.customName = br.ReadBoolean() ? null : br.ReadString();
+			v.lockToInsideTowerRange = br.ReadBoolean();
+			v.startWithClosestTrackPoint = br.ReadBoolean();
+			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
+			v.alwaysShowTarget = br.ReadBoolean();
+			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.useTerrainHeight = br.ReadBoolean();
+		}
+	}
+	
 	#endregion
 	
 	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
@@ -1310,6 +1328,7 @@ public class WizardMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.SwitchDisplayModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MutateRemoveAllAttacksOnAbilityActivateModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1386,6 +1405,7 @@ public class WizardMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tow
 				Set_v_SwitchDisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MutateRemoveAllAttacksOnAbilityActivateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TargetSelectedPointModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Assets.Scripts.Models.Model>();

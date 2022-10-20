@@ -997,6 +997,7 @@ public class MonkeyAceLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	

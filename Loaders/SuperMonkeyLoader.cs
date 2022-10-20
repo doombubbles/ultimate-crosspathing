@@ -512,6 +512,26 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAddative = br.ReadSingle();
+			v.mustIncludeAllTags = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_DisplayModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -648,26 +668,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLeftHandModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_DamageModifierModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
-		Set_v_DamageModifierModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
-			v.damageMultiplier = br.ReadSingle();
-			v.damageAddative = br.ReadSingle();
-			v.mustIncludeAllTags = br.ReadBoolean();
-			v.applyOverMaxDamage = br.ReadBoolean();
 		}
 	}
 	
@@ -1227,6 +1227,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	
@@ -1614,8 +1615,8 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				CreateArraySet<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				Read_a_String_Array();
+				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_TargetType_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
@@ -1649,6 +1650,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ShowTextOnHitModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.UseAttackRotationModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.CritMultiplierModel>();
@@ -1661,7 +1663,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetClosePrioCamoModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongPrioCamoModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLeftHandModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DarkshiftModel>();
@@ -1761,6 +1762,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_KnockbackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ShowTextOnHitModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UseAttackRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CritMultiplierModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1773,7 +1775,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Set_v_TargetClosePrioCamoModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetStrongPrioCamoModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetLeftHandModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DarkshiftModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -509,6 +509,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			v.fortifiedTag = br.ReadBoolean();
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
+			v.hasMoabTag = br.ReadBoolean();
 		}
 	}
 	
