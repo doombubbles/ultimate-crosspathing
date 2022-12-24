@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -115,6 +116,18 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			m[mIndex++] = arr;
 		}
 	}
+	private void Read_a_TowerSet_Array() {
+		var arrSetCount = br.ReadInt32();
+		var count = arrSetCount;
+		for (var i = 0; i < count; i++) {
+			var arrCount = br.ReadInt32();
+			var arr = new Assets.Scripts.Models.TowerSets.TowerSet[arrCount];
+			for (var j = 0; j < arr.Length; j++) {
+				arr[j] = (Assets.Scripts.Models.TowerSets.TowerSet)br.ReadInt32();
+			}
+			m[mIndex++] = arr;
+		}
+	}
 	private void Read_a_AreaType_Array() {
 		var arrSetCount = br.ReadInt32();
 		var count = arrSetCount;
@@ -188,7 +201,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -220,6 +233,9 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -320,6 +336,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -580,6 +597,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.parentDamageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1307,6 +1325,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			var v = (Assets.Scripts.Models.Towers.Behaviors.AirUnitModel)m[i+start];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.displayScale = br.ReadSingle();
 		}
 	}
 	
@@ -1368,7 +1387,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 			v.points = (Il2CppStructArray<Assets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
 			v.newAreaType = (Assets.Scripts.Models.Map.AreaType) (br.ReadInt32());
 			v.filterInTowerSizes = (Il2CppStringArray) m[br.ReadInt32()];
-			v.filterInTowerSets = (Il2CppStringArray) m[br.ReadInt32()];
+			v.filterInTowerSets = (Assets.Scripts.Models.TowerSets.TowerSet[]) m[br.ReadInt32()];
 			v.filterOutSpecificTowers = (Il2CppStringArray) m[br.ReadInt32()];
 			v.renderHeightOffset = br.ReadSingle();
 			v.ignoreZAxisTowerCollision = br.ReadBoolean();
@@ -1403,6 +1422,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Assets.Scripts.Models.Towers.
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.TowerBehaviorModel>();
 				Read_a_Vector3_Array();
+				Read_a_TowerSet_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects

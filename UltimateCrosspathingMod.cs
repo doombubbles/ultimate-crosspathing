@@ -15,7 +15,7 @@ namespace UltimateCrosspathing
     {
         public override void OnMainMenu()
         {
-            var failedTowers = ModContent.GetContent<LoadInfo>().Count(info => info.loaded != true);
+            var failedTowers = ModContent.GetContent<LoadInfo>().Count(info => info.loaded != true && info.Enabled);
 
             if (failedTowers > 0)
             {

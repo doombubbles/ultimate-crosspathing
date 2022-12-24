@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -188,7 +189,7 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -220,6 +221,9 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -328,6 +332,7 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -802,6 +807,7 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.parentDamageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -851,6 +857,20 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 		}
 	}
 	
+	private void Set_v_SlowModifierForTagModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.slowId = br.ReadBoolean() ? null : br.ReadString();
+			v.slowMultiplier = br.ReadSingle();
+			v.resetToUnmodified = br.ReadBoolean();
+			v.preventMutation = br.ReadBoolean();
+			v.lifespanOverride = br.ReadSingle();
+			v.makeNotTag = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -868,20 +888,6 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 			v.damageAddative = br.ReadSingle();
 			v.mustIncludeAllTags = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_SlowModifierForTagModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.slowId = br.ReadBoolean() ? null : br.ReadString();
-			v.slowMultiplier = br.ReadSingle();
-			v.resetToUnmodified = br.ReadBoolean();
-			v.preventMutation = br.ReadBoolean();
-			v.lifespanOverride = br.ReadSingle();
-			v.makeNotTag = br.ReadBoolean();
 		}
 	}
 	
@@ -1203,8 +1209,8 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModifierForTagsModel>();
@@ -1269,8 +1275,8 @@ public class IceMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerM
 				Set_v_FilterMutatedTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FreezeModifierForTagsModel_Fields(br.ReadInt32(), br.ReadInt32());

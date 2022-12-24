@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -200,7 +201,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -232,6 +233,9 @@ public class NinjaMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -726,6 +730,9 @@ public class NinjaMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.altSpeed = br.ReadSingle();
 			v.stopOnTargetReached = br.ReadBoolean();
 			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+			v.keepUpdatingTargetPos = br.ReadBoolean();
+			v.rotateToTarget = br.ReadBoolean();
+			v.maxTurnAngle = br.ReadSingle();
 		}
 	}
 	
@@ -761,6 +768,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -899,6 +907,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.parentDamageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	

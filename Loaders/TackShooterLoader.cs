@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -176,7 +177,7 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -208,6 +209,9 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -308,6 +312,7 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -705,6 +710,14 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel)m[i+start];
+			v.targetSupplierName = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_CreateEffectWhileAttackingModel_Fields(int start, int count) {
 		Set_v_AttackBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -785,6 +798,7 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.parentDamageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -922,6 +936,7 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.LinkDisplayScaleToTowerRangeModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CreateEffectWhileAttackingModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel>();
@@ -968,6 +983,7 @@ public class TackShooterLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LinkDisplayScaleToTowerRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectWhileAttackingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterAllExceptTargetModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -8,10 +8,10 @@ using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Api.Towers;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using MelonLoader.TinyJSON;
 using UltimateCrosspathing.Merging;
 using UltimateCrosspathing.Tasks;
-using UnhollowerBaseLib;
 using Path = System.IO.Path;
 
 #if RELEASE

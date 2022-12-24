@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -176,7 +177,7 @@ public class BananaFarmLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tower
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -208,6 +209,9 @@ public class BananaFarmLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tower
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -334,6 +338,7 @@ public class BananaFarmLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tower
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -791,6 +796,9 @@ public class BananaFarmLoader : ModByteLoader<Assets.Scripts.Models.Towers.Tower
 			v.altSpeed = br.ReadSingle();
 			v.stopOnTargetReached = br.ReadBoolean();
 			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+			v.keepUpdatingTargetPos = br.ReadBoolean();
+			v.rotateToTarget = br.ReadBoolean();
+			v.maxTurnAngle = br.ReadSingle();
 		}
 	}
 	

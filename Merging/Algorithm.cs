@@ -13,9 +13,9 @@ using Assets.Scripts.Models.Towers.Projectiles;
 using Assets.Scripts.Models.Towers.Weapons;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
+using Il2CppInterop.Runtime;
 using Il2CppSystem.Reflection;
 using MelonLoader;
-using UnhollowerRuntimeLib;
 using Array = Il2CppSystem.Array;
 using Boolean = Il2CppSystem.Boolean;
 using Exception = System.Exception;
@@ -436,7 +436,7 @@ namespace UltimateCrosspathing.Merging
             {
                 foreach (var ((name, type), value) in BetterBooleans)
                 {
-                    if (fieldName.Contains(name))
+                    if (fieldName.Contains((string) name))
                     {
                         if (history.GetLeft<Model>().GetIl2CppType().IsSubclassOf(type))
                         {

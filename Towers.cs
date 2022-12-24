@@ -10,9 +10,9 @@ using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Helpers;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
+using Il2CppInterop.Runtime;
 using UltimateCrosspathing.Merging;
 using UltimateCrosspathing.PostMergeFixes;
-using Il2CppType = UnhollowerRuntimeLib.Il2CppType;
 
 
 namespace UltimateCrosspathing

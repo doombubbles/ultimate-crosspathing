@@ -35,7 +35,7 @@ namespace UltimateCrosspathing
         {
             if (LoadInfo.ShouldWork(__instance.selectedTower.Def.baseId))
             {
-                __result = __instance.selectedTower.Def.tiers.Sum() >= Settings.MaxTiers;
+                __result &= __instance.selectedTower.Def.tiers.Sum() >= Settings.MaxTiers;
             }
         }
     }

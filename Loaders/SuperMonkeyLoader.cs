@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -188,7 +189,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -220,6 +221,9 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -344,6 +348,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -956,7 +961,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.TempleTowerMutatorGroupModel)m[i+start];
 			v.cost = br.ReadInt32();
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 		}
 	}
 	
@@ -1091,7 +1096,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Mutators.Conditions.Behaviors.CheckTempleUnderLevelModel)m[i+start];
 			v.cost = br.ReadInt32();
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.templeType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
@@ -1259,6 +1264,13 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_CreditPopsToParentTowerModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel)m[i+start];
+		}
+	}
+	
 	private void Set_v_FireFromAirUnitModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1303,6 +1315,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			var v = (Assets.Scripts.Models.Towers.Behaviors.AirUnitModel)m[i+start];
 			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.displayScale = br.ReadSingle();
 		}
 	}
 	
@@ -1397,13 +1410,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 		}
 	}
 	
-	private void Set_v_CreditPopsToParentTowerModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_InstantModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1481,6 +1487,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.affectSelf = br.ReadBoolean();
 			v.tierCap = br.ReadInt32();
+			v.isBuffFromArea = br.ReadBoolean();
 		}
 	}
 	
@@ -1709,6 +1716,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.TowerExpireOnParentDestroyedModel>();
+				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.FireFromAirUnitModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.AlternateProjectileModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CirclePatternModel>();
@@ -1722,7 +1730,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterAllModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.TowerExpireModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnExpireModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.InstantModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.WeaponRateMinModel>();
 				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionModel>();
@@ -1821,6 +1828,7 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Set_v_CreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SavedSubTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TowerExpireOnParentDestroyedModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireFromAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AlternateProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CirclePatternModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1834,7 +1842,6 @@ public class SuperMonkeyLoader : ModByteLoader<Assets.Scripts.Models.Towers.Towe
 				Set_v_FilterAllModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TowerExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Assets_Scripts_Models_Towers_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_InstantModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponRateMinModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomPositionModel_Fields(br.ReadInt32(), br.ReadInt32());

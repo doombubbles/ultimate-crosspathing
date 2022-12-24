@@ -1,5 +1,6 @@
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
 
@@ -115,6 +116,18 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			m[mIndex++] = arr;
 		}
 	}
+	private void Read_a_TowerSet_Array() {
+		var arrSetCount = br.ReadInt32();
+		var count = arrSetCount;
+		for (var i = 0; i < count; i++) {
+			var arrCount = br.ReadInt32();
+			var arr = new Assets.Scripts.Models.TowerSets.TowerSet[arrCount];
+			for (var j = 0; j < arr.Length; j++) {
+				arr[j] = (Assets.Scripts.Models.TowerSets.TowerSet)br.ReadInt32();
+			}
+			m[mIndex++] = arr;
+		}
+	}
 	private void Read_a_AreaType_Array() {
 		var arrSetCount = br.ReadInt32();
 		var count = arrSetCount;
@@ -188,7 +201,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -220,6 +233,9 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAddMutatorsFromParent = br.ReadBoolean();
+			v.displayScale = br.ReadSingle();
+			v.showBuffs = br.ReadBoolean();
 		}
 	}
 	
@@ -287,6 +303,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
 			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -444,6 +461,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.affectSelf = br.ReadBoolean();
 			v.tierCap = br.ReadInt32();
+			v.isBuffFromArea = br.ReadBoolean();
 		}
 	}
 	
@@ -790,6 +808,9 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 			v.altSpeed = br.ReadSingle();
 			v.stopOnTargetReached = br.ReadBoolean();
 			v.curve = (Assets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve) m[br.ReadInt32()];
+			v.keepUpdatingTargetPos = br.ReadBoolean();
+			v.rotateToTarget = br.ReadBoolean();
+			v.maxTurnAngle = br.ReadSingle();
 		}
 	}
 	
@@ -952,7 +973,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 		Set_v_TowerFilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Assets.Scripts.Models.Towers.TowerFilters.FilterInSetModel)m[i+start];
-			v.towerSets = (Il2CppStringArray) m[br.ReadInt32()];
+			v.towerSets = (Assets.Scripts.Models.TowerSets.TowerSet[]) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1125,6 +1146,7 @@ public class MonkeyVillageLoader : ModByteLoader<Assets.Scripts.Models.Towers.To
 				Read_a_Single_Array();
 				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Assets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
+				Read_a_TowerSet_Array();
 				Read_a_TargetType_Array();
 				CreateListSet<Assets.Scripts.Models.Model>();
 				
