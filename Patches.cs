@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Assets.Scripts.Simulation.Towers.Behaviors;
-using Assets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
+using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
+using Il2CppAssets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
 using BTD_Mod_Helper.Api;
 using HarmonyLib;
 

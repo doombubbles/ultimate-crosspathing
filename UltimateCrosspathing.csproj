@@ -5,16 +5,8 @@
         <Configurations>Debug;Release</Configurations>
         <AssemblyName>UltimateCrosspathing</AssemblyName>
         <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    
-    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
         <Optimize>False</Optimize>
         <DebugType>embedded</DebugType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <Optimize>True</Optimize>
-        <DebugType>none</DebugType>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(Configuration)'=='Debug'">

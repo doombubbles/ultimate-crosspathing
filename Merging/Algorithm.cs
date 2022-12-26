@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Models;
-using Assets.Scripts.Models.GenericBehaviors;
-using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Models.Towers.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Abilities;
-using Assets.Scripts.Models.Towers.Behaviors.Attack;
-using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Emissions;
-using Assets.Scripts.Models.Towers.Filters;
-using Assets.Scripts.Models.Towers.Projectiles;
-using Assets.Scripts.Models.Towers.Weapons;
+using Il2CppAssets.Scripts.Models;
+using Il2CppAssets.Scripts.Models.GenericBehaviors;
+using Il2CppAssets.Scripts.Models.Towers;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions;
+using Il2CppAssets.Scripts.Models.Towers.Filters;
+using Il2CppAssets.Scripts.Models.Towers.Projectiles;
+using Il2CppAssets.Scripts.Models.Towers.Weapons;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Extensions;
+using Il2Cpp;
 using Il2CppInterop.Runtime;
 using Il2CppSystem.Reflection;
 using MelonLoader;
@@ -180,11 +181,11 @@ namespace UltimateCrosspathing.Merging
                     memberInfo.SetValue(left, MergeString(memberInfo, leftValue, rightValue, ancestorValue));
                 }
             }
-            else if (memberType.IsType<BloonProperties>())
+            else if (memberType.IsEnum && memberType.Name == nameof(BloonProperties))
             {
-                var leftProps = leftValue.Unbox<BloonProperties>();
-                var rightProps = rightValue.Unbox<BloonProperties>();
-                var result = (int)(leftProps & rightProps);
+                var leftProps = leftValue.Unbox<int>();
+                var rightProps = rightValue.Unbox<int>();
+                var result = leftProps & rightProps;
 
                 memberInfo.SetValue(left, result.ToIl2Cpp());
             }

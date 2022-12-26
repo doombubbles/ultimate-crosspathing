@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Models.Towers;
+﻿using Il2CppAssets.Scripts.Models.Towers;
 
 namespace UltimateCrosspathing.Merging
 {

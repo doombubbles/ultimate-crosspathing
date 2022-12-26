@@ -1,7 +1,7 @@
 ﻿global using System.Linq;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Api;
-using Assets.Scripts.Unity.UI_New.Popups;
+using Il2CppAssets.Scripts.Unity.UI_New.Popups;
 using MelonLoader;
 using UltimateCrosspathing;
 

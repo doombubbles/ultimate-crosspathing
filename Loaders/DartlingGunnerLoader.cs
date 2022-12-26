@@ -3,16 +3,17 @@ using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
 using BTD_Mod_Helper.Api;
+using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppSystem.Reflection;
 using Il2CppSystem;
-using Assets.Scripts.Simulation.SMath;
+using Il2CppAssets.Scripts.Simulation.SMath;
 using System.IO;
 
-public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.TowerModel> {
+public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.TowerModel> {
 	
 	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	BinaryReader br = null;
@@ -55,7 +56,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			}
 		}
 	}
-	private void LinkModelDictionary<T>() where T : Assets.Scripts.Models.Model {
+	private void LinkModelDictionary<T>() where T : Il2CppAssets.Scripts.Models.Model {
 		var setCount = br.ReadInt32();
 		for (var i = 0; i < setCount; i++) {
 			var arrIndex = br.ReadInt32();
@@ -97,9 +98,9 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		var count = arrSetCount;
 		for (var i = 0; i < count; i++) {
 			var arrCount = br.ReadInt32();
-			var arr = new Il2CppReferenceArray<Assets.Scripts.Models.Towers.TargetType>(arrCount);
+			var arr = new Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>(arrCount);
 			for (var j = 0; j < arr.Length; j++) {
-				arr[j] = new Assets.Scripts.Models.Towers.TargetType {id = br.ReadString(), isActionable = br.ReadBoolean()};
+				arr[j] = new Il2CppAssets.Scripts.Models.Towers.TargetType {id = br.ReadString(), isActionable = br.ReadBoolean()};
 			}
 			m[mIndex++] = arr;
 		}
@@ -109,9 +110,9 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 		var count = arrSetCount;
 		for (var i = 0; i < count; i++) {
 			var arrCount = br.ReadInt32();
-			var arr = new Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>(arrCount);
+			var arr = new Il2CppAssets.Scripts.Models.Map.AreaType[arrCount];
 			for (var j = 0; j < arr.Length; j++) {
-				arr[j] = (Assets.Scripts.Models.Map.AreaType)br.ReadInt32();
+				arr[j] = (Il2CppAssets.Scripts.Models.Map.AreaType)br.ReadInt32();
 			}
 			m[mIndex++] = arr;
 		}
@@ -153,20 +154,20 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	#region Link object records
 	
 	private void Set_v_Model_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Models.Model>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Model>();
 		var _nameField = t.GetField("_name", bindFlags);
 		var childDependantsField = t.GetField("childDependants", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Model)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
 			_nameField.SetValue(v,br.ReadBoolean() ? null : String.Intern(br.ReadString()));
-			childDependantsField.SetValue(v,(List<Assets.Scripts.Models.Model>) m[br.ReadInt32()]);
+			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
 		}
 	}
 	
 	private void Set_v_TowerModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.TowerModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.TowerModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
@@ -177,23 +178,24 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.isGlobalRange = br.ReadBoolean();
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
-			v.towerSet = (Assets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			v.areaTypes = (Il2CppStructArray<Assets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
+			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			var whoCares = m[br.ReadInt32()];
+			v.areaTypes = null;
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
-			v.mods = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
+			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
-			v.footprint = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
+			v.footprint = (Il2CppAssets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
 			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
-			v.upgrades = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
+			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
-			v.targetTypes = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
-			v.paragonUpgrade = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel) m[br.ReadInt32()];
+			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
+			v.paragonUpgrade = (Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel) m[br.ReadInt32()];
 			v.isSubTower = br.ReadBoolean();
 			v.isBakable = br.ReadBoolean();
 			v.powerName = br.ReadBoolean() ? null : br.ReadString();
@@ -218,7 +220,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_ApplyModModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Mods.ApplyModModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel)m[i+start];
 			v.mod = br.ReadBoolean() ? null : br.ReadString();
 			v.target = br.ReadBoolean() ? null : br.ReadString();
 		}
@@ -227,22 +229,22 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_CreateEffectOnSellModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel)m[i+start];
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel)m[i+start];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_EffectModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.EffectModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Effects.EffectModel)m[i+start];
 			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
@@ -259,8 +261,8 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
@@ -268,26 +270,26 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateEffectOnPlaceModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel)m[i+start];
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel)m[i+start];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_CreateSoundOnTowerPlaceModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
-			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
+			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_SoundModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Audio.SoundModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Audio.SoundModel)m[i+start];
 			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
@@ -295,42 +297,42 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateSoundOnSellModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel)m[i+start];
-			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel)m[i+start];
+			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_DartlingMaintainLastPosModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.DartlingMaintainLastPosModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DartlingMaintainLastPosModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_CreateSoundOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel)m[i+start];
-			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound3 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound4 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound5 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound6 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound7 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound8 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel)m[i+start];
+			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound6 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound7 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound8 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_AttackModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel)m[i+start];
-			v.weapons = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponModel>) m[br.ReadInt32()];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel)m[i+start];
+			v.weapons = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.range = br.ReadSingle();
-			v.targetProvider = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel) m[br.ReadInt32()];
+			v.targetProvider = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel) m[br.ReadInt32()];
 			v.offsetX = br.ReadSingle();
 			v.offsetY = br.ReadSingle();
 			v.offsetZ = br.ReadSingle();
@@ -344,22 +346,22 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_WeaponModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var rateField = t.GetField("rate", bindFlags);
 		var customStartCooldownField = t.GetField("customStartCooldown", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel)m[i+start];
 			v.animation = br.ReadInt32();
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
-			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -372,15 +374,15 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_EmissionModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel)m[i+start];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel)m[i+start];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_RandomEmissionModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel)m[i+start];
 			v.angle = br.ReadSingle();
 			v.count = br.ReadInt32();
 			v.startOffset = br.ReadSingle();
@@ -395,7 +397,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
@@ -404,8 +406,8 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.ignoreBlockers = br.ReadBoolean();
 			v.usePointCollisionWithBloons = br.ReadBoolean();
 			v.canCollisionBeBlockedByMapLos = br.ReadBoolean();
-			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
+			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.collisionPasses = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.canCollideWithBloons = br.ReadBoolean();
 			v.radius = br.ReadSingle();
@@ -422,14 +424,14 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_FilterModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_FilterInvisibleModel_Fields(int start, int count) {
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel)m[i+start];
 			v.isActive = br.ReadBoolean();
 			v.ignoreBroadPhase = br.ReadBoolean();
 		}
@@ -438,7 +440,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_ProjectileBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorModel)m[i+start];
 			v.collisionPass = br.ReadInt32();
 		}
 	}
@@ -446,7 +448,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_DamageModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel)m[i+start];
 			v.damage = br.ReadSingle();
 			v.maxDamage = br.ReadSingle();
 			v.distributeToChildren = br.ReadBoolean();
@@ -460,18 +462,18 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_ProjectileFilterModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel)m[i+start];
-			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel)m[i+start];
+			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_TravelStraightSlowdownModel_Fields(int start, int count) {
 		Set_v_TravelStraitModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
 		var slowdownSpeedField = t.GetField("slowdownSpeed", bindFlags);
 		var minSpeedField = t.GetField("minSpeed", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel)m[i+start];
 			slowdownSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			minSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.maxDistance = br.ReadSingle();
@@ -483,10 +485,10 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_KnockbackModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel)m[i+start];
 			v.moabMultiplier = br.ReadSingle();
 			v.heavyMultiplier = br.ReadSingle();
 			v.lightMultiplier = br.ReadSingle();
@@ -498,13 +500,13 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_DisplayModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
 			v.ignoreRotation = br.ReadBoolean();
-			v.animationChanges = (List<Assets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
+			v.animationChanges = (List<Il2CppAssets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
 			v.delayedReveal = br.ReadSingle();
 		}
 	}
@@ -512,16 +514,16 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_EjectEffectModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
 			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.rotateToWeapon = br.ReadBoolean();
@@ -534,7 +536,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetSupplierModel_Fields(int start, int count) {
 		Set_v_AttackBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel)m[i+start];
 			v.isOnSubTower = br.ReadBoolean();
 		}
 	}
@@ -542,14 +544,14 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_TargetPointerModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetPointerModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetPointerModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 			v.customName = br.ReadBoolean() ? null : br.ReadString();
 			v.setOnAttached = br.ReadBoolean();
@@ -559,7 +561,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetSelectedPointModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
@@ -568,7 +570,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.startWithClosestTrackPoint = br.ReadBoolean();
 			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
 			v.alwaysShowTarget = br.ReadBoolean();
-			v.projectileToExpireOnTargetChangeModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.projectileToExpireOnTargetChangeModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.useTerrainHeight = br.ReadBoolean();
 		}
 	}
@@ -576,7 +578,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_RotateToPointerModel_Fields(int start, int count) {
 		Set_v_AttackBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToPointerModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToPointerModel)m[i+start];
 			v.rate = br.ReadSingle();
 			v.rotateTower = br.ReadBoolean();
 			v.weaponEjectZ = br.ReadSingle();
@@ -586,16 +588,16 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_AttackFilterModel_Fields(int start, int count) {
 		Set_v_AttackBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel)m[i+start];
-			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel)m[i+start];
+			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_EmissionWithOffsetsModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel)m[i+start];
-			v.throwMarkerOffsetModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel)m[i+start];
+			v.throwMarkerOffsetModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>) m[br.ReadInt32()];
 			v.projectileCount = br.ReadInt32();
 			v.rotateProjectileWithTower = br.ReadBoolean();
 			v.randomRotationCone = br.ReadSingle();
@@ -604,11 +606,11 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_TravelStraitModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
 		var speedField = t.GetField("speed", bindFlags);
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel)m[i+start];
 			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
@@ -617,7 +619,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CollideExtraPierceReductionModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel)m[i+start];
 			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
 			v.extraAmount = br.ReadInt32();
 			v.destroyProjectileIfPierceNotEnough = br.ReadBoolean();
@@ -627,9 +629,9 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateProjectileOnExhaustPierceModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustPierceModel)m[i+start];
-			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustPierceModel)m[i+start];
+			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.pierceInterval = br.ReadSingle();
 			v.count = br.ReadInt32();
 			v.minimumTimeDifferenceInFrames = br.ReadInt32();
@@ -642,30 +644,30 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_AgeModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
 			v.rounds = br.ReadInt32();
 			v.useRoundTime = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.endOfRoundClearBypassModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
+			v.endOfRoundClearBypassModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_SingleEmissionModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_CreateProjectileOnBlockerCollideModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnBlockerCollideModel)m[i+start];
-			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnBlockerCollideModel)m[i+start];
+			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayLifetime = br.ReadSingle();
 		}
@@ -674,19 +676,19 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateSoundOnProjectileCollisionModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel)m[i+start];
-			v.sound1 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound3 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound4 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound5 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel)m[i+start];
+			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_AlternateAnimationModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.AlternateAnimationModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AlternateAnimationModel)m[i+start];
 			v.states = br.ReadInt32();
 			v.originState = br.ReadInt32();
 		}
@@ -695,7 +697,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_FootprintModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.FootprintModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.FootprintModel)m[i+start];
 			v.doesntBlockTowerPlacement = br.ReadBoolean();
 			v.ignoresPlacementCheck = br.ReadBoolean();
 			v.ignoresTowerOverlap = br.ReadBoolean();
@@ -705,17 +707,17 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CircleFootprintModel_Fields(int start, int count) {
 		Set_v_FootprintModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CircleFootprintModel)m[i+start];
 			v.radius = br.ReadSingle();
 		}
 	}
 	
 	private void Set_v_UpgradePathModel_Fields(int start, int count) {
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 		var towerField = t.GetField("tower", bindFlags);
 		var upgradeField = t.GetField("upgrade", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
 			towerField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 			upgradeField.SetValue(v,br.ReadBoolean() ? null : br.ReadString());
 		}
@@ -724,7 +726,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_EjectAnimationModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectAnimationModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectAnimationModel)m[i+start];
 			v.animationState = br.ReadInt32();
 		}
 	}
@@ -732,16 +734,16 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetIndependantModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetIndependantModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetIndependantModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
-			v.targetProvider = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel) m[br.ReadInt32()];
+			v.targetProvider = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSupplierModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_TargetFirstModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 		}
 	}
@@ -749,7 +751,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_RateBasedAnimationOffsetModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.RateBasedAnimationOffsetModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.RateBasedAnimationOffsetModel)m[i+start];
 			v.baseRate = br.ReadSingle();
 			v.offset = br.ReadSingle();
 		}
@@ -758,7 +760,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetLastModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 		}
 	}
@@ -766,7 +768,7 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetCloseModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 		}
 	}
@@ -774,23 +776,23 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_TargetStrongModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 		}
 	}
 	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 		var cooldownSpeedScaleField = t.GetField("cooldownSpeedScale", bindFlags);
 		var animationOffsetField = t.GetField("animationOffset", bindFlags);
 		var cooldownField = t.GetField("cooldown", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Model>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
@@ -814,27 +816,27 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_CreateSoundOnAbilityModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel)m[i+start];
-			v.sound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound2 = (Assets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel)m[i+start];
+			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_ActivateAttackModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
-			v.attacks = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
+			v.attacks = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
 			v.processOnActivate = br.ReadBoolean();
 			v.cancelIfNoTargets = br.ReadBoolean();
 			v.turnOffExisting = br.ReadBoolean();
@@ -847,10 +849,10 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_TravelCurvyModel_Fields(int start, int count) {
 		Set_v_TravelStraitModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel>();
 		var turnRateField = t.GetField("turnRate", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel)m[i+start];
 			v.maxTurnAngle = br.ReadSingle();
 			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
@@ -859,9 +861,9 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateProjectileOnContactModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel)m[i+start];
-			v.projectile = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.emission = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel)m[i+start];
+			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.passOnCollidedWith = br.ReadBoolean();
 			v.dontCreateAtBloon = br.ReadBoolean();
 			v.passOnDirectionToContact = br.ReadBoolean();
@@ -871,15 +873,15 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_CreateEffectOnContactModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel)m[i+start];
-			v.effectModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel)m[i+start];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_ThrowMarkerOffsetModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel)m[i+start];
 			v.ejectX = br.ReadSingle();
 			v.ejectY = br.ReadSingle();
 			v.ejectZ = br.ReadSingle();
@@ -890,14 +892,14 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
 		Set_v_DamageModifierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
 			v.damageMultiplier = br.ReadSingle();
@@ -910,23 +912,23 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_ProjectileBehaviorWithOverlayModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorWithOverlayModel)m[i+start];
 			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
 	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.layers = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.filter = (Assets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
-			v.filters = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
-			v.behaviors = (Il2CppReferenceArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
+			v.filter = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
+			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
 			v.isUnique = br.ReadBoolean();
 			v.lastAppliesFirst = br.ReadBoolean();
 			v.collideThisFrame = br.ReadBoolean();
@@ -934,31 +936,31 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
-			v.parentDamageModel = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_BloonBehaviorModelWithTowerTracking_Fields(int start, int count) {
 		Set_v_BloonBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModelWithTowerTracking)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModelWithTowerTracking)m[i+start];
 		}
 	}
 	
 	private void Set_v_BloonBehaviorModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel)m[i+start];
 		}
 	}
 	
 	private void Set_v_DamageOverTimeModel_Fields(int start, int count) {
 		Set_v_BloonBehaviorModelWithTowerTracking_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 		var intervalField = t.GetField("interval", bindFlags);
 		var initialDelayField = t.GetField("initialDelay", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel)m[i+start];
 			v.damage = br.ReadSingle();
 			v.payloadCount = br.ReadInt32();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
@@ -971,14 +973,14 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 			v.damageOnDestroy = br.ReadBoolean();
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
-			v.damageModifierModels = (Il2CppReferenceArray<Assets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
 		}
 	}
 	
 	private void Set_v_DamageModifierForBloonStateModel_Fields(int start, int count) {
 		Set_v_DamageModifierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel)m[i+start];
 			v.bloonState = br.ReadBoolean() ? null : br.ReadString();
 			v.bloonStates = (Il2CppStringArray) m[br.ReadInt32()];
 			v.damageMultiplier = br.ReadSingle();
@@ -991,39 +993,39 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	
 	private void Set_v_LineProjectileEmissionModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
 		var effectAtEndRateField = t.GetField("effectAtEndRate", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel)m[i+start];
 			v.useTargetAsEndPoint = br.ReadBoolean();
-			v.displayPath = (Assets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
+			v.displayPath = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
 			v.displayLength = br.ReadSingle();
 			v.displayLifetime = br.ReadSingle();
 			v.ignoreBlockers = br.ReadBoolean();
-			v.effectAtEndModel = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.effectAtEndModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			effectAtEndRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.dontUseTowerPosition = br.ReadBoolean();
 			v.useTowerRotation = br.ReadBoolean();
 			v.useLengthSpeed = br.ReadBoolean();
 			v.lengthSpeed = br.ReadSingle();
 			v.lengthPerFrame = br.ReadSingle();
-			v.projectileInitialHitModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.projectileAtEndModel = (Assets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
-			v.emissionAtEndModel = (Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.projectileInitialHitModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.projectileAtEndModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emissionAtEndModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.endProjectileSharesPierce = br.ReadBoolean();
 		}
 	}
 	
 	private void Set_v_LineEffectModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Assets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel>();
 		var displayLengthSpeedField = t.GetField("displayLengthSpeed", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel)m[i+start];
-			v.lineDisplayPath = (Assets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel)m[i+start];
+			v.lineDisplayPath = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
 			v.lineDisplayLength = br.ReadSingle();
-			v.effectAtEnd = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			v.effectAtStart = (Assets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.effectAtEnd = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.effectAtStart = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.isLineDisplayEndless = br.ReadBoolean();
 			v.useDisplayLengthSpeed = br.ReadBoolean();
 			displayLengthSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1037,14 +1039,14 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 	private void Set_v_AssetPathModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Assets.Scripts.Models.Effects.AssetPathModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel)m[i+start];
 			v.assetPath = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
 	#endregion
 	
-	protected override Assets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
+	protected override Il2CppAssets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
 		using (var s = new MemoryStream(bytes)) {
 			using (var reader = new BinaryReader(s)) {
 				this.br = reader;
@@ -1052,80 +1054,80 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				m = new object[totalCount];
 				
 				//##  Step 1: create empty collections
-				CreateArraySet<Assets.Scripts.Models.Model>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Model>();
 				Read_a_Int32_Array();
 				Read_a_AreaType_Array();
-				CreateArraySet<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_String_Array();
 				Read_a_TargetType_Array();
-				CreateArraySet<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
-				CreateArraySet<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
-				CreateArraySet<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
-				CreateListSet<Assets.Scripts.Models.Model>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>();
+				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
-				Create_Records<Assets.Scripts.Models.Towers.TowerModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
-				Create_Records<Assets.Scripts.Models.Effects.EffectModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Assets.Scripts.Models.Audio.SoundModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.DartlingMaintainLastPosModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
-				Create_Records<Assets.Scripts.Models.GenericBehaviors.DisplayModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetPointerModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToPointerModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustPierceModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnBlockerCollideModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.AlternateAnimationModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.EjectAnimationModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetIndependantModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.RateBasedAnimationOffsetModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
-				Create_Records<Assets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
-				Create_Records<Assets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel>();
-				Create_Records<Assets.Scripts.Models.Effects.AssetPathModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Effects.EffectModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Audio.SoundModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DartlingMaintainLastPosModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetPointerModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToPointerModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustPierceModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnBlockerCollideModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AlternateAnimationModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectAnimationModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetIndependantModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.RateBasedAnimationOffsetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelCurvyModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.LineEffectModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Effects.AssetPathModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1187,20 +1189,20 @@ public class DartlingGunnerLoader : ModByteLoader<Assets.Scripts.Models.Towers.T
 				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
-				LinkArray<Assets.Scripts.Models.Model>();
-				LinkArray<Assets.Scripts.Models.Towers.Mods.ApplyModModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
-				LinkArray<Assets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
-				LinkArray<Assets.Scripts.Models.Bloons.BloonBehaviorModel>();
-				LinkList<Assets.Scripts.Models.Model>();
+				LinkArray<Il2CppAssets.Scripts.Models.Model>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>();
+				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();
 				UnityEngine.Debug.Assert(br.BaseStream.Position == br.BaseStream.Length);
-				return (Assets.Scripts.Models.Towers.TowerModel) m[resIndex];
+				return (Il2CppAssets.Scripts.Models.Towers.TowerModel) m[resIndex];
 			}
 		}
 	}
