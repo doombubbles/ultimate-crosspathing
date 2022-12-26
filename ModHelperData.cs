@@ -4,6 +4,7 @@ namespace UltimateCrosspathing
 {
     public static class ModHelperData
     {
+        public const string WorksOnVersion = "34.3";
         public const string Version = "1.3.6";
         public const string Name = "Ultimate Crosspathing";
 
