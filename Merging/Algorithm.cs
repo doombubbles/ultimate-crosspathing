@@ -181,12 +181,11 @@ namespace UltimateCrosspathing.Merging
                     memberInfo.SetValue(left, MergeString(memberInfo, leftValue, rightValue, ancestorValue));
                 }
             }
-            else if (memberType.IsEnum && memberType.Name == nameof(BloonProperties))
+            else if (memberType.IsType<BloonProperties>())
             {
-                var leftProps = leftValue.Unbox<int>();
-                var rightProps = rightValue.Unbox<int>();
-                var result = leftProps & rightProps;
-
+                var leftProps = leftValue.Unbox<BloonProperties>();
+                var rightProps = rightValue.Unbox<BloonProperties>();
+                var result = (int)(leftProps & rightProps);
                 memberInfo.SetValue(left, result.ToIl2Cpp());
             }
         }
