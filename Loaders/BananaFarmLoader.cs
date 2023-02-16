@@ -111,7 +111,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		var count = arrSetCount;
 		for (var i = 0; i < count; i++) {
 			var arrCount = br.ReadInt32();
-			var arr = new Il2CppAssets.Scripts.Models.Map.AreaType[arrCount];
+			var arr = new Il2CppStructArray<Il2CppAssets.Scripts.Models.Map.AreaType>(arrCount);
 			for (var j = 0; j < arr.Length; j++) {
 				arr[j] = (Il2CppAssets.Scripts.Models.Map.AreaType)br.ReadInt32();
 			}
@@ -169,7 +169,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerModel)m[i+start];
-			v.display = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseId = br.ReadBoolean() ? null : br.ReadString();
 			v.cost = br.ReadSingle();
 			v.radius = br.ReadSingle();
@@ -180,21 +180,21 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
-			v.icon = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
-			v.portrait = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
-			v.instaIcon = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppStructArray<Il2CppAssets.Scripts.Models.Map.AreaType>) m[br.ReadInt32()];
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
+			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
+			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.footprint = (Il2CppAssets.Scripts.Models.Towers.Behaviors.FootprintModel) m[br.ReadInt32()];
 			v.dontDisplayUpgrades = br.ReadBoolean();
-			v.emoteSpriteSmall = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
-			v.emoteSpriteLarge = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
+			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
+			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
-			v.targetTypes = (Il2CppAssets.Scripts.Models.Towers.TargetType[]) m[br.ReadInt32()];
+			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
 			v.paragonUpgrade = (Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel) m[br.ReadInt32()];
 			v.isSubTower = br.ReadBoolean();
 			v.isBakable = br.ReadBoolean();
@@ -245,7 +245,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Effects.EffectModel)m[i+start];
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.scale = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
@@ -278,7 +278,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = new Il2CppAssets.Scripts.Utils.AudioSourceReference(br.ReadString());
+			v.assetId = ModContent.CreateAudioSourceReference(br.ReadString());
 		}
 	}
 	
@@ -350,8 +350,8 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BankModel)m[i+start];
 			v.capacity = br.ReadSingle();
 			v.interest = br.ReadSingle();
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
-			v.fullBankAssetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.fullBankAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.autoCollect = br.ReadBoolean();
 			v.collectAnimation = br.ReadInt32();
@@ -423,7 +423,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
-			v.display = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.id = br.ReadBoolean() ? null : br.ReadString();
 			v.maxPierce = br.ReadSingle();
 			v.pierce = br.ReadSingle();
@@ -487,7 +487,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel)m[i+start];
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.useTowerPosition = br.ReadBoolean();
 		}
@@ -497,7 +497,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel)m[i+start];
-			v.display = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.layer = br.ReadInt32();
 			v.positionOffset = new Vector3(br.ReadSingle(), br.ReadSingle(), br.ReadSingle());
 			v.scale = br.ReadSingle();
@@ -640,7 +640,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.cashPerRound = br.ReadSingle();
 			v.cashRoundBonusMultiplier = br.ReadSingle();
 			v.lifespan = br.ReadSingle();
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.distributeCash = br.ReadBoolean();
 		}
 	}
@@ -666,7 +666,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel)m[i+start];
 			v.amount = br.ReadInt32();
 			v.lifespan = br.ReadSingle();
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -680,7 +680,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
-			v.icon = new Il2CppAssets.Scripts.Utils.SpriteReference(br.ReadString());
+			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			v.activateOnPreLeak = br.ReadBoolean();
 			v.activateOnLeak = br.ReadBoolean();
@@ -715,7 +715,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImfLoanModel)m[i+start];
 			v.amount = br.ReadSingle();
 			v.incomeRecoveryRate = br.ReadSingle();
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.imfLoanCollection = (Il2CppAssets.Scripts.Models.SimulationBehaviors.ImfLoanCollectionModel) m[br.ReadInt32()];
 		}
@@ -776,11 +776,11 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		}
 	}
 	
-	private void Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(int start, int count) {
+	private void Set_v_Il2CppAssets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExpireModel)m[i+start];
-			v.assetId = new Il2CppAssets.Scripts.Utils.PrefabReference(br.ReadString());
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = br.ReadBoolean();
 			v.randomRotation = br.ReadBoolean();
@@ -931,7 +931,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_PickupModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ScaleProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_Assets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_Il2CppAssets_Scripts_Models_Towers_Projectiles_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_HeightOffsetProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BananaCentralBuffModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -12,6 +12,10 @@
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <Compile Remove="Loaders\*.cs" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Loaders" />
+    </ItemGroup>
 
     <Import Project="..\btd6.targets" />
 </Project>
