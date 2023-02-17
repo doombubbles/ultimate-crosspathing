@@ -39,7 +39,7 @@ namespace UltimateCrosspathing
 
         public static bool ShouldWork(string baseId) => TryFind(baseId, out var loadInfo)
             ? loadInfo.Enabled && loadInfo.loaded != false
-            : Settings.AffectModdedTowers;
+            : Find<ModTower>(baseId) != null;
 
 #if DEBUG
         public static void ExportTowers()

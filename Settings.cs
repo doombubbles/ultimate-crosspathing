@@ -16,12 +16,6 @@ public class Settings : ModSettings
                       "Setting this all the way to 15 will enable the complete Ultimate Crosspathing experience!"
     };
 
-    internal static readonly ModSettingBool AffectModdedTowers = new(false)
-    {
-        description = "Note: This setting doesn't cause algorithmic merging of modded towers. " +
-                      "It just activates any existing Ultimate Crosspathing integration that mod authors added themselves."
-    };
-
 #if DEBUG
     
     private static readonly ModSettingCategory DebugSettings = "Debug Settings";
