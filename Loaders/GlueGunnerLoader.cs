@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
-using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
@@ -180,11 +179,10 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			//TODO:FIX ENUM ISSUE
-var x=m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
@@ -941,15 +939,6 @@ var x=m[br.ReadInt32()];
 		}
 	}
 	
-	private void Set_v_FilterMutatedTargetModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel)m[i+start];
-			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
-			v.mutationIds = (Il2CppStringArray) m[br.ReadInt32()];
-		}
-	}
-	
 	private void Set_v_DamageModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1040,7 +1029,6 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.EmitOnDestroyModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1094,7 +1082,6 @@ var x=m[br.ReadInt32()];
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmitOnDestroyModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterMutatedTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name

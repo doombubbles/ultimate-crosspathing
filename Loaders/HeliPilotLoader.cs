@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
-using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
@@ -180,11 +179,10 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			//TODO:FIX ENUM ISSUE
-var x=m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
@@ -815,6 +813,17 @@ var x=m[br.ReadInt32()];
 		}
 	}
 	
+	private void Set_v_RemoveMutatorsFromBloonModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel)m[i+start];
+			v.key = br.ReadBoolean() ? null : br.ReadString();
+			v.keys = (Il2CppStringArray) m[br.ReadInt32()];
+			v.mutatorIds = br.ReadBoolean() ? null : br.ReadString();
+			v.mutatorIdList = (Il2CppStringArray) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_IgnoreThrowMarkerModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1276,6 +1285,7 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.IgnoreThrowMarkerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel>();
@@ -1358,6 +1368,7 @@ var x=m[br.ReadInt32()];
 				Set_v_FilterMutatedTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreThrowMarkerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ComancheDefenceModel_Fields(br.ReadInt32(), br.ReadInt32());

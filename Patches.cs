@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
+﻿using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
 using Il2CppAssets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
-using BTD_Mod_Helper.Api;
 using HarmonyLib;
+using Il2CppAssets.Scripts.Models.Towers;
 
 namespace UltimateCrosspathing
 {
@@ -31,11 +30,15 @@ namespace UltimateCrosspathing
     internal class TowerSelectionMenu_IsUpgradePathClosed
     {
         [HarmonyPostfix]
-        internal static void Postfix(TowerSelectionMenu __instance, ref bool __result)
+        internal static void Postfix(TowerSelectionMenu __instance, int path, ref bool __result)
         {
-            if (LoadInfo.ShouldWork(__instance.selectedTower.Def.baseId))
+            var towerModel = __instance.selectedTower.Def;
+            var blockBeastHandler = towerModel.baseId == TowerType.BeastHandler &&
+                                    towerModel.tiers.Count(t => t > 0) >= 2 &&
+                                    towerModel.tiers[path] == 0;
+            if (LoadInfo.ShouldWork(towerModel.baseId) && !blockBeastHandler)
             {
-                __result &= __instance.selectedTower.Def.tiers.Sum() >= Settings.MaxTiers;
+                __result &= towerModel.tiers.Sum() >= Settings.MaxTiers;
             }
         }
     }

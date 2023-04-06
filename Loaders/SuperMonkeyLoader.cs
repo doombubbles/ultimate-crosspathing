@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
-using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
@@ -192,11 +191,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			//TODO:FIX ENUM ISSUE
-var x=m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
@@ -805,6 +803,21 @@ var x=m[br.ReadInt32()];
 		}
 	}
 	
+	private void Set_v_RetargetOnContactModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
+		var delayField = t.GetField("delay", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
+			v.distance = br.ReadSingle();
+			v.maxBounces = br.ReadInt32();
+			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.targetType.id = br.ReadString();
+			v.targetType.actionOnCreate = br.ReadBoolean();
+			v.expireIfNoTargetFound = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_ImmunityModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImmunityModel>();
@@ -1120,21 +1133,6 @@ var x=m[br.ReadInt32()];
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel)m[i+start];
 			v.offset = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_RetargetOnContactModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
-		var delayField = t.GetField("delay", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
-			v.distance = br.ReadSingle();
-			v.maxBounces = br.ReadInt32();
-			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.targetType.id = br.ReadString();
-			v.targetType.actionOnCreate = br.ReadBoolean();
-			v.expireIfNoTargetFound = br.ReadBoolean();
 		}
 	}
 	
@@ -1504,6 +1502,7 @@ var x=m[br.ReadInt32()];
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.dontShowX = br.ReadBoolean();
 		}
 	}
 	
@@ -1521,6 +1520,7 @@ var x=m[br.ReadInt32()];
 			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
 			v.maxStackSize = br.ReadInt32();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.onlyAffectParagon = br.ReadBoolean();
 		}
 	}
 	
@@ -1680,6 +1680,7 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ImmunityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
@@ -1706,7 +1707,6 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.Conditions.Behaviors.CheckTempleUnderLevelModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ReloadTimeTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.UseParentEjectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel>();
@@ -1792,6 +1792,7 @@ var x=m[br.ReadInt32()];
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionWithOffsetsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ThrowMarkerOffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RetargetOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ImmunityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1818,7 +1819,6 @@ var x=m[br.ReadInt32()];
 				Set_v_CheckTempleUnderLevelModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ReloadTimeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RetargetOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FollowPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UseParentEjectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileSizeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());

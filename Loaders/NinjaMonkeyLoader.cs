@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
-using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
@@ -204,11 +203,10 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			//TODO:FIX ENUM ISSUE
-var x=m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
@@ -736,6 +734,7 @@ var x=m[br.ReadInt32()];
 			v.keepUpdatingTargetPos = br.ReadBoolean();
 			v.rotateToTarget = br.ReadBoolean();
 			v.maxTurnAngle = br.ReadSingle();
+			v.positionAboveMoabTypes = br.ReadBoolean();
 		}
 	}
 	
@@ -829,6 +828,7 @@ var x=m[br.ReadInt32()];
 			v.maxStackSize = br.ReadInt32();
 			v.globalRange = br.ReadBoolean();
 			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.dontShowX = br.ReadBoolean();
 		}
 	}
 	
@@ -988,6 +988,26 @@ var x=m[br.ReadInt32()];
 		}
 	}
 	
+	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAddative = br.ReadSingle();
+			v.mustIncludeAllTags = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -1091,13 +1111,6 @@ var x=m[br.ReadInt32()];
 		}
 	}
 	
-	private void Set_v_DamageModifierModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_DamagePercentOfMaxModel_Fields(int start, int count) {
 		Set_v_DamageModifierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1164,19 +1177,6 @@ var x=m[br.ReadInt32()];
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageModifierModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
-		Set_v_DamageModifierModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
-			v.damageMultiplier = br.ReadSingle();
-			v.damageAddative = br.ReadSingle();
-			v.mustIncludeAllTags = br.ReadBoolean();
-			v.applyOverMaxDamage = br.ReadBoolean();
 		}
 	}
 	
@@ -1268,6 +1268,7 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.ProjectileOverTimeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMinusAbilityDurationModel>();
@@ -1279,7 +1280,6 @@ var x=m[br.ReadInt32()];
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateRangeSupportZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInTowerTiersModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateDamageModifierSupportZoneModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.RandomAngleOffsetModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1333,6 +1333,7 @@ var x=m[br.ReadInt32()];
 				Set_v_ProjectileOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterMutatedTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowMinusAbilityDurationModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1344,7 +1345,6 @@ var x=m[br.ReadInt32()];
 				Set_v_ActivateRangeSupportZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInTowerTiersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateDamageModifierSupportZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomAngleOffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name

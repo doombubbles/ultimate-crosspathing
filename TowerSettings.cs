@@ -1,5 +1,4 @@
 ﻿using System;
-using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Components;
 using BTD_Mod_Helper.Api.Data;
 using BTD_Mod_Helper.Api.Enums;
@@ -192,5 +191,12 @@ public class TowerSettings : ModSettings
         button = true,
         category = IndividualTowers,
         icon = VanillaSprites.EngineerMonkeyicon
+    };
+
+    public static readonly ModSettingBool BeastHandlerEnabled = new(true)
+    {
+        button = true,
+        category = IndividualTowers,
+        icon = VanillaSprites.BeastHandlerIcon
     };
 }

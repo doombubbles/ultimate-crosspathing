@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BTD_Mod_Helper.Extensions;
-using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
@@ -180,11 +179,10 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
-			//TODO:FIX ENUM ISSUE
-var x=m[br.ReadInt32()];
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
 			v.instaIcon = ModContent.CreateSpriteReference(br.ReadString());
+			v.areaTypes = (Il2CppAssets.Scripts.Models.Map.AreaType[]) m[br.ReadInt32()];
 			v.mods = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>) m[br.ReadInt32()];
 			v.ignoreTowerForSelection = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];

@@ -1,18 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Il2CppAssets.Scripts.Models;
 using Il2CppAssets.Scripts.Models.Towers;
-using Il2CppAssets.Scripts.Utils;
-using BTD_Mod_Helper;
-using BTD_Mod_Helper.Api;
-using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Api.Towers;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using MelonLoader.TinyJSON;
-using UltimateCrosspathing.Merging;
-using UltimateCrosspathing.Tasks;
-using Path = System.IO.Path;
 
 #if RELEASE
 using UltimateCrosspathing.Loaders;
@@ -89,6 +78,15 @@ namespace UltimateCrosspathing
 #endif
 
         public override ModSettingBool Enabled => TowerSettings.BananaFarmEnabled;
+    }
+    
+    public class BeastHandler : LoadInfo
+    {
+#if RELEASE
+        public override ModByteLoader<TowerModel> Loader => GetInstance<BeastHandlerLoader>();
+#endif
+
+        public override ModSettingBool Enabled => TowerSettings.BeastHandlerEnabled;
     }
 
     public class BombShooter : LoadInfo
