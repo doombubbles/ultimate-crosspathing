@@ -9,7 +9,7 @@ public class Settings : ModSettings
 
     public static readonly ModSettingInt MaxTiers = new(15)
     {
-        min = 0,
+        min = 7,
         max = 15,
         slider = true,
         description = "Controls the maximum number of upgrades that any one tower can have at once. " +

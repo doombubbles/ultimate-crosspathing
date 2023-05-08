@@ -11,7 +11,7 @@ namespace UltimateCrosspathing
         [HarmonyPostfix]
         internal static void Postfix(UpgradeObject __instance, ref int __result)
         {
-            if (LoadInfo.ShouldWork(__instance.tts.Def.baseId))
+            if (__instance.tts != null && LoadInfo.ShouldWork(__instance.tts.Def.baseId))
             {
                 var tier = __instance.tier;
                 var tiers = __instance.tts.Def.tiers;
@@ -32,6 +32,8 @@ namespace UltimateCrosspathing
         [HarmonyPostfix]
         internal static void Postfix(TowerSelectionMenu __instance, int path, ref bool __result)
         {
+            if (__instance.selectedTower == null) return;
+            
             var towerModel = __instance.selectedTower.Def;
             var blockBeastHandler = towerModel.baseId == TowerType.BeastHandler &&
                                     towerModel.tiers.Count(t => t > 0) >= 2 &&

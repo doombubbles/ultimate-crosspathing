@@ -5,6 +5,11 @@ using BTD_Mod_Helper.Api.Towers;
 
 #if RELEASE
 using UltimateCrosspathing.Loaders;
+#else
+using System.IO;
+using Il2CppAssets.Scripts.Models;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using UltimateCrosspathing.Tasks;
 #endif
 
 namespace UltimateCrosspathing

@@ -43,160 +43,183 @@ public class TowerSettings : ModSettings
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.DartMonkeyIcon
+        icon = VanillaSprites.DartMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool BoomerangMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.BoomerangMonkeyIcon
+        icon = VanillaSprites.BoomerangMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool BombShooterEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.BombShooterIcon
+        icon = VanillaSprites.BombShooterIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool TackShooterEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.TackShooterIcon
+        icon = VanillaSprites.TackShooterIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool IceMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.IceMonkeyIcon
+        icon = VanillaSprites.IceMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool GlueGunnerEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.GlueGunnerIcon
+        icon = VanillaSprites.GlueGunnerIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool SniperMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.SniperMonkeyIcon
+        icon = VanillaSprites.SniperMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool MonkeySubEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.MonkeySubIcon
+        icon = VanillaSprites.MonkeySubIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool MonkeyBuccaneerEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.MonkeyBuccaneerIcon
+        icon = VanillaSprites.MonkeyBuccaneerIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool MonkeyAceEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.MonkeyAceIcon
+        icon = VanillaSprites.MonkeyAceIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool HeliPilotEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.HeliPilotIcon
+        icon = VanillaSprites.HeliPilotIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool MortarMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.MortarMonkeyIcon
+        icon = VanillaSprites.MortarMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool DartlingGunnerEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.DartlingGunnerIcon
+        icon = VanillaSprites.DartlingGunnerIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool WizardMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.WizardIcon
+        icon = VanillaSprites.WizardIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool SuperMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.SuperMonkeyIcon
+        icon = VanillaSprites.SuperMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool NinjaMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.NInjaMonkeyIcon
+        icon = VanillaSprites.NInjaMonkeyIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool AlchemistEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.AlchemistIcon
+        icon = VanillaSprites.AlchemistIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool DruidEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.DruidIcon
+        icon = VanillaSprites.DruidIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool BananaFarmEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.BananaFarmIcon2
+        icon = VanillaSprites.BananaFarmIcon2,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool SpikeFactoryEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.SpikeFactoryIcon
+        icon = VanillaSprites.SpikeFactoryIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool MonkeyVillageEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.MonkeyVillageIcon
+        icon = VanillaSprites.MonkeyVillageIcon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool EngineerMonkeyEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.EngineerMonkeyicon
+        icon = VanillaSprites.EngineerMonkeyicon,
+        requiresRestart = true
     };
 
     public static readonly ModSettingBool BeastHandlerEnabled = new(true)
     {
         button = true,
         category = IndividualTowers,
-        icon = VanillaSprites.BeastHandlerIcon
+        icon = VanillaSprites.BeastHandlerIcon,
+        requiresRestart = true
     };
 }

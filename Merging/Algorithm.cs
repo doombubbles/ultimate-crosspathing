@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Il2CppAssets.Scripts.Models;
 using Il2CppAssets.Scripts.Models.GenericBehaviors;
 using Il2CppAssets.Scripts.Models.Towers;
@@ -51,11 +52,11 @@ namespace UltimateCrosspathing.Merging
             { "0ddd8752be0d3554cb0db6abe6686e8e", "69bf8d5932f2bea4f9ce36f861240d2e" } //DartMonkey-043
         };
 
-        private static readonly Dictionary<(string, Type), bool> BetterBooleans = new()
+        private static readonly Dictionary<Tuple<string, Type>, bool> BetterBooleans = new()
         {
-            { ("isActive", Il2CppType.Of<FilterModel>()), false },
-            { ("ignoreBlockers", Il2CppType.Of<ProjectileModel>()), true },
-            { ("isSharedRangeEnabled", Il2CppType.Of<TargetSupplierModel>()), true },
+            { new Tuple<string, Type>("isActive", Il2CppType.Of<FilterModel>()), false },
+            { new Tuple<string, Type>("ignoreBlockers", Il2CppType.Of<ProjectileModel>()), true },
+            { new Tuple<string, Type>("isSharedRangeEnabled", Il2CppType.Of<TargetSupplierModel>()), true },
         };
 
 
