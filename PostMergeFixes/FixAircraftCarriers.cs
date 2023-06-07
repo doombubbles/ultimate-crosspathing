@@ -30,7 +30,7 @@ public class FixAircraftCarriers : PostMergeFix
                 if (createTowerModel != null && filter != null)
                 {
                     filter.baseSubTowerId = createTowerModel.tower.baseId;
-                    filter.baseSubTowerIds = new[] {filter.baseSubTowerId};
+                    filter.baseSubTowerIds = new[] { filter.baseSubTowerId };
                 }
             });
 
@@ -78,7 +78,7 @@ public class FixAircraftCarriers : PostMergeFix
                 if (!attackModel.HasBehavior<DisplayModel>())
                 {
                     attackModel.AddBehavior(new DisplayModel("DisplayModel_AttackDisplay",
-                        ModContent.CreatePrefabReference(""), 0));
+                        CreatePrefabReference(""), 0, DisplayCategory.Default));
                 }
             });
         }
