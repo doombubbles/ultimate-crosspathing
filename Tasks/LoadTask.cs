@@ -84,6 +84,8 @@ namespace UltimateCrosspathing.Tasks
                 loadInfo.loaded = true;
                 ModHelper.Msg<UltimateCrosspathingMod>($"Finished loading {loadInfo.Name}s!");
                 Description = loadInfo.Name.Spaced() + "s";
+                
+                loadInfo.Loader.Dispose();
             }
 
             Description = "Done!";

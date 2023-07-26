@@ -226,6 +226,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	

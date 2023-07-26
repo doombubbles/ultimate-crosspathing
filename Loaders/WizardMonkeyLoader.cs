@@ -226,6 +226,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -767,6 +768,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
@@ -1007,6 +1009,14 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_OverrideCamoDetectionModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.OverrideCamoDetectionModel)m[i+start];
+			v.detectCamo = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -1062,6 +1072,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.AbilityCreateTowerModel)m[i+start];
 			v.towerModel = (Il2CppAssets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
 			v.isAirBasedTower = br.ReadBoolean();
+			v.trackCirclePosition = br.ReadBoolean();
 		}
 	}
 	
@@ -1323,6 +1334,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffBloonDirectionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.PrinceOfDarknessEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SyncTargetPriorityWithSubTowersModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.OverrideCamoDetectionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.AbilityCreateTowerModel>();
@@ -1400,6 +1412,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_EmissionRotationOffBloonDirectionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PrinceOfDarknessEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SyncTargetPriorityWithSubTowersModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_OverrideCamoDetectionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityCreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());

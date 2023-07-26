@@ -238,6 +238,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	

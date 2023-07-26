@@ -250,6 +250,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -642,6 +643,14 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel)m[i+start];
+			v.targetSupplierName = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_InstantDamageEmissionModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -818,6 +827,15 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutOffscreenModel)m[i+start];
 			v.includeBloonRadius = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_FilterBloonIfDamageTypeModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel)m[i+start];
+			v.ifCantHitBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.damageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1187,6 +1205,23 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_TrackTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
+		var turnRateField = t.GetField("turnRate", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel)m[i+start];
+			v.distance = br.ReadSingle();
+			v.trackNewTargets = br.ReadBoolean();
+			v.constantlyAquireNewTarget = br.ReadBoolean();
+			v.maxSeekAngle = br.ReadSingle();
+			v.ignoreSeekAngle = br.ReadBoolean();
+			v.overrideRotation = br.ReadBoolean();
+			v.useLifetimeAsDistance = br.ReadBoolean();
+			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
 	private void Set_v_ZeroRotationModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1322,6 +1357,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetCloseModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.InstantDamageEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.JungleVineEffectModel>();
@@ -1340,6 +1376,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.JungleVineLimitProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutOffscreenModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PoplustSupportModel>();
@@ -1360,6 +1397,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ZeroRotationModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnIntervalModel>();
@@ -1397,6 +1435,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_TargetLastModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetCloseModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetStrongModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_InstantDamageEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_JungleVineEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1415,6 +1454,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_JungleVineLimitProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutOffscreenModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PoplustSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1435,6 +1475,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_FilterMutatedTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ZeroRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnIntervalModel_Fields(br.ReadInt32(), br.ReadInt32());

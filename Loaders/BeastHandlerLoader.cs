@@ -226,6 +226,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	

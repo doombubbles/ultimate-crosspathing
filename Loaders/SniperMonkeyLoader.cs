@@ -214,6 +214,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -941,6 +942,14 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_ActivateAbilitiesOnAbilityModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel)m[i+start];
+			v.abilityToFind = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_SupportModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1103,6 +1112,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionBasicModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetEliteTargettingModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
@@ -1164,6 +1174,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_RandomPositionBasicModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetEliteTargettingModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSupplierSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());

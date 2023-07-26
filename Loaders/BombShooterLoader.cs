@@ -214,6 +214,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -901,6 +902,19 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
+	private void Set_v_PushBackModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel)m[i+start];
+			v.pushAmount = br.ReadSingle();
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.multiplierMOAB = br.ReadSingle();
+			v.multiplierBFB = br.ReadSingle();
+			v.multiplierDDT = br.ReadSingle();
+			v.multiplierZOMG = br.ReadSingle();
+		}
+	}
+	
 	private void Set_v_FilterBloonIfDamageTypeModel_Fields(int start, int count) {
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1029,6 +1043,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetMoabModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.PushBackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel>();
@@ -1084,6 +1099,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PushBackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());

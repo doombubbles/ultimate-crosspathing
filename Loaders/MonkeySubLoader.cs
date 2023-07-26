@@ -226,6 +226,7 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	

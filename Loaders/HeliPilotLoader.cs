@@ -214,6 +214,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -826,6 +827,16 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_CollideExtraPierceReductionModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel)m[i+start];
+			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
+			v.extraAmount = br.ReadInt32();
+			v.destroyProjectileIfPierceNotEnough = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_IgnoreThrowMarkerModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1301,6 +1312,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.IgnoreThrowMarkerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.ComancheDefenceModel>();
@@ -1385,6 +1397,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CollideExtraPierceReductionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreThrowMarkerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ComancheDefenceModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -226,6 +226,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.dontAddMutatorsFromParent = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.showBuffs = br.ReadBoolean();
+			v.destroyTowerOnRedistribution = br.ReadBoolean();
 		}
 	}
 	
@@ -810,6 +811,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.glueLevel = br.ReadInt32();
 			v.applyOnlyIfDamaged = br.ReadBoolean();
 			v.stackCount = br.ReadInt32();
+			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
