@@ -240,6 +240,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.showPowerTowerBuffs = br.ReadBoolean();
 			v.animationSpeed = br.ReadSingle();
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
+			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
@@ -1146,6 +1147,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.maxCost = br.ReadSingle();
 			v.maxTowers = br.ReadInt32();
 			v.affectList = br.ReadBoolean() ? null : br.ReadString();
+			v.affectListArray = (Il2CppStringArray) m[br.ReadInt32()];
 			v.resetOnDefeatScreen = br.ReadBoolean();
 			v.ignoreWithMutators = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreWithMutatorsList = (Il2CppStringArray) m[br.ReadInt32()];

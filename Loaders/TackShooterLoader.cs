@@ -202,6 +202,7 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.showPowerTowerBuffs = br.ReadBoolean();
 			v.animationSpeed = br.ReadSingle();
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
+			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();

@@ -238,6 +238,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.showPowerTowerBuffs = br.ReadBoolean();
 			v.animationSpeed = br.ReadSingle();
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
+			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
@@ -571,6 +572,16 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.ratePerLife = br.ReadSingle();
 			v.lifeCap = br.ReadInt32();
 			v.baseRateIncrease = br.ReadSingle();
+			v.saveId = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_PierceFromLivesGainedModel_Fields(int start, int count) {
+		Set_v_WeaponBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.PierceFromLivesGainedModel)m[i+start];
+			v.piercePercentPerLife = br.ReadSingle();
+			v.lifeCap = br.ReadInt32();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
@@ -936,6 +947,16 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.rbeThreshold = br.ReadInt32();
 			v.damage = br.ReadInt32();
 			v.maxDamageBoost = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_BonusLivesPerRoundModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel)m[i+start];
+			v.amount = br.ReadInt32();
+			v.lifespan = br.ReadSingle();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -1351,6 +1372,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.OffsetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.LifeBasedAttackSpeedModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.PierceFromLivesGainedModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
@@ -1383,6 +1405,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DruidVengeanceEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierWrathModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CashPerBananaFarmInRangeModel>();
@@ -1429,6 +1452,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_OffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LifeBasedAttackSpeedModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PierceFromLivesGainedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1461,6 +1485,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DruidVengeanceEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierWrathModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BonusLivesPerRoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashPerBananaFarmInRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
