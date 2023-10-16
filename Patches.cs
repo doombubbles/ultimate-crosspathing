@@ -9,19 +9,18 @@ namespace UltimateCrosspathing
     internal class UpgradeObject_CheckBlockedPath
     {
         [HarmonyPostfix]
-        internal static void Postfix(UpgradeObject __instance, ref int __result)
+        internal static void Postfix(UpgradeObject __instance, ref int __result, ref bool __runOriginal)
         {
-            if (__instance.tts != null && LoadInfo.ShouldWork(__instance.tts.Def.baseId))
+            if (__instance.tts == null || !LoadInfo.ShouldWork(__instance.tts.Def.baseId) || !__runOriginal) return;
+
+            var tier = __instance.tier;
+            var tiers = __instance.tts.Def.tiers;
+            var sum = tiers.Sum();
+            var remainingTiers = Settings.MaxTiers - sum;
+            __result = tier + remainingTiers;
+            if (__result > 5)
             {
-                var tier = __instance.tier;
-                var tiers = __instance.tts.Def.tiers;
-                var sum = tiers.Sum();
-                var remainingTiers = Settings.MaxTiers - sum;
-                __result = tier + remainingTiers;
-                if (__result > 5)
-                {
-                    __result = 5;
-                }
+                __result = 5;
             }
         }
     }
@@ -30,10 +29,10 @@ namespace UltimateCrosspathing
     internal class TowerSelectionMenu_IsUpgradePathClosed
     {
         [HarmonyPostfix]
-        internal static void Postfix(TowerSelectionMenu __instance, int path, ref bool __result)
+        internal static void Postfix(TowerSelectionMenu __instance, int path, ref bool __result, ref bool __runOriginal)
         {
-            if (__instance.selectedTower == null) return;
-            
+            if (__instance.selectedTower == null || !__runOriginal) return;
+
             var towerModel = __instance.selectedTower.Def;
             var blockBeastHandler = towerModel.baseId == TowerType.BeastHandler &&
                                     towerModel.tiers.Count(t => t > 0) >= 2 &&
@@ -44,7 +43,7 @@ namespace UltimateCrosspathing
             }
         }
     }
-    
+
     /// <summary>
     /// Fix v38.1 inlining of TowerSelectionMenu.IsUpgradePathClosed method
     /// </summary>
@@ -58,13 +57,14 @@ namespace UltimateCrosspathing
             {
                 __instance.upgradeButton.SetUpgradeModel(null);
             }
+
             __instance.CheckLocked();
             var maxTier = __instance.CheckBlockedPath();
             var maxTierRestricted = __instance.CheckRestrictedPath();
             __instance.SetTier(__instance.tier, maxTier, maxTierRestricted);
             __instance.currentUpgrade.UpdateVisuals();
             __instance.upgradeButton.UpdateVisuals(path, upgradeClicked);
-            
+
             return false;
         }
     }
