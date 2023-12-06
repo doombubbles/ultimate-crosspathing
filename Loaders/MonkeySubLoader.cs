@@ -535,6 +535,7 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
+			v.ignoreImmunityDestroy = br.ReadBoolean();
 		}
 	}
 	
@@ -550,6 +551,7 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.animationChanges = (List<Il2CppAssets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
 			v.delayedReveal = br.ReadSingle();
 			v.category = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayCategory) (br.ReadUInt16());
+			v.isAnimationPaused = br.ReadBoolean();
 		}
 	}
 	

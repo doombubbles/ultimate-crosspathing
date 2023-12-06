@@ -14,3 +14,6 @@ Download the latest Btd6ModHelper.dll from here https://github.com/gurrenm3/BTD-
 
 Download the latest UltimateCrosspathing.dll from here https://github.com/doombubbles/ultimate-crosspathing/releases
 
+## Did a new BTD6 Update just come out?
+
+Allow some time for a new version of the mod to be released.

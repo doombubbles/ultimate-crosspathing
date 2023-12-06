@@ -450,6 +450,7 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
+			v.ignoreImmunityDestroy = br.ReadBoolean();
 		}
 	}
 	
@@ -485,6 +486,7 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.animationChanges = (List<Il2CppAssets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
 			v.delayedReveal = br.ReadSingle();
 			v.category = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayCategory) (br.ReadUInt16());
+			v.isAnimationPaused = br.ReadBoolean();
 		}
 	}
 	
@@ -713,6 +715,7 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.baseTowerRange = br.ReadSingle();
 			v.displayRadius = br.ReadSingle();
+			v.hideIfAttackPausedId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	

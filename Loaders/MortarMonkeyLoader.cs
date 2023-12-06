@@ -585,6 +585,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.createPopEffect = br.ReadBoolean();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
+			v.ignoreImmunityDestroy = br.ReadBoolean();
 		}
 	}
 	
@@ -633,6 +634,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.animationChanges = (List<Il2CppAssets.Scripts.Models.GenericBehaviors.AnimationChange>) m[br.ReadInt32()];
 			v.delayedReveal = br.ReadSingle();
 			v.category = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayCategory) (br.ReadUInt16());
+			v.isAnimationPaused = br.ReadBoolean();
 		}
 	}
 	
@@ -867,6 +869,18 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileZeroRotationModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_RemoveMutatorOnUpgradeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel)m[i+start];
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.firstPath = br.ReadInt32();
+			v.secondPath = br.ReadInt32();
+			v.thirdPath = br.ReadInt32();
+			v.paths = (Il2CppStructArray<int>) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1178,6 +1192,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RefreshPierceModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileZeroRotationModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RemoveMutatorOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CycleAnimationModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectWithOffsetsModel>();
@@ -1239,6 +1254,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_RefreshPierceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileZeroRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RemoveMutatorOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ThrowMarkerOffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CycleAnimationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EjectEffectWithOffsetsModel_Fields(br.ReadInt32(), br.ReadInt32());
