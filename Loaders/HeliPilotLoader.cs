@@ -765,6 +765,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.minVelocityCapScale = br.ReadSingle();
 			v.destinationYOffset = br.ReadSingle();
 			v.tiltAngle = br.ReadSingle();
+			v.patrolPursuitRadius = br.ReadSingle();
 		}
 	}
 	
@@ -1047,6 +1048,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
 			v.isDoubleable = br.ReadBoolean();
+			v.distributeBonusIncome = br.ReadBoolean();
 			v.emittedByCashEarnedMultiplier = br.ReadSingle();
 		}
 	}

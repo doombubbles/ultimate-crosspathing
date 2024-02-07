@@ -1221,6 +1221,23 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
+	private void Set_v_TrackTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
+		var turnRateField = t.GetField("turnRate", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel)m[i+start];
+			v.distance = br.ReadSingle();
+			v.trackNewTargets = br.ReadBoolean();
+			v.constantlyAquireNewTarget = br.ReadBoolean();
+			v.maxSeekAngle = br.ReadSingle();
+			v.ignoreSeekAngle = br.ReadBoolean();
+			v.overrideRotation = br.ReadBoolean();
+			v.useLifetimeAsDistance = br.ReadBoolean();
+			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
 	private void Set_v_FireFromAirUnitModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1284,23 +1301,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
 			v.hasMoabTag = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_TrackTargetModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
-		var turnRateField = t.GetField("turnRate", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel)m[i+start];
-			v.distance = br.ReadSingle();
-			v.trackNewTargets = br.ReadBoolean();
-			v.constantlyAquireNewTarget = br.ReadBoolean();
-			v.maxSeekAngle = br.ReadSingle();
-			v.ignoreSeekAngle = br.ReadBoolean();
-			v.overrideRotation = br.ReadBoolean();
-			v.useLifetimeAsDistance = br.ReadBoolean();
-			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1394,15 +1394,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.baseSubTowerIds = (Il2CppStringArray) m[br.ReadInt32()];
 			v.maxNumberOfSubTowers = br.ReadSingle();
 			v.checkForPreExisting = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_EmissionRotationOffBloonDirectionModel_Fields(int start, int count) {
-		Set_v_EmissionBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffBloonDirectionModel)m[i+start];
-			v.useAirUnitPosition = br.ReadBoolean();
-			v.dontSetAfterEmit = br.ReadBoolean();
 		}
 	}
 	
@@ -1536,6 +1527,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FireFromAirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterTargetAngleModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FighterPilotPatternFirstModel>();
@@ -1543,7 +1535,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FighterPilotPatternLastModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FighterPilotPatternStrongModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AccelerateModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstAirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastAirUnitModel>();
@@ -1552,7 +1543,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.FighterMovementModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.SubTowerFilterModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffBloonDirectionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FlagshipAttackSpeedIncreaseModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AddMakeshiftAreaModel>();
 				
@@ -1630,6 +1620,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_SavedSubTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionWithOffsetsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ThrowMarkerOffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireFromAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterTargetAngleModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FighterPilotPatternFirstModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1637,7 +1628,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_FighterPilotPatternLastModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FighterPilotPatternStrongModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterWithTagModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AccelerateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetLastAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1646,7 +1636,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_AirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FighterMovementModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SubTowerFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_EmissionRotationOffBloonDirectionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FlagshipAttackSpeedIncreaseModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddMakeshiftAreaModel_Fields(br.ReadInt32(), br.ReadInt32());
 				

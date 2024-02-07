@@ -894,6 +894,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
 			v.isDoubleable = br.ReadBoolean();
+			v.distributeBonusIncome = br.ReadBoolean();
 			v.emittedByCashEarnedMultiplier = br.ReadSingle();
 		}
 	}

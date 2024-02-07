@@ -990,8 +990,12 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.throwOffsetX = br.ReadSingle();
 			v.throwOffsetY = br.ReadSingle();
 			v.throwOffsetZ = br.ReadSingle();
+			v.throwOffsetSecondX = br.ReadSingle();
+			v.throwOffsetSecondY = br.ReadSingle();
+			v.throwOffsetSecondZ = br.ReadSingle();
 			v.ejectEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.animationState = br.ReadInt32();
+			v.animationStateSecond = br.ReadInt32();
 		}
 	}
 	
@@ -1034,6 +1038,12 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.submergeSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.emergeSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.supportMutatorPriority = br.ReadInt32();
+			v.monkeySubParagonSupportModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.MonkeySubParagonSupportModel) m[br.ReadInt32()];
+			v.abilityCooldownSpeedScaleParagon = br.ReadSingle();
+			v.animateOnSubmerge = br.ReadInt32();
+			v.animateOnExitSubmerge = br.ReadInt32();
+			v.submergeEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.unsubmergeEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 		}
 	}
 	

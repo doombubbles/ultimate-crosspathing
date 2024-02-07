@@ -1204,6 +1204,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.exitAnimationTime = br.ReadSingle();
 			v.exitAnimationState = br.ReadInt32();
 			v.maxMoabGrabTime = br.ReadSingle();
+			v.maxMoabGrabTimeMegalodon = br.ReadSingle();
 			v.moabDamagePerSecond = br.ReadInt32();
 			v.maxMoabDamagePercentPerSecond = br.ReadSingle();
 			v.playRetreatAnimationAt = br.ReadSingle();

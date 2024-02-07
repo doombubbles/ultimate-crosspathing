@@ -751,6 +751,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
 			v.isDoubleable = br.ReadBoolean();
+			v.distributeBonusIncome = br.ReadBoolean();
 			v.emittedByCashEarnedMultiplier = br.ReadSingle();
 		}
 	}

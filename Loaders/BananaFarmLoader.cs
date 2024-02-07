@@ -468,6 +468,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.distributeSalvage = br.ReadBoolean();
 			v.forceCreateProjectile = br.ReadBoolean();
 			v.isDoubleable = br.ReadBoolean();
+			v.distributeBonusIncome = br.ReadBoolean();
 			v.emittedByCashEarnedMultiplier = br.ReadSingle();
 		}
 	}
