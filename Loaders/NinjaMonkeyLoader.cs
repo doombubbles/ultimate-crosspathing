@@ -253,9 +253,16 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_EntityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.EntityBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -397,6 +404,8 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+		var checkCollisionIntervalField = t.GetField("checkCollisionInterval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
@@ -415,7 +424,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.vsBlockerRadius = br.ReadSingle();
 			v.hasDamageModifiers = br.ReadBoolean();
 			v.dontUseCollisionChecker = br.ReadBoolean();
-			v.checkCollisionFrames = br.ReadInt32();
+			checkCollisionIntervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.ignoreNonTargetable = br.ReadBoolean();
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
@@ -528,6 +537,27 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
+	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageModifierForBloonStateModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel)m[i+start];
+			v.bloonState = br.ReadBoolean() ? null : br.ReadString();
+			v.bloonStates = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAdditive = br.ReadSingle();
+			v.mustIncludeAllStates = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
+			v.mustBeModified = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_DisplayModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -602,6 +632,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.dontRefreshDuration = br.ReadBoolean();
 			v.cascadeMutators = br.ReadBoolean();
 			v.removeMutatorIfNotMatching = br.ReadBoolean();
+			v.matchLayersWithDamage = br.ReadBoolean();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.countGlueAchievement = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -996,13 +1027,6 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_DamageModifierModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
 		Set_v_DamageModifierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1243,6 +1267,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetWithinTimeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AlternateProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
@@ -1308,6 +1333,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetWithinTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveBloonModifiersModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForBloonStateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AlternateProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());

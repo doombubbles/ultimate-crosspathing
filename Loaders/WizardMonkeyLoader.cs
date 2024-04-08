@@ -241,9 +241,16 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	}
 	
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_EntityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.EntityBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -395,6 +402,8 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+		var checkCollisionIntervalField = t.GetField("checkCollisionInterval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
@@ -413,7 +422,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.vsBlockerRadius = br.ReadSingle();
 			v.hasDamageModifiers = br.ReadBoolean();
 			v.dontUseCollisionChecker = br.ReadBoolean();
-			v.checkCollisionFrames = br.ReadInt32();
+			checkCollisionIntervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.ignoreNonTargetable = br.ReadBoolean();
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
@@ -1020,6 +1029,20 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_ArcEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
+		var CountField = t.GetField("Count", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
+			v.angle = br.ReadSingle();
+			v.offset = br.ReadSingle();
+			v.useProjectileRotation = br.ReadBoolean();
+			v.useAirUnitRotation = br.ReadBoolean();
+			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -1168,20 +1191,6 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.destroyOnEnd = br.ReadBoolean();
 			v.useAttackTransform = br.ReadBoolean();
 			v.canSave = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_ArcEmissionModel_Fields(int start, int count) {
-		Set_v_EmissionModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
-		var CountField = t.GetField("Count", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
-			v.angle = br.ReadSingle();
-			v.offset = br.ReadSingle();
-			v.useProjectileRotation = br.ReadBoolean();
-			v.useAirUnitRotation = br.ReadBoolean();
-			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
 		}
 	}
 	
@@ -1338,6 +1347,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.PrinceOfDarknessEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SyncTargetPriorityWithSubTowersModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.OverrideCamoDetectionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.AbilityCreateTowerModel>();
@@ -1351,7 +1361,6 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.PathMovementFromScreenCenterPatternModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerCreateTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AlternateProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.SwitchDisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MutateRemoveAllAttacksOnAbilityActivateModel>();
@@ -1416,6 +1425,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_PrinceOfDarknessEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SyncTargetPriorityWithSubTowersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_OverrideCamoDetectionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityCreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1429,7 +1439,6 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_PathMovementFromScreenCenterPatternModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TowerCreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AlternateProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SwitchDisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MutateRemoveAllAttacksOnAbilityActivateModel_Fields(br.ReadInt32(), br.ReadInt32());

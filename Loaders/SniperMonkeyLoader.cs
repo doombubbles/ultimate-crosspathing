@@ -229,9 +229,16 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	}
 	
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_EntityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.EntityBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -383,6 +390,8 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+		var checkCollisionIntervalField = t.GetField("checkCollisionInterval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
@@ -401,7 +410,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.vsBlockerRadius = br.ReadSingle();
 			v.hasDamageModifiers = br.ReadBoolean();
 			v.dontUseCollisionChecker = br.ReadBoolean();
-			v.checkCollisionFrames = br.ReadInt32();
+			checkCollisionIntervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.ignoreNonTargetable = br.ReadBoolean();
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
@@ -929,6 +938,14 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_ActivateAbilitiesOnAbilityModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel)m[i+start];
+			v.abilityToFind = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -943,14 +960,6 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetEliteTargettingModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 			v.percentageThroughMap = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_ActivateAbilitiesOnAbilityModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel)m[i+start];
-			v.abilityToFind = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1114,9 +1123,9 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.OffsetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionBasicModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetEliteTargettingModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TargetSupplierSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
@@ -1176,9 +1185,9 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_CreateTextEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_OffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomPositionBasicModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetEliteTargettingModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSupplierSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());

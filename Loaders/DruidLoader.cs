@@ -123,7 +123,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		var count = arrSetCount;
 		for (var i = 0; i < count; i++) {
 			var arrCount = br.ReadInt32();
-			var arr = new Il2CppAssets.Scripts.Utils.PrefabReference[arrCount];
+			var arr = new Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[arrCount];
 			for (var j = 0; j < arr.Length; j++) {
 				arr[j] = ModContent.CreatePrefabReference(br.ReadString());
 			}
@@ -265,9 +265,16 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	}
 	
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_EntityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.EntityBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -438,6 +445,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+		var checkCollisionIntervalField = t.GetField("checkCollisionInterval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
@@ -456,7 +465,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.vsBlockerRadius = br.ReadSingle();
 			v.hasDamageModifiers = br.ReadBoolean();
 			v.dontUseCollisionChecker = br.ReadBoolean();
-			v.checkCollisionFrames = br.ReadInt32();
+			checkCollisionIntervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.ignoreNonTargetable = br.ReadBoolean();
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
@@ -1015,6 +1024,14 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_ActivateAbilitiesOnAbilityModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel)m[i+start];
+			v.abilityToFind = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_SpiritOfTheForestModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel>();
@@ -1025,17 +1042,17 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.objectToPlace2FarPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3FarPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4FarPath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceFarPath = (Il2CppAssets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceFarPath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.objectToPlace1MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace2MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceMiddlePath = (Il2CppAssets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceMiddlePath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.objectToPlace1ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace2ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4ClosePath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceClosePath = (Il2CppAssets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceClosePath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelFar = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelMiddle = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelClose = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
@@ -1146,7 +1163,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateLightningEffectModel)m[i+start];
 			v.lifeSpan = br.ReadSingle();
-			v.displayPaths = (Il2CppAssets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.displayPaths = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.displayLengths = (Il2CppStructArray<float>) m[br.ReadInt32()];
 		}
 	}
@@ -1402,6 +1419,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CashPerBananaFarmInRangeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeCustomModel>();
@@ -1481,6 +1499,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashPerBananaFarmInRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SpiritOfTheForestModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeCustomModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -123,7 +123,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		var count = arrSetCount;
 		for (var i = 0; i < count; i++) {
 			var arrCount = br.ReadInt32();
-			var arr = new Il2CppAssets.Scripts.Utils.PrefabReference[arrCount];
+			var arr = new Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[arrCount];
 			for (var j = 0; j < arr.Length; j++) {
 				arr[j] = ModContent.CreatePrefabReference(br.ReadString());
 			}
@@ -253,9 +253,16 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	}
 	
 	private void Set_v_TowerBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_EntityBehaviorModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.EntityBehaviorModel)m[i+start];
 		}
 	}
 	
@@ -419,6 +426,8 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	
 	private void Set_v_ProjectileModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
+		var checkCollisionIntervalField = t.GetField("checkCollisionInterval", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel)m[i+start];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
@@ -437,7 +446,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.vsBlockerRadius = br.ReadSingle();
 			v.hasDamageModifiers = br.ReadBoolean();
 			v.dontUseCollisionChecker = br.ReadBoolean();
-			v.checkCollisionFrames = br.ReadInt32();
+			checkCollisionIntervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.ignoreNonTargetable = br.ReadBoolean();
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
@@ -521,7 +530,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SetSpriteFromPierceModel)m[i+start];
-			v.sprites = (Il2CppAssets.Scripts.Utils.PrefabReference[]) m[br.ReadInt32()];
+			v.sprites = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.loopMode = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
