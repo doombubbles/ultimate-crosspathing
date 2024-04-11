@@ -118,18 +118,6 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			m[mIndex++] = arr;
 		}
 	}
-	private void Read_l_String_List() {
-		var arrSetCount = br.ReadInt32();
-		var count = arrSetCount;
-		for (var i = 0; i < count; i++) {
-			var arrCount = br.ReadInt32();
-			var arr = new List<string>(arrCount);
-			for (var j = 0; j < arrCount; j++) {
-				arr.Add( br.ReadBoolean() ? null : br.ReadString() );
-			}
-			m[mIndex++] = arr;
-		}
-	}
 	#endregion
 	
 	#region Read object records
@@ -505,7 +493,8 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.cleanseLead = br.ReadBoolean();
 			v.cleanseFortified = br.ReadBoolean();
 			v.cleanseOnlyIfDamaged = br.ReadBoolean();
-			v.bloonTagExcludeList = (List<System.String>) m[br.ReadInt32()];
+			v.bloonTagExcludeList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.bloonTagExplicitList = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1154,7 +1143,6 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
-				Read_l_String_List();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerModel>();

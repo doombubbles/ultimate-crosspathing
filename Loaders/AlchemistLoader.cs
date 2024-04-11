@@ -130,18 +130,6 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			m[mIndex++] = arr;
 		}
 	}
-	private void Read_l_String_List() {
-		var arrSetCount = br.ReadInt32();
-		var count = arrSetCount;
-		for (var i = 0; i < count; i++) {
-			var arrCount = br.ReadInt32();
-			var arr = new List<string>(arrCount);
-			for (var j = 0; j < arrCount; j++) {
-				arr.Add( br.ReadBoolean() ? null : br.ReadString() );
-			}
-			m[mIndex++] = arr;
-		}
-	}
 	private void Read_String_v_Single_Dictionary() {
 		var arrSetCount = br.ReadInt32();
 		var count = arrSetCount;
@@ -698,7 +686,8 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.cleanseLead = br.ReadBoolean();
 			v.cleanseFortified = br.ReadBoolean();
 			v.cleanseOnlyIfDamaged = br.ReadBoolean();
-			v.bloonTagExcludeList = (List<System.String>) m[br.ReadInt32()];
+			v.bloonTagExcludeList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.bloonTagExplicitList = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1344,7 +1333,6 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorModel>();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
-				Read_l_String_List();
 				Read_String_v_Single_Dictionary();
 				
 				//##  Step 2: create empty objects
