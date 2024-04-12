@@ -1,9 +1,19 @@
+
+<h1 align="center">
+
 <a href="https://github.com/doombubbles/ultimate-crosspathing/releases/latest/download/UltimateCrosspathing.dll">
     <img align="left" alt="Icon" height="90" src="Icon.png">
     <img align="right" alt="Download" height="75" src="https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/BloonsTD6%20Mod%20Helper/Resources/DownloadBtn.png">
 </a>
 
-<h1 align="center">Ultimate Crosspathing</h1>
+Ultimate Crosspathing
+
+[![total downloads](https://img.shields.io/github/downloads/doombubbles/ultimate-crosspathing/total 'total downloads for API')](https://github.com/doombubbles/ultimate-crosspathing/releases)
+[![total issues](https://img.shields.io/github/issues/doombubbles/ultimate-crosspathing 'total issues for API')](https://github.com/doombubbles/ultimate-crosspathing/issues)
+[![code size](https://img.shields.io/github/stars/doombubbles/ultimate-crosspathing 'total stars for API')](https://github.com/doombubbles/ultimate-crosspathing/stargazers)
+[![latest release](https://img.shields.io/github/v/tag/doombubbles/ultimate-crosspathing 'latest release for API')](https://github.com/doombubbles/ultimate-crosspathing/releases/latest)
+
+</h1>
 
 ### An exprimental BTD6 mod enabling more crosspathing combinations through algorithmic generation.
 
