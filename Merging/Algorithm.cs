@@ -25,8 +25,8 @@ namespace UltimateCrosspathing.Merging
 {
     public static class DeepMerging
     {
-        private static readonly HashSet<string> DontMerge = new()
-        {
+        private static readonly HashSet<string> DontMerge =
+        [
             "animation",
             "offsetX",
             "offsetY",
@@ -38,13 +38,13 @@ namespace UltimateCrosspathing.Merging
             "rateFrames",
             "isPowerTower",
             "isGeraldoItem"
-        };
+        ];
 
-        private static readonly HashSet<string> Multiplicative = new()
-        {
+        private static readonly HashSet<string> Multiplicative =
+        [
             "pierce",
             "range"
-        };
+        ];
 
         private static readonly Dictionary<string, string> StringOverrides = new()
         {

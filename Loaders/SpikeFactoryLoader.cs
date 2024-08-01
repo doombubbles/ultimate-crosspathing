@@ -348,6 +348,8 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -1010,6 +1012,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayLifetime = br.ReadSingle();
 			v.displayFullscreen = br.ReadBoolean();
+			v.useBloonPosition = br.ReadBoolean();
 		}
 	}
 	

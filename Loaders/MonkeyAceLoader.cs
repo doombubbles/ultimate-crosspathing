@@ -332,6 +332,8 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -751,6 +753,10 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayScale = br.ReadSingle();
+			v.isAirUnitSelectable = br.ReadBoolean();
+			v.selectableRadius = br.ReadSingle();
+			v.blocksPlacement = br.ReadBoolean();
+			v.blockingRadius = br.ReadSingle();
 		}
 	}
 	

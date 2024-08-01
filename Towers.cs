@@ -33,7 +33,8 @@ namespace UltimateCrosspathing
                 { TowerType.GlueGunner, (2, 0, 1) },
                 { TowerType.WizardMonkey, (0, 2, 1) },
                 { TowerType.BananaFarm, (1, 2, 0) },
-                { TowerType.SpikeFactory, (2, 1, 0) }
+                { TowerType.SpikeFactory, (2, 1, 0) },
+                { TowerType.Mermonkey, (1, 2, 0) }
             };
 
         /// <summary>

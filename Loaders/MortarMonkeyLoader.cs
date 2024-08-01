@@ -313,6 +313,8 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -467,6 +469,8 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.InstantModel)m[i+start];
 			v.destroyIfInvalid = br.ReadBoolean();
+			v.ignoreTargetZ = br.ReadBoolean();
+			v.dontFollowTarget = br.ReadBoolean();
 		}
 	}
 	
@@ -850,6 +854,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RefreshPierceModel)m[i+start];
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isBuffedByRate = br.ReadBoolean();
 		}
 	}
 	

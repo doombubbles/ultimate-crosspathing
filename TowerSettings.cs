@@ -182,6 +182,14 @@ public class TowerSettings : ModSettings
         icon = VanillaSprites.DruidIcon,
         requiresRestart = true
     };
+    
+    public static readonly ModSettingBool MermonkeyEnabled = new(true)
+    {
+        button = true,
+        category = IndividualTowers,
+        icon = "MonkeyIcons[MermonkeyIcon]", // TODO replace with VanillaSprites.MermonkeyIcon
+        requiresRestart = true
+    };
 
     public static readonly ModSettingBool BananaFarmEnabled = new(true)
     {

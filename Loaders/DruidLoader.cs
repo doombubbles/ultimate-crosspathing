@@ -348,6 +348,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -710,6 +712,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.InstantModel)m[i+start];
 			v.destroyIfInvalid = br.ReadBoolean();
+			v.ignoreTargetZ = br.ReadBoolean();
+			v.dontFollowTarget = br.ReadBoolean();
 		}
 	}
 	
@@ -757,6 +761,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RefreshPierceModel)m[i+start];
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isBuffedByRate = br.ReadBoolean();
 		}
 	}
 	
@@ -942,16 +947,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
-	private void Set_v_BonusLivesPerRoundModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel)m[i+start];
-			v.amount = br.ReadInt32();
-			v.lifespan = br.ReadSingle();
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
-		}
-	}
-	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -1010,6 +1005,14 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.rangeIncrease = br.ReadSingle();
 			v.textAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.textLifespan = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_BonusLivesOnAbilityModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.BonusLivesOnAbilityModel)m[i+start];
+			v.amount = br.ReadSingle();
 		}
 	}
 	
@@ -1136,14 +1139,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.lifespan = br.ReadSingle();
 			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.distributeCash = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_BonusLivesOnAbilityModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.BonusLivesOnAbilityModel)m[i+start];
-			v.amount = br.ReadSingle();
 		}
 	}
 	
@@ -1276,6 +1271,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.targetType.id = br.ReadString();
 			v.targetType.actionOnCreate = br.ReadBoolean();
 			v.isBuffedByRate = br.ReadBoolean();
+			v.useRawWeaponRate = br.ReadBoolean();
+			v.onlyEmitOnce = br.ReadBoolean();
 		}
 	}
 	
@@ -1294,6 +1291,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.canFreezeMoabs = br.ReadBoolean();
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
+			v.applyAfterDamage = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1403,16 +1401,15 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DruidVengeanceEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierWrathModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusLivesPerRoundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CashPerBananaFarmInRangeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.BonusLivesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeCustomModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.BonusLivesOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateLightningEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.LightningModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CreateSoundOnProjectileCreatedModel>();
@@ -1483,16 +1480,15 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DruidVengeanceEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierWrathModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BonusLivesPerRoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashPerBananaFarmInRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BonusLivesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SpiritOfTheForestModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeCustomModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BonusLivesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateLightningEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LightningModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCreatedModel_Fields(br.ReadInt32(), br.ReadInt32());

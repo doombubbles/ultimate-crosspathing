@@ -273,4 +273,13 @@ namespace UltimateCrosspathing
 
         public override ModSettingBool Enabled => TowerSettings.WizardMonkeyEnabled;
     }
+
+    public class Mermonkey : LoadInfo
+    {
+#if RELEASE
+        public override ModByteLoader<TowerModel> Loader => GetInstance<MermonkeyLoader>();
+#endif
+
+        public override ModSettingBool Enabled => TowerSettings.MermonkeyEnabled;
+    }
 }

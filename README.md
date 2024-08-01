@@ -1,4 +1,3 @@
-
 <h1 align="center">
 
 <a href="https://github.com/doombubbles/ultimate-crosspathing/releases/latest/download/UltimateCrosspathing.dll">
@@ -15,7 +14,7 @@ Ultimate Crosspathing
 
 </h1>
 
-### An exprimental BTD6 mod enabling more crosspathing combinations through algorithmic generation.
+### A BTD6 mod enabling more crosspathing combinations through algorithmic generation.
 
 <img alt="Screenshot" height="400" src="screenshot.png"/>
 

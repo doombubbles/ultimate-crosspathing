@@ -349,6 +349,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -825,6 +827,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
 			v.distance = br.ReadSingle();
+			v.minDistance = br.ReadSingle();
 			v.maxBounces = br.ReadInt32();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.targetType.id = br.ReadString();
@@ -928,6 +931,13 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.RectangleFootprintModel)m[i+start];
 			v.xWidth = br.ReadSingle();
 			v.yWidth = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_KeepTowerZAtTerrainHeightModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.KeepTowerZAtTerrainHeightModel)m[i+start];
 		}
 	}
 	
@@ -1333,6 +1343,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayScale = br.ReadSingle();
+			v.isAirUnitSelectable = br.ReadBoolean();
+			v.selectableRadius = br.ReadSingle();
+			v.blocksPlacement = br.ReadBoolean();
+			v.blockingRadius = br.ReadSingle();
 		}
 	}
 	
@@ -1432,6 +1446,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.InstantModel)m[i+start];
 			v.destroyIfInvalid = br.ReadBoolean();
+			v.ignoreTargetZ = br.ReadBoolean();
+			v.dontFollowTarget = br.ReadBoolean();
 		}
 	}
 	
@@ -1505,7 +1521,11 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.affectSelf = br.ReadBoolean();
 			v.tierCap = br.ReadInt32();
+			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
+			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.isBuffFromArea = br.ReadBoolean();
+			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAffectOthersInCoop = br.ReadBoolean();
 		}
 	}
 	
@@ -1707,6 +1727,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RotateToDefaultPositionTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RectangleFootprintModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.KeepTowerZAtTerrainHeightModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CheckTempleCanFireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.MonkeyTempleModel>();
@@ -1819,6 +1840,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToDefaultPositionTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RectangleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_KeepTowerZAtTerrainHeightModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CheckTempleCanFireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MonkeyTempleModel_Fields(br.ReadInt32(), br.ReadInt32());

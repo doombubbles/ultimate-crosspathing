@@ -248,6 +248,8 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -461,6 +463,8 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.InstantModel)m[i+start];
 			v.destroyIfInvalid = br.ReadBoolean();
+			v.ignoreTargetZ = br.ReadBoolean();
+			v.dontFollowTarget = br.ReadBoolean();
 		}
 	}
 	
@@ -570,6 +574,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
 			v.distance = br.ReadSingle();
+			v.minDistance = br.ReadSingle();
 			v.maxBounces = br.ReadInt32();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.targetType.id = br.ReadString();
@@ -1044,6 +1049,18 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_CreateProjectileOnContactModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel)m[i+start];
+			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.passOnCollidedWith = br.ReadBoolean();
+			v.dontCreateAtBloon = br.ReadBoolean();
+			v.passOnDirectionToContact = br.ReadBoolean();
+		}
+	}
+	
 	#endregion
 	
 	protected override Il2CppAssets.Scripts.Models.Towers.TowerModel Load(byte[] bytes) {
@@ -1130,6 +1147,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowMaimMoabModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ApplyModModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1192,6 +1210,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowMaimMoabModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
 				LinkArray<Il2CppAssets.Scripts.Models.Model>();

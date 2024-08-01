@@ -448,6 +448,8 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -831,6 +833,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.moabPiercePenalty = br.ReadInt32();
 			v.bfbPiercePenalty = br.ReadInt32();
 			v.zomgPiercePenalty = br.ReadInt32();
+			v.ddtPiercePenalty = br.ReadInt32();
 			v.continuePickingUpBloons = br.ReadBoolean();
 			v.moabSpeedScale = br.ReadSingle();
 			v.enableAdjacentHover = br.ReadBoolean();
@@ -891,6 +894,10 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayScale = br.ReadSingle();
+			v.isAirUnitSelectable = br.ReadBoolean();
+			v.selectableRadius = br.ReadSingle();
+			v.blocksPlacement = br.ReadBoolean();
+			v.blockingRadius = br.ReadSingle();
 		}
 	}
 	
@@ -1242,6 +1249,8 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.targetType.id = br.ReadString();
 			v.targetType.actionOnCreate = br.ReadBoolean();
 			v.isBuffedByRate = br.ReadBoolean();
+			v.useRawWeaponRate = br.ReadBoolean();
+			v.onlyEmitOnce = br.ReadBoolean();
 		}
 	}
 	

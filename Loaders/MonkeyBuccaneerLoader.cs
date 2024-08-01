@@ -304,6 +304,8 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -824,14 +826,39 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
-	private void Set_v_CashbackZoneModel_Fields(int start, int count) {
+	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.isGlobalRange = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_CashbackZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CashbackZoneModel)m[i+start];
 			v.cashbackZoneMultiplier = br.ReadSingle();
 			v.cashbackMaxPercent = br.ReadSingle();
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.maxStacks = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
+			v.buffName = br.ReadBoolean() ? null : br.ReadString();
+			v.iconName = br.ReadBoolean() ? null : br.ReadString();
+			v.stackable = br.ReadBoolean();
+			v.maxStackSize = br.ReadInt32();
+			v.globalRange = br.ReadBoolean();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.dontShowX = br.ReadBoolean();
 		}
 	}
 	
@@ -888,17 +915,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
-	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
-			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
-			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
-			v.maxStackSize = br.ReadInt32();
-			v.isGlobalRange = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_TradeEmpireBuffModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorBuffModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -910,20 +926,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.ceramicDamageBuff = br.ReadInt32();
 			v.moabDamageBuff = br.ReadInt32();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
-		}
-	}
-	
-	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
-			v.buffName = br.ReadBoolean() ? null : br.ReadString();
-			v.iconName = br.ReadBoolean() ? null : br.ReadString();
-			v.stackable = br.ReadBoolean();
-			v.maxStackSize = br.ReadInt32();
-			v.globalRange = br.ReadBoolean();
-			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			v.dontShowX = br.ReadBoolean();
 		}
 	}
 	
@@ -1369,6 +1371,10 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>) m[br.ReadInt32()];
 			v.display = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayScale = br.ReadSingle();
+			v.isAirUnitSelectable = br.ReadBoolean();
+			v.selectableRadius = br.ReadSingle();
+			v.blocksPlacement = br.ReadBoolean();
+			v.blockingRadius = br.ReadSingle();
 		}
 	}
 	
@@ -1504,13 +1510,13 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CashbackZoneModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RotateToDefaultPositionTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffDisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffDisplayOnEmitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionArcRotationOffDisplayDirectionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TradeEmpireBuffModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.GrappleEmissionModel>();
@@ -1597,13 +1603,13 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashbackZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToDefaultPositionTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionRotationOffDisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionRotationOffDisplayOnEmitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionArcRotationOffDisplayDirectionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TradeEmpireBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GrappleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -272,6 +272,8 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -474,7 +476,11 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.affectSelf = br.ReadBoolean();
 			v.tierCap = br.ReadInt32();
+			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
+			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.isBuffFromArea = br.ReadBoolean();
+			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAffectOthersInCoop = br.ReadBoolean();
 		}
 	}
 	
@@ -1051,6 +1057,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
 			v.distance = br.ReadSingle();
+			v.minDistance = br.ReadSingle();
 			v.maxBounces = br.ReadInt32();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.targetType.id = br.ReadString();
@@ -1162,10 +1169,10 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				Read_a_String_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
-				Read_a_String_Array();
 				Read_a_Single_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();

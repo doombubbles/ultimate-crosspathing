@@ -337,6 +337,8 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
 			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
@@ -1014,6 +1016,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel)m[i+start];
 			v.distance = br.ReadSingle();
+			v.minDistance = br.ReadSingle();
 			v.maxBounces = br.ReadInt32();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.targetType.id = br.ReadString();
