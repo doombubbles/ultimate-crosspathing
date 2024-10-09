@@ -730,6 +730,10 @@ namespace UltimateCrosspathing.Merging
 
         private static bool IsType<T>(this Type typ)
         {
+            if (typeof(T).IsEnum)
+            {
+                return typ.FullName.StartsWith(typeof(T).FullName!);
+            }
             var ty = Il2CppType.From(typeof(T));
             return ty.IsAssignableFrom(typ);
         }
