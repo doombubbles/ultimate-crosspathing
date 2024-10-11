@@ -2,6 +2,7 @@
 using Il2CppAssets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
 using HarmonyLib;
 using Il2CppAssets.Scripts.Models.Towers;
+using Il2CppAssets.Scripts.Simulation.Towers.Behaviors.Attack;
 
 namespace UltimateCrosspathing
 {
@@ -78,6 +79,22 @@ namespace UltimateCrosspathing
             if (__instance.bankModel.autoCollect && __instance.Cash >= __instance.bankModel.capacity)
             {
                 __instance.Collect();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fix bug where previous target suppliers that were since destroyed would sometimes still stick around
+    /// </summary>
+    [HarmonyPatch(typeof(Attack), nameof(Attack.UpdateActiveTargetSupplier))]
+    internal static class Attack_UpdateActiveTargetSupplier
+    {
+        [HarmonyPrefix]
+        internal static void Prefix(Attack __instance)
+        {
+            if (__instance.activeTargetSupplier is {IsDestroyed: true})
+            {
+                __instance.activeTargetSupplier = null;
             }
         }
     }
