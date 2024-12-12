@@ -434,7 +434,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -587,7 +587,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -624,7 +624,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -854,7 +854,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
@@ -978,6 +977,9 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -986,7 +988,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -1040,17 +1042,17 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.objectToPlace2FarPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3FarPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4FarPath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceFarPath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceFar = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.objectToPlace1MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace2MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4MiddlePath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceMiddlePath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceMiddle = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.objectToPlace1ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace2ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace3ClosePath = ModContent.CreatePrefabReference(br.ReadString());
 			v.objectToPlace4ClosePath = ModContent.CreatePrefabReference(br.ReadString());
-			v.objectsToPlaceClosePath = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
+			v.objectsToPlaceClose = (Il2CppNinjaKiwi.Common.ResourceUtils.PrefabReference[]) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelFar = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelMiddle = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
 			v.damageOverTimeZoneModelClose = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel) m[br.ReadInt32()];
@@ -1099,6 +1101,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.damage = br.ReadSingle();
 			v.payloadCount = br.ReadInt32();
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			intervalField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.displayPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayLifetime = br.ReadSingle();
@@ -1244,6 +1247,16 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_CollideExtraPierceReductionModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel)m[i+start];
+			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
+			v.extraAmount = br.ReadInt32();
+			v.destroyProjectileIfPierceNotEnough = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_ZeroRotationModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1255,7 +1268,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.fraction = br.ReadSingle();
@@ -1309,16 +1321,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
-	private void Set_v_CollideExtraPierceReductionModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel)m[i+start];
-			v.bloonTag = br.ReadBoolean() ? null : br.ReadString();
-			v.extraAmount = br.ReadInt32();
-			v.destroyProjectileIfPierceNotEnough = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_IgnoreInsufficientPierceModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1345,7 +1347,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Read_a_TargetType_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				Read_a_PrefabReference_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				Read_a_Single_Array();
@@ -1423,12 +1424,12 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.WindModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ZeroRotationModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnIntervalModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.IgnoreInsufficientPierceModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1502,12 +1503,12 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_WindModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CollideExtraPierceReductionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ZeroRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnIntervalModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FreezeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CollideExtraPierceReductionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreInsufficientPierceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
@@ -1516,7 +1517,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				

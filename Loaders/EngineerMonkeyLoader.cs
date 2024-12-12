@@ -411,7 +411,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -441,7 +441,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -600,7 +600,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -800,7 +800,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.fraction = br.ReadSingle();
@@ -940,6 +939,13 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 		}
 	}
 	
+	private void Set_v_DestroyProjectileIfTowerDestroyedModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DestroyProjectileIfTowerDestroyedModel)m[i+start];
+		}
+	}
+	
 	private void Set_v_LimitProjectileModel_Fields(int start, int count) {
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1014,6 +1020,9 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1022,7 +1031,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -1176,6 +1185,18 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.ignoreTerrain = br.ReadBoolean();
 			v.idealDistanceWithinTrack = br.ReadSingle();
 			v.towerSet = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_ParallelEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ParallelEmissionModel)m[i+start];
+			v.spreadLength = br.ReadSingle();
+			v.yOffset = br.ReadSingle();
+			v.count = br.ReadInt32();
+			v.linear = br.ReadBoolean();
+			v.offsetStart = br.ReadSingle();
 		}
 	}
 	
@@ -1409,7 +1430,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				Read_a_Single_Array();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
@@ -1466,6 +1486,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CashModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTextEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.HeightOffsetProjectileModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DestroyProjectileIfTowerDestroyedModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.LimitProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ZeroRotationModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CreateSoundOnProjectileCreatedModel>();
@@ -1484,6 +1505,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnExpireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ParallelEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CloseTargetTrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTypedTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileBlockerCollisionReboundModel>();
@@ -1556,6 +1578,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Set_v_CashModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateTextEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_HeightOffsetProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DestroyProjectileIfTowerDestroyedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LimitProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ZeroRotationModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCreatedModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1574,6 +1597,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Set_v_Il2CppAssets_Scripts_Models_Towers_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomPositionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ParallelEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CloseTargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateTypedTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileBlockerCollisionReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1601,7 +1625,6 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();

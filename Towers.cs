@@ -17,25 +17,24 @@ namespace UltimateCrosspathing
         /// <summary>
         /// Determines which paths takes precedence when determining for visuals and certain other behavior
         /// </summary>
-        public static readonly Dictionary<string, (int, int, int)> PathPriorities =
-            new()
-            {
-                { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
-                { TowerType.TackShooter, (0, 1, 2) },
-                { TowerType.BoomerangMonkey, (1, 2, 0) },
-                { TowerType.BombShooter, (2, 1, 0) },
-                { TowerType.MonkeyBuccaneer, (0, 1, 2) },
-                { TowerType.NinjaMonkey, (0, 2, 1) },
-                { TowerType.SniperMonkey, (1, 2, 0) },
-                { TowerType.DartlingGunner, (2, 0, 1) },
-                { TowerType.IceMonkey, (2, 0, 1) },
-                { TowerType.SuperMonkey, (0, 1, 2) },
-                { TowerType.GlueGunner, (2, 0, 1) },
-                { TowerType.WizardMonkey, (0, 2, 1) },
-                { TowerType.BananaFarm, (1, 2, 0) },
-                { TowerType.SpikeFactory, (2, 1, 0) },
-                { TowerType.Mermonkey, (1, 2, 0) }
-            };
+        public static readonly Dictionary<string, (int, int, int)> PathPriorities = new()
+        {
+            { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
+            { TowerType.TackShooter, (0, 1, 2) },
+            { TowerType.BoomerangMonkey, (1, 2, 0) },
+            { TowerType.BombShooter, (2, 1, 0) },
+            { TowerType.MonkeyBuccaneer, (0, 1, 2) },
+            { TowerType.NinjaMonkey, (0, 2, 1) },
+            { TowerType.SniperMonkey, (1, 2, 0) },
+            { TowerType.DartlingGunner, (2, 0, 1) },
+            { TowerType.IceMonkey, (2, 0, 1) },
+            { TowerType.SuperMonkey, (0, 1, 2) },
+            { TowerType.GlueGunner, (2, 0, 1) },
+            { TowerType.WizardMonkey, (0, 2, 1) },
+            { TowerType.BananaFarm, (1, 2, 0) },
+            { TowerType.SpikeFactory, (2, 1, 0) },
+            { TowerType.Mermonkey, (1, 2, 0) }
+        };
 
         /// <summary>
         /// Some probably overcomplicated logic to determine which different tiers of tower model should be merged together to create the new one
@@ -50,8 +49,8 @@ namespace UltimateCrosspathing
         private static bool GetTiersForMerging(string baseId, int top, int mid, int bot, out int[] leftTiers,
             out int[] rightTiers)
         {
-            var (high, medium, low) = PathPriorities.ContainsKey(baseId)
-                ? PathPriorities[baseId]
+            var (high, medium, low) = PathPriorities.TryGetValue(baseId, out var priority)
+                ? priority
                 : PathPriorities[TowerType.DartMonkey];
             var tiers = new[] { top, mid, bot };
             leftTiers = new[] { top, mid, bot };
@@ -185,7 +184,8 @@ namespace UltimateCrosspathing
                                 var commonAncestor = Game.instance.model.GetTowerWithName(commonAncestorName);
                                 if (commonAncestor != null)
                                 {
-                                    ModHelper.Msg<UltimateCrosspathingMod>($"Creating {newTowerName} from {leftName} and {rightName}");
+                                    ModHelper.Msg<UltimateCrosspathingMod>(
+                                        $"Creating {newTowerName} from {leftName} and {rightName}");
                                     yield return new MergeInfo(result, left, right, commonAncestor);
                                 }
                             }

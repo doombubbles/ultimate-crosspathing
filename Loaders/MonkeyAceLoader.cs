@@ -408,7 +408,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -529,23 +529,6 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
-	private void Set_v_TrackTargetModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
-		var turnRateField = t.GetField("turnRate", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel)m[i+start];
-			v.distance = br.ReadSingle();
-			v.trackNewTargets = br.ReadBoolean();
-			v.constantlyAquireNewTarget = br.ReadBoolean();
-			v.maxSeekAngle = br.ReadSingle();
-			v.ignoreSeekAngle = br.ReadBoolean();
-			v.overrideRotation = br.ReadBoolean();
-			v.useLifetimeAsDistance = br.ReadBoolean();
-			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -566,6 +549,22 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_AdoraTrackTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AdoraTrackTargetModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AdoraTrackTargetModel)m[i+start];
+			v.rotation = br.ReadSingle();
+			v.minimumSpeed = br.ReadSingle();
+			v.maximumSpeed = br.ReadSingle();
+			v.acceleration = br.ReadSingle();
+			v.accelerateInAngle = br.ReadSingle();
+			v.startDeceleratingIfAngleGreaterThan = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
 	private void Set_v_DisplayModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -583,7 +582,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -605,7 +604,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -725,7 +724,6 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.fraction = br.ReadSingle();
@@ -811,6 +809,23 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffBloonDirectionModel)m[i+start];
 			v.useAirUnitPosition = br.ReadBoolean();
 			v.dontSetAfterEmit = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_TrackTargetModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
+		var turnRateField = t.GetField("turnRate", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel)m[i+start];
+			v.distance = br.ReadSingle();
+			v.trackNewTargets = br.ReadBoolean();
+			v.constantlyAquireNewTarget = br.ReadBoolean();
+			v.maxSeekAngle = br.ReadSingle();
+			v.ignoreSeekAngle = br.ReadBoolean();
+			v.overrideRotation = br.ReadBoolean();
+			v.useLifetimeAsDistance = br.ReadBoolean();
+			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -906,6 +921,9 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -914,7 +932,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -933,6 +951,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			v.isSaved = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1093,7 +1112,6 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Read_a_TargetType_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
@@ -1121,8 +1139,8 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AdoraTrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FireFromAirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CirclePatternModel>();
@@ -1142,6 +1160,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PathMovementModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffBloonDirectionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AlternateProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
@@ -1182,8 +1201,8 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TravelStraitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AdoraTrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireFromAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CirclePatternModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1203,6 +1222,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_AirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PathMovementModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionRotationOffBloonDirectionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AlternateProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCollisionModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1229,7 +1249,6 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.TowerBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();

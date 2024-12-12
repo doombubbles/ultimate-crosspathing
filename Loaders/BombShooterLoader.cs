@@ -399,7 +399,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -611,7 +611,6 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.fraction = br.ReadSingle();
@@ -666,7 +665,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -676,7 +675,6 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
@@ -688,7 +686,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -791,6 +789,9 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -799,7 +800,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -818,6 +819,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			v.isSaved = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1009,7 +1011,6 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Read_a_TargetType_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
@@ -1132,7 +1133,6 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				

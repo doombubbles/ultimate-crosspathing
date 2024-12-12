@@ -421,7 +421,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -541,7 +541,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -572,7 +572,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -610,6 +610,50 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel)m[i+start];
 			v.isActive = br.ReadBoolean();
 			v.ignoreBroadPhase = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_SupportModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.SupportModel)m[i+start];
+			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
+			v.isGlobal = br.ReadBoolean();
+			v.isCustomRadius = br.ReadBoolean();
+			v.customRadius = br.ReadSingle();
+			v.appliesToOwningTower = br.ReadBoolean();
+			v.showBuffIcon = br.ReadBoolean();
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.onlyAffectParagon = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_RangeSupportModel_Fields(int start, int count) {
+		Set_v_SupportModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel)m[i+start];
+			v.multiplier = br.ReadSingle();
+			v.additive = br.ReadSingle();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.isUnique = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_TowerFilterModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_FilterInBaseTowerIdModel_Fields(int start, int count) {
+		Set_v_TowerFilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel)m[i+start];
+			v.baseIds = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	
@@ -718,6 +762,9 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -726,7 +773,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -864,8 +911,8 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Read_a_String_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				Read_a_Single_Array();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
@@ -897,6 +944,8 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionBasicModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CentralMarketBuffModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
@@ -942,6 +991,8 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_RandomPositionBasicModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RangeSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CentralMarketBuffModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -965,8 +1016,8 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Mods.ApplyModModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();

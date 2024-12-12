@@ -47,7 +47,7 @@ jobs:
 
       - name: Download Specific MelonLoader
         if: env.MELONLOADER_BRANCH != ''
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: build.yml
@@ -80,7 +80,7 @@ jobs:
 
 
       - name: Download Specific Mod Helper
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         if: env.MOD_HELPER_BRANCH != ''
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

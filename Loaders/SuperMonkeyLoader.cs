@@ -435,7 +435,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.fireWithoutTarget = br.ReadBoolean();
 			v.fireBetweenRounds = br.ReadBoolean();
-			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>) m[br.ReadInt32()];
+			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()];
 			rateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.useAttackPosition = br.ReadBoolean();
 			v.startInCooldown = br.ReadBoolean();
@@ -605,7 +605,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel)m[i+start];
 		}
@@ -631,7 +631,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_AttackBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackBehaviorModel)m[i+start];
 		}
@@ -733,7 +733,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel)m[i+start];
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.lifespan = br.ReadSingle();
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
@@ -769,6 +768,9 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.sharedCooldown = br.ReadBoolean();
 			v.dontShowStacked = br.ReadBoolean();
 			v.animateOnMainAttackDisplay = br.ReadBoolean();
+			v.additionalCharges = br.ReadInt32();
+			v.hideAbilityIfInCooldown = br.ReadBoolean();
+			v.startOffCooldown = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -777,7 +779,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	}
 	
 	private void Set_v_AbilityBehaviorModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
+		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityBehaviorModel)m[i+start];
 		}
@@ -879,6 +881,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.endOnRoundEnd = br.ReadBoolean();
 			v.endOnDefeatScreen = br.ReadBoolean();
 			v.isOneShot = br.ReadBoolean();
+			v.isSaved = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1036,28 +1039,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_PierceTowerMutatorModel_Fields(int start, int count) {
-		Set_v_TowerMutatorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel)m[i+start];
-			v.pierce = br.ReadInt32();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_v_DamageTowerMutatorModel_Fields(int start, int count) {
-		Set_v_TowerMutatorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel)m[i+start];
-			v.damage = br.ReadSingle();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
 	private void Set_v_AddAttackTowerMutatorModel_Fields(int start, int count) {
 		Set_v_TowerMutatorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.AddAttackTowerMutatorModel>();
@@ -1069,17 +1050,24 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_ArcEmissionModel_Fields(int start, int count) {
+	private void Set_v_SingleEmmisionTowardsTargetModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
-		var CountField = t.GetField("Count", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
-			v.angle = br.ReadSingle();
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel)m[i+start];
 			v.offset = br.ReadSingle();
-			v.useProjectileRotation = br.ReadBoolean();
-			v.useAirUnitRotation = br.ReadBoolean();
-			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_FollowPathModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel>();
+		var speedField = t.GetField("speed", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel)m[i+start];
+			v.path = (Il2CppStructArray<Il2CppAssets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
+			v.easePath = (Il2CppStructArray<Il2CppAssets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
+			v.destroyAtEndOfPath = br.ReadBoolean();
+			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1090,6 +1078,13 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel)m[i+start];
 			angleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_UseParentEjectModel_Fields(int start, int count) {
+		Set_v_WeaponBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.UseParentEjectModel)m[i+start];
 		}
 	}
 	
@@ -1160,54 +1155,17 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_SingleEmmisionTowardsTargetModel_Fields(int start, int count) {
+	private void Set_v_ArcEmissionModel_Fields(int start, int count) {
 		Set_v_EmissionModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
+		var CountField = t.GetField("Count", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel)m[i+start];
+			v.angle = br.ReadSingle();
 			v.offset = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_FollowPathModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel>();
-		var speedField = t.GetField("speed", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel)m[i+start];
-			v.path = (Il2CppStructArray<Il2CppAssets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
-			v.easePath = (Il2CppStructArray<Il2CppAssets.Scripts.Simulation.SMath.Vector3>) m[br.ReadInt32()];
-			v.destroyAtEndOfPath = br.ReadBoolean();
-			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_v_UseParentEjectModel_Fields(int start, int count) {
-		Set_v_WeaponBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.UseParentEjectModel)m[i+start];
-		}
-	}
-	
-	private void Set_v_ProjectileSizeTowerMutatorModel_Fields(int start, int count) {
-		Set_v_TowerMutatorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel)m[i+start];
-			v.sizeModifier = br.ReadSingle();
-			v.assetSizeModifier = br.ReadSingle();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-		}
-	}
-	
-	private void Set_v_ProjectileSpeedTowerMutatorModel_Fields(int start, int count) {
-		Set_v_TowerMutatorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel)m[i+start];
-			v.speedModifier = br.ReadSingle();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.useProjectileRotation = br.ReadBoolean();
+			v.useAirUnitRotation = br.ReadBoolean();
+			CountField.SetValue(v,br.ReadInt32().ToIl2Cpp());
 		}
 	}
 	
@@ -1266,6 +1224,28 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.tag = br.ReadBoolean() ? null : br.ReadString();
 			v.inclusive = br.ReadBoolean();
 			v.hasMoabTag = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_DamageTowerMutatorModel_Fields(int start, int count) {
+		Set_v_TowerMutatorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel)m[i+start];
+			v.damage = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_ProjectileSpeedTowerMutatorModel_Fields(int start, int count) {
+		Set_v_TowerMutatorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel)m[i+start];
+			v.speedModifier = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1388,6 +1368,29 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
+	private void Set_v_PierceTowerMutatorModel_Fields(int start, int count) {
+		Set_v_TowerMutatorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel)m[i+start];
+			v.pierce = br.ReadInt32();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_ProjectileSizeTowerMutatorModel_Fields(int start, int count) {
+		Set_v_TowerMutatorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel)m[i+start];
+			v.sizeModifier = br.ReadSingle();
+			v.assetSizeModifier = br.ReadSingle();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
 	private void Set_v_WindChanceTowerMutatorModel_Fields(int start, int count) {
 		Set_v_TowerMutatorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Mutators.WindChanceTowerMutatorModel>();
@@ -1506,6 +1509,18 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
+	private void Set_v_PerRoundCashBonusTowerModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel)m[i+start];
+			v.cashPerRound = br.ReadSingle();
+			v.cashRoundBonusMultiplier = br.ReadSingle();
+			v.lifespan = br.ReadSingle();
+			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
+			v.distributeCash = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1575,18 +1590,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.isUnique = br.ReadBoolean();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.priority = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_PerRoundCashBonusTowerModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel)m[i+start];
-			v.cashPerRound = br.ReadSingle();
-			v.cashRoundBonusMultiplier = br.ReadSingle();
-			v.lifespan = br.ReadSingle();
-			v.assetId = ModContent.CreatePrefabReference(br.ReadString());
-			v.distributeCash = br.ReadBoolean();
 		}
 	}
 	
@@ -1671,7 +1674,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Read_a_TargetType_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Mutators.TowerMutatorModel>();
@@ -1738,11 +1740,11 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CheckTempleCanFireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.MonkeyTempleModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TempleTowerMutatorGroupTierOneModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.AddAttackTowerMutatorModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.UseParentEjectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.UseTowerRangeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFirstModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetLastModel>();
@@ -1750,16 +1752,14 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetStrongModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.Conditions.Behaviors.CheckTempleUnderLevelModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ReloadTimeTowerMutatorModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FollowPathModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.UseParentEjectModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.DamageTowerMutatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSpeedTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerExpireOnParentDestroyedModel>();
@@ -1771,6 +1771,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PathMovementModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.SubTowerFilterModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.PierceTowerMutatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.ProjectileSizeTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.WindChanceTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveMutatorsFromBloonModel>();
@@ -1782,10 +1784,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RandomPositionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.RangeTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.AddBehaviorToTowerMutatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusCashZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PierceSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel>();
@@ -1851,11 +1853,11 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_CheckTempleCanFireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MonkeyTempleModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TempleTowerMutatorGroupTierOneModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PierceTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddAttackTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FollowPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_UseParentEjectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UseTowerRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFirstModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetLastModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1863,16 +1865,14 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_TargetStrongModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CheckTempleUnderLevelModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ReloadTimeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FollowPathModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_UseParentEjectModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ProjectileSizeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ProjectileSpeedTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterAllExceptTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterWithTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ProjectileSpeedTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SavedSubTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TowerExpireOnParentDestroyedModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1884,6 +1884,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_AirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PathMovementModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SubTowerFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PierceTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ProjectileSizeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WindChanceTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RemoveMutatorsFromBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1895,10 +1897,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_RandomPositionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RangeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBehaviorToTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DiscountZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PierceSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RangeSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1912,7 +1914,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
-				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponBehaviorModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Mutators.TowerMutatorModel>();
