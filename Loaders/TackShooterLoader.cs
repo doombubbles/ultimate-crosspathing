@@ -829,6 +829,7 @@ public class TackShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	

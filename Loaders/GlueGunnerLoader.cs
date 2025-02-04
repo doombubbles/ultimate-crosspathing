@@ -535,6 +535,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.countGlueAchievement = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -710,6 +711,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -895,6 +897,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.layers = br.ReadInt32();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.removeAll = br.ReadBoolean();
+			v.bloonPropertiesToRemove = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	

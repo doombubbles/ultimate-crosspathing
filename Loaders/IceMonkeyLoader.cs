@@ -822,6 +822,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -1008,6 +1009,14 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_MultiEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.MultiEmissionModel)m[i+start];
+			v.secondaryProjectileModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_AbilityBehaviorBuffModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1094,6 +1103,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.countGlueAchievement = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -1185,6 +1195,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.layers = br.ReadInt32();
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.removeAll = br.ReadBoolean();
+			v.bloonPropertiesToRemove = (BloonProperties) (br.ReadInt32());
 		}
 	}
 	
@@ -1286,6 +1297,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModifierForTagsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.MultiEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateRateSupportZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInBaseTowerIdModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
@@ -1357,6 +1369,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_FreezeModifierForTagsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MultiEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateRateSupportZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInBaseTowerIdModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -598,6 +598,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -1042,6 +1043,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.countGlueAchievement = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -1075,7 +1077,6 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		Set_v_SupportModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageModifierSupportModel)m[i+start];
-			v.increase = br.ReadSingle();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.isUnique = br.ReadBoolean();
 			v.damageModifierModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel) m[br.ReadInt32()];

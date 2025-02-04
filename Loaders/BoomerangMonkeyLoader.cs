@@ -771,6 +771,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.countGlueAchievement = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -842,6 +843,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -1089,6 +1091,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideOnlyWithTargetModel)m[i+start];
+			v.collideWithFirstIfInvalidTarget = br.ReadBoolean();
 		}
 	}
 	

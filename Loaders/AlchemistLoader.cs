@@ -618,6 +618,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.stackCount = br.ReadInt32();
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
+			v.chance = br.ReadSingle();
 		}
 	}
 	
@@ -681,6 +682,8 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	
 	private void Set_v_IncreaseBloonWorthModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.IncreaseBloonWorthModel>();
+		var durationField = t.GetField("duration", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.IncreaseBloonWorthModel)m[i+start];
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
@@ -688,6 +691,8 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.cashMultiplier = br.ReadSingle();
 			v.filter = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
 			v.charges = br.ReadInt32();
+			v.bloonPropertiesToRemove = (BloonProperties) (br.ReadInt32());
+			durationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
