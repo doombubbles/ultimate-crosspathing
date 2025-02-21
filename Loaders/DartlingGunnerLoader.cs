@@ -516,13 +516,13 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 		}
 	}
 	
-	private void Set_v_TravelStraightSlowdownModel_Fields(int start, int count) {
+	private void Set_v_TravelStraitSlowdownModel_Fields(int start, int count) {
 		Set_v_TravelStraitModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitSlowdownModel>();
 		var slowdownSpeedField = t.GetField("slowdownSpeed", bindFlags);
 		var minSpeedField = t.GetField("minSpeed", bindFlags);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel)m[i+start];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitSlowdownModel)m[i+start];
 			slowdownSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			minSpeedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.maxDistance = br.ReadSingle();
@@ -1004,6 +1004,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	
@@ -1120,7 +1121,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraightSlowdownModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitSlowdownModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
@@ -1179,7 +1180,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_TravelStraightSlowdownModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TravelStraitSlowdownModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_KnockbackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
