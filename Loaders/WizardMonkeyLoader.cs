@@ -223,6 +223,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -351,6 +352,11 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -863,6 +869,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	

@@ -223,6 +223,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -351,6 +352,11 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -604,6 +610,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.randomRotation = br.ReadBoolean();
 			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.useTargetPosition = br.ReadBoolean();
 		}
 	}
 	

@@ -247,6 +247,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -373,6 +374,8 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.StartOfRoundRateBuffModel)m[i+start];
 			v.modifier = br.ReadSingle();
 			durationField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isUnique = br.ReadBoolean();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -386,6 +389,11 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -953,6 +961,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	
@@ -965,6 +974,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.limiter = br.ReadInt32();
 		}
 	}
 	
@@ -995,6 +1005,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.useRotation = br.ReadBoolean();
+			v.useTargetPosition = br.ReadBoolean();
 		}
 	}
 	
@@ -1007,6 +1018,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.fullscreen = (Il2CppAssets.Scripts.Models.Effects.Fullscreen) (br.ReadInt32());
 			v.randomRotation = br.ReadBoolean();
 			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.useTargetPosition = br.ReadBoolean();
 		}
 	}
 	

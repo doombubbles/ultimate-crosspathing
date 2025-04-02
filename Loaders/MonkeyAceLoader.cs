@@ -223,6 +223,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -352,6 +353,11 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -710,6 +716,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.limiter = br.ReadInt32();
 		}
 	}
 	
@@ -963,6 +970,7 @@ public class MonkeyAceLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.useRotation = br.ReadBoolean();
+			v.useTargetPosition = br.ReadBoolean();
 		}
 	}
 	

@@ -235,6 +235,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -468,6 +469,11 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -870,6 +876,9 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.initialYOffset = br.ReadSingle();
 			v.keepPickingBloonsRange = br.ReadSingle();
 			v.noGrabEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.grabRadius = br.ReadSingle();
+			v.grabAmount = br.ReadInt32();
+			v.extraGrabAmount = br.ReadSingle();
 		}
 	}
 	
@@ -1274,6 +1283,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			timeField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.repeat = br.ReadBoolean();
 			v.isBuffedByRate = br.ReadBoolean();
+			v.useTargetPosition = br.ReadBoolean();
 		}
 	}
 	

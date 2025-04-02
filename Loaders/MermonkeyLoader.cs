@@ -235,6 +235,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -396,6 +397,11 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -503,6 +509,15 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel)m[i+start];
 			v.isActive = br.ReadBoolean();
 			v.ignoreBroadPhase = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_FilterBloonIfDamageTypeModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel)m[i+start];
+			v.ifCantHitBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.damageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -944,6 +959,20 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_RemoveBloonModifiersModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel)m[i+start];
+			v.cleanseRegen = br.ReadBoolean();
+			v.cleanseCamo = br.ReadBoolean();
+			v.cleanseLead = br.ReadBoolean();
+			v.cleanseFortified = br.ReadBoolean();
+			v.cleanseOnlyIfDamaged = br.ReadBoolean();
+			v.bloonTagExcludeList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.bloonTagExplicitList = (Il2CppStringArray) m[br.ReadInt32()];
+		}
+	}
+	
 	private void Set_v_LinkDisplayScaleToTowerRangeModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1075,20 +1104,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel)m[i+start];
 			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
 			v.inclusive = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_RemoveBloonModifiersModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel)m[i+start];
-			v.cleanseRegen = br.ReadBoolean();
-			v.cleanseCamo = br.ReadBoolean();
-			v.cleanseLead = br.ReadBoolean();
-			v.cleanseFortified = br.ReadBoolean();
-			v.cleanseOnlyIfDamaged = br.ReadBoolean();
-			v.bloonTagExcludeList = (Il2CppStringArray) m[br.ReadInt32()];
-			v.bloonTagExplicitList = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1294,15 +1309,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.speedMultiplierMax = br.ReadSingle();
 			v.ejectPointRandomness = br.ReadSingle();
 			v.useMainAttackRotation = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_FilterBloonIfDamageTypeModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel)m[i+start];
-			v.ifCantHitBloonProperties = (BloonProperties) (br.ReadInt32());
-			v.damageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1553,6 +1559,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelStraitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
@@ -1585,6 +1592,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DestroyProjectileIfTowerDestroyedModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CollideExtraPierceReductionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.LinkDisplayScaleToTowerRangeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.WeaponRateMinModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.PauseOtherAttacksModel>();
@@ -1598,7 +1606,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SavedSubTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SelectParentOnSelectedModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RemoveBloonModifiersModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreditPopsToParentTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnExpireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CreateEffectOnParentOnAttackModel>();
@@ -1614,7 +1621,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MutateRemoveAllAttacksOnAbilityActivateModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileBlockerCollisionReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointOrDefaultModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CreateEffectWhileAttackingModel>();
@@ -1652,6 +1658,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TravelStraitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1684,6 +1691,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DestroyProjectileIfTowerDestroyedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CollideExtraPierceReductionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RemoveBloonModifiersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LinkDisplayScaleToTowerRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponRateMinModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PauseOtherAttacksModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1697,7 +1705,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_SavedSubTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SelectParentOnSelectedModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterWithTagsModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RemoveBloonModifiersModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreditPopsToParentTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Il2CppAssets_Scripts_Models_Towers_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnParentOnAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1713,7 +1720,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_MutateRemoveAllAttacksOnAbilityActivateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileBlockerCollisionReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSelectedPointOrDefaultModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectWhileAttackingModel_Fields(br.ReadInt32(), br.ReadInt32());

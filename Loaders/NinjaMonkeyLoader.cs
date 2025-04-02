@@ -235,6 +235,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -313,11 +314,21 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_CreateSoundOnSellModel_Fields(int start, int count) {
+	private void Set_v_CreateSoundOnTowerPlaceModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel)m[i+start];
-			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
+			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -345,16 +356,11 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_CreateSoundOnTowerPlaceModel_Fields(int start, int count) {
+	private void Set_v_CreateSoundOnSellModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel)m[i+start];
-			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.waterSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel)m[i+start];
+			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1009,6 +1015,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	
@@ -1257,10 +1264,10 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Effects.EffectModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Audio.SoundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
@@ -1323,10 +1330,10 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());

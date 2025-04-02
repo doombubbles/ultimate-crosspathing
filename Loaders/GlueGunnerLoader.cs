@@ -223,6 +223,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -351,6 +352,11 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -770,6 +776,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	
@@ -931,6 +938,21 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		}
 	}
 	
+	private void Set_v_DamageModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel)m[i+start];
+			v.damage = br.ReadSingle();
+			v.maxDamage = br.ReadSingle();
+			v.distributeToChildren = br.ReadBoolean();
+			v.overrideDistributeBlocker = br.ReadBoolean();
+			v.createPopEffect = br.ReadBoolean();
+			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
+			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
+			v.ignoreImmunityDestroy = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -957,21 +979,6 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.EmitOnDestroyModel)m[i+start];
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
-		}
-	}
-	
-	private void Set_v_DamageModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel)m[i+start];
-			v.damage = br.ReadSingle();
-			v.maxDamage = br.ReadSingle();
-			v.distributeToChildren = br.ReadBoolean();
-			v.overrideDistributeBlocker = br.ReadBoolean();
-			v.createPopEffect = br.ReadBoolean();
-			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
-			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
-			v.ignoreImmunityDestroy = br.ReadBoolean();
 		}
 	}
 	
@@ -1062,9 +1069,9 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.RotateToParentModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.EmitOnDestroyModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1115,9 +1122,9 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToParentModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmitOnDestroyModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name

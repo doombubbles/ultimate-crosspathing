@@ -249,6 +249,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.showBuffs = br.ReadBoolean();
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
+			v.useAirUnitHeight = br.ReadBoolean();
 		}
 	}
 	
@@ -410,6 +411,11 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactDelay = br.ReadSingle();
 		}
 	}
 	
@@ -657,6 +663,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.overrideDistributionBlocker = br.ReadBoolean();
 			v.distributeToChildren = br.ReadBoolean();
 			v.damageModifierModels = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>) m[br.ReadInt32()];
+			v.isFireBased = br.ReadBoolean();
 		}
 	}
 	
@@ -1303,6 +1310,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.limiter = br.ReadInt32();
 		}
 	}
 	
