@@ -380,6 +380,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -482,6 +483,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -927,6 +929,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel)m[i+start];
+			v.cantbePaused = br.ReadBoolean();
 		}
 	}
 	
@@ -944,6 +947,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutationIds = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inverse = br.ReadBoolean();
 		}
 	}
 	
@@ -977,6 +981,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -1075,6 +1080,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());

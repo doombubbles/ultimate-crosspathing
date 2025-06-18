@@ -409,6 +409,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -559,6 +560,8 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.isUnique = br.ReadBoolean();
 			v.behaviors = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>) m[br.ReadInt32()];
+			v.bindRadiusToTowerRange = br.ReadBoolean();
+			v.radiusOffset = br.ReadSingle();
 		}
 	}
 	
@@ -934,6 +937,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -993,6 +997,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.isUnique = br.ReadBoolean();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.priority = br.ReadInt32();
+			v.buffDisplayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1064,6 +1069,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	

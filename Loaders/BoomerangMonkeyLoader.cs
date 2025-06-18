@@ -409,6 +409,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -520,6 +521,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -571,6 +573,19 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.damageAddative = br.ReadSingle();
 			v.mustIncludeAllTags = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_AgeModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
+			v.rounds = br.ReadInt32();
+			v.useRoundTime = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.endOfRoundClearBypassModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -815,19 +830,6 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
-	private void Set_v_AgeModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
-		var lifespanField = t.GetField("lifespan", bindFlags);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel)m[i+start];
-			v.rounds = br.ReadInt32();
-			v.useRoundTime = br.ReadBoolean();
-			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
-			v.endOfRoundClearBypassModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.EndOfRoundClearBypassModel) m[br.ReadInt32()];
-		}
-	}
-	
 	private void Set_v_AddBehaviorToBloonModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorWithOverlayModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
@@ -850,6 +852,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -946,6 +949,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1157,6 +1161,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileFilterModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RotateModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ClearHitBloonsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FlipFollowPathModel>();
@@ -1174,7 +1179,6 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowForBloonModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel>();
@@ -1218,6 +1222,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_ProjectileFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ClearHitBloonsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FlipFollowPathModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1235,7 +1240,6 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowForBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileExpireModel_Fields(br.ReadInt32(), br.ReadInt32());

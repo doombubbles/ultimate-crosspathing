@@ -420,6 +420,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -539,6 +540,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -987,6 +989,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1201,6 +1204,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutationIds = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inverse = br.ReadBoolean();
 		}
 	}
 	

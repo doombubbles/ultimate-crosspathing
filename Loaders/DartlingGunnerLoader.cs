@@ -392,6 +392,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -511,6 +512,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -658,6 +660,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.projectileCount = br.ReadInt32();
 			v.rotateProjectileWithTower = br.ReadBoolean();
 			v.randomRotationCone = br.ReadSingle();
+			v.spreadProjectilesAcrossMarkers = br.ReadBoolean();
 		}
 	}
 	
@@ -838,6 +841,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -972,6 +976,7 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -1051,6 +1056,10 @@ public class DartlingGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.projectileAtEndModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emissionAtEndModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.endProjectileSharesPierce = br.ReadBoolean();
+			v.effectAtCollision = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.maxCollisionEffects = br.ReadInt32();
+			v.emitFromTarget = br.ReadBoolean();
+			v.emitFromTargetLength = br.ReadSingle();
 		}
 	}
 	

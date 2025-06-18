@@ -421,6 +421,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -538,6 +539,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -777,6 +779,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -820,6 +823,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.projectileCount = br.ReadInt32();
 			v.rotateProjectileWithTower = br.ReadBoolean();
 			v.randomRotationCone = br.ReadSingle();
+			v.spreadProjectilesAcrossMarkers = br.ReadBoolean();
 		}
 	}
 	
@@ -1179,6 +1183,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel)m[i+start];
+			v.cantbePaused = br.ReadBoolean();
 		}
 	}
 	
@@ -1596,6 +1601,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.isUnique = br.ReadBoolean();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.priority = br.ReadInt32();
+			v.buffDisplayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
 		}
 	}
 	

@@ -385,6 +385,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -592,6 +593,16 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		}
 	}
 	
+	private void Set_v_AddBehaviorModifierForTagModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
+			v.mutatorMultiplier = br.ReadSingle();
+		}
+	}
+	
 	private void Set_v_DisplayModel_Fields(int start, int count) {
 		Set_v_Model_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -718,6 +729,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -845,6 +857,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -950,6 +963,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -979,6 +993,9 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.EmitOnDestroyModel)m[i+start];
 			v.projectile = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.sound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.sound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 		}
 	}
 	
@@ -1046,6 +1063,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileCollisionModel>();
@@ -1099,6 +1117,7 @@ public class GlueGunnerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_SlowModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AddBehaviorModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnProjectileCollisionModel_Fields(br.ReadInt32(), br.ReadInt32());

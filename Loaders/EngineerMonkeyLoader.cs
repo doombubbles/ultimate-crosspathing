@@ -397,6 +397,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -443,6 +444,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.projectileCount = br.ReadInt32();
 			v.rotateProjectileWithTower = br.ReadBoolean();
 			v.randomRotationCone = br.ReadSingle();
+			v.spreadProjectilesAcrossMarkers = br.ReadBoolean();
 		}
 	}
 	
@@ -530,6 +532,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -1032,6 +1035,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1062,6 +1066,9 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
 			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
 			v.tierBasedDurationMultiplier = (Il2CppStructArray<float>) m[br.ReadInt32()];
+			v.isParagonMode = br.ReadBoolean();
+			v.paragonZoneRange = br.ReadSingle();
+			v.paragonZoneLifespanFrames = br.ReadInt32();
 		}
 	}
 	
@@ -1281,6 +1288,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutationIds = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inverse = br.ReadBoolean();
 		}
 	}
 	

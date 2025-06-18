@@ -409,6 +409,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -542,6 +543,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -595,6 +597,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -972,6 +975,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1015,6 +1019,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel)m[i+start];
+			v.cantbePaused = br.ReadBoolean();
 		}
 	}
 	
@@ -1123,12 +1128,12 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
-	private void Set_v_FilterOutTagModel_Fields(int start, int count) {
+	private void Set_v_FilterWithTagsModel_Fields(int start, int count) {
 		Set_v_FilterModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.disableWhenSupportMutatorIDs = (Il2CppStringArray) m[br.ReadInt32()];
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel)m[i+start];
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inclusive = br.ReadBoolean();
 		}
 	}
 	
@@ -1239,6 +1244,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.projectileCount = br.ReadInt32();
 			v.rotateProjectileWithTower = br.ReadBoolean();
 			v.randomRotationCone = br.ReadSingle();
+			v.spreadProjectilesAcrossMarkers = br.ReadBoolean();
 		}
 	}
 	
@@ -1550,7 +1556,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateSoundOnProjectileExpireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.LinearTravelModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetGrapplableModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ParallelEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SyncTargetPriorityWithSubTowersModel>();
@@ -1643,7 +1649,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_CreateSoundOnProjectileExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LinearTravelModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetGrapplableModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterWithTagsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ParallelEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SyncTargetPriorityWithSubTowersModel_Fields(br.ReadInt32(), br.ReadInt32());

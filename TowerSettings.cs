@@ -87,6 +87,14 @@ public class TowerSettings : ModSettings
         requiresRestart = true
     };
 
+    public static readonly ModSettingBool DesperadoEnabled = new(true)
+    {
+        button = true,
+        category = IndividualTowers,
+        icon = VanillaSprites.DesperadoIcon,
+        requiresRestart = true
+    };
+
     public static readonly ModSettingBool SniperMonkeyEnabled = new(true)
     {
         button = true,
@@ -187,7 +195,7 @@ public class TowerSettings : ModSettings
     {
         button = true,
         category = IndividualTowers,
-        icon = "MonkeyIcons[MermonkeyIcon]", // TODO replace with VanillaSprites.MermonkeyIcon
+        icon = VanillaSprites.MermonkeyIcon,
         requiresRestart = true
     };
 

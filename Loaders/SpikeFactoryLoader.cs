@@ -422,6 +422,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -518,6 +519,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -709,17 +711,6 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
-	private void Set_v_FarTargetTrackModel_Fields(int start, int count) {
-		Set_v_TargetSupplierModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FarTargetTrackModel)m[i+start];
-			v.radius = br.ReadSingle();
-			v.isSelectable = br.ReadBoolean();
-			v.maxOffset = br.ReadSingle();
-			v.donutRadius = br.ReadSingle();
-		}
-	}
-	
 	private void Set_v_SmartTargetTrackModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -754,6 +745,33 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		}
 	}
 	
+	private void Set_v_TargetSelectedPointModel_Fields(int start, int count) {
+		Set_v_TargetSupplierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel)m[i+start];
+			v.isSelectable = br.ReadBoolean();
+			v.display = ModContent.CreatePrefabReference(br.ReadString());
+			v.scale = br.ReadSingle();
+			v.customName = br.ReadBoolean() ? null : br.ReadString();
+			v.lockToInsideTowerRange = br.ReadBoolean();
+			v.startWithClosestTrackPoint = br.ReadBoolean();
+			v.displayInvalid = ModContent.CreatePrefabReference(br.ReadString());
+			v.alwaysShowTarget = br.ReadBoolean();
+			v.projectileToExpireOnTargetChangeModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.useTerrainHeight = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_AutoTargetTrackModel_Fields(int start, int count) {
+		Set_v_TargetSupplierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AutoTargetTrackModel)m[i+start];
+			v.radius = br.ReadSingle();
+			v.isSelectable = br.ReadBoolean();
+			v.maxOffset = br.ReadSingle();
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -782,6 +800,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -923,6 +942,7 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -1098,10 +1118,11 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.RandomRotationWeaponBehaviorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetTrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CloseTargetTrackModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.FarTargetTrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.SmartTargetTrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackFilterModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterInvisibleModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AutoTargetTrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeRandomModel>();
@@ -1153,10 +1174,11 @@ public class SpikeFactoryLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_RandomRotationWeaponBehaviorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CloseTargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FarTargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SmartTargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackFilterModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInvisibleModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_TargetSelectedPointModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AutoTargetTrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AgeRandomModel_Fields(br.ReadInt32(), br.ReadInt32());

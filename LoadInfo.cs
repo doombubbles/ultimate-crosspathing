@@ -157,6 +157,15 @@ namespace UltimateCrosspathing
         public override ModSettingBool Enabled => TowerSettings.GlueGunnerEnabled;
     }
 
+    public class Desperado : LoadInfo
+    {
+#if RELEASE
+        public override ModByteLoader<TowerModel> Loader => GetInstance<DesperadoLoader>();
+#endif
+
+        public override ModSettingBool Enabled => TowerSettings.DesperadoEnabled;
+    }
+
     public class HeliPilot : LoadInfo
     {
 #if RELEASE

@@ -444,6 +444,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.framesBeforeRetarget = br.ReadInt32();
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
+			v.drawRangeCircle = br.ReadBoolean();
 		}
 	}
 	
@@ -584,6 +585,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.immuneBloonProperties = (BloonProperties) (br.ReadInt32());
 			v.immuneBloonPropertiesOriginal = (BloonProperties) (br.ReadInt32());
 			v.ignoreImmunityDestroy = br.ReadBoolean();
+			v.ignoreDamageMultipliers = br.ReadBoolean();
 		}
 	}
 	
@@ -625,6 +627,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.dontCopy = br.ReadBoolean();
 			v.parentDamageModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel) m[br.ReadInt32()];
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -941,6 +944,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterMutatedTargetModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutationIds = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inverse = br.ReadBoolean();
 		}
 	}
 	
@@ -1041,6 +1045,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.additionalCharges = br.ReadInt32();
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
+			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
