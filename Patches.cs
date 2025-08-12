@@ -70,6 +70,19 @@ namespace UltimateCrosspathing
         }
     }
 
+    /// <summary>
+    /// Fix bug with max tiers not being checked on certain UI updates to the tower selection menu
+    /// </summary>
+    [HarmonyPatch(typeof(UpgradeObject), nameof(UpgradeObject.LoadUpgrades))]
+    internal static class UpgradeObject_LoadUpgrades
+    {
+        [HarmonyPostfix]
+        internal static void Postfix(UpgradeObject __instance)
+        {
+            __instance.UpdateVisuals(__instance.path, false);
+        }
+    }
+
     [HarmonyPatch(typeof(Bank), nameof(Bank.Cash), MethodType.Setter)]
     internal class Bank_Cash
     {
