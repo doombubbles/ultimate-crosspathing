@@ -965,6 +965,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1056,6 +1057,7 @@ public class MortarMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	

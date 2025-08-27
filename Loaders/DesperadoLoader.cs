@@ -369,8 +369,16 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
-	private void Set_v_VigilanteTowerBehaviorModel_Fields(int start, int count) {
+	private void Set_v_TowerBehaviorWithAbilityCooldownScaleModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.TowerBehaviorWithAbilityCooldownScaleModel)m[i+start];
+			v.abilityCooldownScale = br.ReadSingle();
+		}
+	}
+	
+	private void Set_v_VigilanteTowerBehaviorModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorWithAbilityCooldownScaleModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.VigilanteTowerBehaviorModel)m[i+start];
 			v.loseLifeAttackSpeedBuff = br.ReadSingle();
@@ -679,6 +687,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetDesperadoModel)m[i+start];
 			v.isSelectable = br.ReadBoolean();
 			v.canTargetMarked = br.ReadBoolean();
+			v.canPrioritiseCamo = br.ReadBoolean();
 		}
 	}
 	
@@ -869,6 +878,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());

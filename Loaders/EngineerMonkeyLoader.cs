@@ -753,6 +753,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -912,6 +913,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isCamoPickup = br.ReadBoolean();
 		}
 	}
 	
@@ -1036,6 +1038,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());

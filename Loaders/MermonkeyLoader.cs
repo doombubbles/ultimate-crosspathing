@@ -1125,13 +1125,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
-	private void Set_v_FilterOfftrackModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterOfftrackModel)m[i+start];
-		}
-	}
-	
 	private void Set_v_SupportModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1248,6 +1241,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1380,6 +1374,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			multiplierField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.chance = br.ReadSingle();
+			v.dontRemoveOnBloonDegrade = br.ReadBoolean();
 		}
 	}
 	
@@ -1603,7 +1598,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnExpireModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CreateEffectOnParentOnAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DrawSubtowerRangeCircleModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOfftrackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInSetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AbilityCooldownScaleSupportModel>();
@@ -1701,7 +1695,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_Il2CppAssets_Scripts_Models_Towers_Behaviors_CreateEffectOnExpireModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnParentOnAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DrawSubtowerRangeCircleModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterOfftrackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RangeSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterInSetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityCooldownScaleSupportModel_Fields(br.ReadInt32(), br.ReadInt32());

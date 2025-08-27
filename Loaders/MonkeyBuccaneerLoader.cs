@@ -863,6 +863,8 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.cashbackMaxPercent = br.ReadSingle();
 			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.maxStacks = br.ReadInt32();
+			v.baseIds = br.ReadBoolean() ? null : br.ReadString();
+			v.baseIdsArray = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	
@@ -976,6 +978,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());

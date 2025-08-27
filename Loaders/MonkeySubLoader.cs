@@ -699,6 +699,8 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.isSelectable = br.ReadBoolean();
 			v.isSharedRangeEnabled = br.ReadBoolean();
 			v.isGlobalRange = br.ReadBoolean();
+			v.isGettingRangeFromSpecificTower = br.ReadBoolean();
+			v.specificTowerType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -709,6 +711,8 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.isSelectable = br.ReadBoolean();
 			v.isSharedRangeEnabled = br.ReadBoolean();
 			v.isGlobalRange = br.ReadBoolean();
+			v.isGettingRangeFromSpecificTower = br.ReadBoolean();
+			v.specificTowerType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -719,6 +723,8 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.isSelectable = br.ReadBoolean();
 			v.isSharedRangeEnabled = br.ReadBoolean();
 			v.isGlobalRange = br.ReadBoolean();
+			v.isGettingRangeFromSpecificTower = br.ReadBoolean();
+			v.specificTowerType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -729,6 +735,8 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.isSelectable = br.ReadBoolean();
 			v.isSharedRangeEnabled = br.ReadBoolean();
 			v.isGlobalRange = br.ReadBoolean();
+			v.isGettingRangeFromSpecificTower = br.ReadBoolean();
+			v.specificTowerType = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -948,6 +956,7 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());

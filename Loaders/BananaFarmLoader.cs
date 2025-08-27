@@ -681,12 +681,15 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CollectCashZoneModel)m[i+start];
 			v.attractRange = br.ReadSingle();
 			v.collectRange = br.ReadSingle();
-			v.speed = br.ReadSingle();
+			v.lerpMultiplier = br.ReadSingle();
 			v.towerFilter = br.ReadBoolean() ? null : br.ReadString();
 			v.useTowerRange = br.ReadBoolean();
 			v.countCollectedCash = br.ReadBoolean();
 			v.animateTower = br.ReadBoolean();
 			v.rotate = br.ReadBoolean();
+			v.onlyAttractsCamo = br.ReadBoolean();
+			v.minEmitWaitTime = br.ReadSingle();
+			v.minEmitWaitTimeFrames = br.ReadInt32();
 		}
 	}
 	
@@ -729,6 +732,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -789,6 +793,7 @@ public class BananaFarmLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isCamoPickup = br.ReadBoolean();
 		}
 	}
 	

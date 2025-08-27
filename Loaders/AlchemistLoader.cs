@@ -1046,6 +1046,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1210,6 +1211,14 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_FilterAllExceptTargetModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel)m[i+start];
+			v.cantbePaused = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_AddAcidicMixtureToProjectileModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1239,6 +1248,13 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		Set_v_WeaponBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AcidicMixtureModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DestroyIfTargetLostModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DestroyIfTargetLostModel)m[i+start];
 		}
 	}
 	
@@ -1431,9 +1447,11 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.IncreaseRangeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MorphTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityEndModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllExceptTargetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddAcidicMixtureToProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AcidicMixtureCheckModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.AcidicMixtureModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DestroyIfTargetLostModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetFriendlyModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBerserkerBrewToProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.BerserkerBrewModel>();
@@ -1508,9 +1526,11 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_IncreaseRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MorphTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityEndModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterAllExceptTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddAcidicMixtureToProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AcidicMixtureCheckModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AcidicMixtureModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DestroyIfTargetLostModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetFriendlyModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBerserkerBrewToProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BerserkerBrewModel_Fields(br.ReadInt32(), br.ReadInt32());

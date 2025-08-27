@@ -798,6 +798,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -904,6 +905,7 @@ public class SniperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.PickupModel)m[i+start];
 			v.collectRadius = br.ReadSingle();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.isCamoPickup = br.ReadBoolean();
 		}
 	}
 	

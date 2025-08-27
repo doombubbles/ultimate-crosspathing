@@ -780,6 +780,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1550,14 +1551,15 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.discountMultiplier = br.ReadSingle();
 			v.stackLimit = br.ReadInt32();
 			v.stackName = br.ReadBoolean() ? null : br.ReadString();
-			v.groupName = br.ReadBoolean() ? null : br.ReadString();
 			v.affectSelf = br.ReadBoolean();
 			v.tierCap = br.ReadInt32();
+			v.tierMin = br.ReadInt32();
 			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
 			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.isBuffFromArea = br.ReadBoolean();
 			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
 			v.dontAffectOthersInCoop = br.ReadBoolean();
+			v.isGlobal = br.ReadBoolean();
 		}
 	}
 	

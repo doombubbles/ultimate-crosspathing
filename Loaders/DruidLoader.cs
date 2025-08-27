@@ -990,6 +990,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.hideAbilityIfInCooldown = br.ReadBoolean();
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
+			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1333,6 +1334,14 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
+			v.changeRotation = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_IgnoreInsufficientPierceModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1442,6 +1451,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnIntervalModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.IgnoreInsufficientPierceModel>();
 				
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1521,6 +1531,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_CreateProjectileOnIntervalModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FreezeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_IgnoreInsufficientPierceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				
 				//##  Step 4: link object collections e.g Product[]. Note: requires object data e.g dictionary<string, value> where string = model.name
