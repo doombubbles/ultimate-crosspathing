@@ -6,6 +6,9 @@ using Il2CppAssets.Scripts.Simulation.Towers.Behaviors.Attack;
 
 namespace UltimateCrosspathing;
 
+/// <summary>
+/// Show correct upgrade pips for towers
+/// </summary>
 [HarmonyPatch(typeof(UpgradeObject), nameof(UpgradeObject.CheckBlockedPath))]
 internal class UpgradeObject_CheckBlockedPath
 {
@@ -26,6 +29,32 @@ internal class UpgradeObject_CheckBlockedPath
     }
 }
 
+/// <summary>
+/// Show correct upgrade pips for powers pro
+/// </summary>
+[HarmonyPatch(typeof(PowerProUpgradeObject), nameof(PowerProUpgradeObject.CheckBlockedPath))]
+internal static class PowerProUpgradeObject_CheckBlockedPath
+{
+    [HarmonyPostfix]
+    internal static void Postfix(PowerProUpgradeObject __instance, ref int __result, ref bool __runOriginal)
+    {
+        if (__instance.tts == null || !LoadInfo.ShouldWork(__instance.tts.Def.baseId) || !__runOriginal) return;
+
+        var tier = __instance.tier;
+        var tiers = __instance.tts.Def.tiers;
+        var sum = tiers.Sum();
+        var remainingTiers = Settings.MaxTiersPowersPro - sum;
+        __result = tier + remainingTiers;
+        if (__result > 3)
+        {
+            __result = 3;
+        }
+    }
+}
+
+/// <summary>
+/// Make sure paths aren't closed for towers
+/// </summary>
 [HarmonyPatch(typeof(TowerSelectionMenu), nameof(TowerSelectionMenu.IsUpgradePathClosed))]
 internal class TowerSelectionMenu_IsUpgradePathClosed
 {
@@ -40,33 +69,31 @@ internal class TowerSelectionMenu_IsUpgradePathClosed
                                 towerModel.tiers[path] == 0;
         if (LoadInfo.ShouldWork(towerModel.baseId) && !blockBeastHandler)
         {
-            __result &= towerModel.tiers.Sum() >= Settings.MaxTiers;
+            __result &= towerModel.tiers.Sum() >= (__instance.powerProDetails.activeSelf
+                                                       ? Settings.MaxTiersPowersPro
+                                                       : Settings.MaxTiers);
         }
     }
 }
 
 /// <summary>
-/// Fix v38.1 inlining of TowerSelectionMenu.IsUpgradePathClosed method
+/// Make sure paths aren't closed for powers pro
 /// </summary>
-[HarmonyPatch(typeof(UpgradeObject), nameof(UpgradeObject.UpdateVisuals))]
-internal static class UpgradeObject_UpdateVisuals
+[HarmonyPatch(typeof(PowerProUpgradeObject), nameof(PowerProUpgradeObject.CheckLocked))]
+internal static class PowerProUpgradeObject_CheckLocked
 {
-    [HarmonyPrefix]
-    private static bool Prefix(UpgradeObject __instance, int path, bool upgradeClicked)
+    [HarmonyPostfix]
+    internal static void Postfix(PowerProUpgradeObject __instance, ref bool __runOriginal)
     {
-        if (__instance.towerSelectionMenu.IsUpgradePathClosed(path))
+        if (__instance.tts == null || !__runOriginal) return;
+
+        var towerModel = __instance.tts.Def;
+        if (LoadInfo.ShouldWork(towerModel.baseId))
         {
-            __instance.upgradeButton.SetUpgradeModel(null);
+            var locked = __instance.locked.activeSelf;
+            locked &= towerModel.tiers.Sum() >= Settings.MaxTiersPowersPro;
+            __instance.locked.SetActive(locked);
         }
-
-        __instance.CheckLocked();
-        var maxTier = __instance.CheckBlockedPath();
-        var maxTierRestricted = __instance.CheckRestrictedPath();
-        __instance.SetTier(__instance.tier, maxTier, maxTierRestricted);
-        __instance.currentUpgrade.UpdateVisuals();
-        __instance.upgradeButton.UpdateVisuals(path, __instance.tier, upgradeClicked);
-
-        return false;
     }
 }
 
@@ -83,6 +110,9 @@ internal static class UpgradeObject_LoadUpgrades
     }
 }
 
+/// <summary>
+/// Auto collect banks quicker
+/// </summary>
 [HarmonyPatch(typeof(Bank), nameof(Bank.Cash), MethodType.Setter)]
 internal class Bank_Cash
 {

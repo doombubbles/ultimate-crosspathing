@@ -2,11 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Il2CppAssets.Scripts.Models.Towers;
 using Il2CppAssets.Scripts.Unity;
-using BTD_Mod_Helper;
-using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Helpers;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
@@ -15,7 +12,7 @@ namespace UltimateCrosspathing.Tasks;
 
 public class GenerateTask : ModLoadTask
 {
-    public static List<TowerModel> TowerModels { get; } = new();
+    public static List<TowerModel> TowerModels { get; } = [];
 
     public override string DisplayName => "Generating Crosspaths Ultimately...";
 
@@ -48,7 +45,6 @@ public class GenerateTask : ModLoadTask
 
         var enabledTowers = loadInfos
             .Where(info => info.Enabled)
-            .Select(info => info.Name)
             .ToArray();
 
         while (true)

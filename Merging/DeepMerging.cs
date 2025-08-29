@@ -664,7 +664,9 @@ public static class DeepMerging
         if (leftModel.IsType<AbilityModel>(out var leftAbility) &&
             rightModel.IsType<AbilityModel>(out var rightAbility))
         {
-            return leftAbility.displayName == rightAbility.displayName;
+            return leftAbility.displayName == rightAbility.displayName ||
+                   leftAbility.displayName.StartsWith("Super Monkey Beacon") &&
+                   rightAbility.displayName.StartsWith("Super Monkey Beacon");
         }
 
         if (leftModel.IsType<TowerBehaviorModel>() && rightModel.IsType<TowerBehaviorModel>() &&
