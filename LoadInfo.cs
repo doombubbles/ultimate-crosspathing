@@ -12,28 +12,28 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UltimateCrosspathing.Tasks;
 #endif
 
-namespace UltimateCrosspathing
+namespace UltimateCrosspathing;
+
+public abstract class LoadInfo : ModContent
 {
-    public abstract class LoadInfo : ModContent
+    private static readonly Dictionary<string, LoadInfo> Cache = new();
+
+    public virtual ModByteLoader<TowerModel> Loader { get; }
+
+    public abstract ModSettingBool Enabled { get; }
+
+    public bool? loaded = null;
+
+    public sealed override void Register()
     {
-        private static readonly Dictionary<string, LoadInfo> Cache = new();
+        Cache[Name] = this;
+    }
 
-        public virtual ModByteLoader<TowerModel> Loader { get; }
+    public static bool TryFind(string baseId, out LoadInfo loadInfo) => Cache.TryGetValue(baseId, out loadInfo);
 
-        public abstract ModSettingBool Enabled { get; }
-
-        public bool? loaded = null;
-
-        public sealed override void Register()
-        {
-            Cache[Name] = this;
-        }
-
-        public static bool TryFind(string baseId, out LoadInfo loadInfo) => Cache.TryGetValue(baseId, out loadInfo);
-
-        public static bool ShouldWork(string baseId) => TryFind(baseId, out var loadInfo)
-            ? loadInfo.Enabled && loadInfo.loaded != false
-            : Find<ModTower>(baseId) != null;
+    public static bool ShouldWork(string baseId) => TryFind(baseId, out var loadInfo)
+                                                        ? loadInfo.Enabled && loadInfo.loaded != false
+                                                        : Find<ModTower>(baseId) != null;
 
 #if DEBUG
         public static void ExportTowers()
@@ -65,230 +65,229 @@ namespace UltimateCrosspathing
             );
         }
 #endif
-    }
+}
 
-    public class Alchemist : LoadInfo
-    {
+public class Alchemist : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<AlchemistLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<AlchemistLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.AlchemistEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.AlchemistEnabled;
+}
 
-    public class BananaFarm : LoadInfo
-    {
+public class BananaFarm : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<BananaFarmLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<BananaFarmLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.BananaFarmEnabled;
-    }
-    
-    public class BeastHandler : LoadInfo
-    {
+    public override ModSettingBool Enabled => TowerSettings.BananaFarmEnabled;
+}
+
+public class BeastHandler : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<BeastHandlerLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<BeastHandlerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.BeastHandlerEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.BeastHandlerEnabled;
+}
 
-    public class BombShooter : LoadInfo
-    {
+public class BombShooter : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<BombShooterLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<BombShooterLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.BombShooterEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.BombShooterEnabled;
+}
 
-    public class BoomerangMonkey : LoadInfo
-    {
+public class BoomerangMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<BoomerangMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<BoomerangMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.BoomerangMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.BoomerangMonkeyEnabled;
+}
 
-    public class DartlingGunner : LoadInfo
-    {
+public class DartlingGunner : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<DartlingGunnerLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<DartlingGunnerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.DartlingGunnerEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.DartlingGunnerEnabled;
+}
 
-    public class DartMonkey : LoadInfo
-    {
+public class DartMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<DartMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<DartMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.DartMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.DartMonkeyEnabled;
+}
 
-    public class Druid : LoadInfo
-    {
+public class Druid : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<DruidLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<DruidLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.DruidEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.DruidEnabled;
+}
 
-    public class EngineerMonkey : LoadInfo
-    {
+public class EngineerMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<EngineerMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<EngineerMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.EngineerMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.EngineerMonkeyEnabled;
+}
 
-    public class GlueGunner : LoadInfo
-    {
+public class GlueGunner : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<GlueGunnerLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<GlueGunnerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.GlueGunnerEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.GlueGunnerEnabled;
+}
 
-    public class Desperado : LoadInfo
-    {
+public class Desperado : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<DesperadoLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<DesperadoLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.DesperadoEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.DesperadoEnabled;
+}
 
-    public class HeliPilot : LoadInfo
-    {
+public class HeliPilot : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<HeliPilotLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<HeliPilotLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.HeliPilotEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.HeliPilotEnabled;
+}
 
-    public class IceMonkey : LoadInfo
-    {
+public class IceMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<IceMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<IceMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.IceMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.IceMonkeyEnabled;
+}
 
-    public class MonkeyAce : LoadInfo
-    {
+public class MonkeyAce : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyAceLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyAceLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MonkeyAceEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MonkeyAceEnabled;
+}
 
-    public class MonkeyBuccaneer : LoadInfo
-    {
+public class MonkeyBuccaneer : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyBuccaneerLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyBuccaneerLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MonkeyBuccaneerEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MonkeyBuccaneerEnabled;
+}
 
-    public class MonkeySub : LoadInfo
-    {
+public class MonkeySub : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeySubLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeySubLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MonkeySubEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MonkeySubEnabled;
+}
 
-    public class MonkeyVillage : LoadInfo
-    {
+public class MonkeyVillage : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyVillageLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyVillageLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MonkeyVillageEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MonkeyVillageEnabled;
+}
 
-    public class MortarMonkey : LoadInfo
-    {
+public class MortarMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MortarMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MortarMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MortarMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MortarMonkeyEnabled;
+}
 
-    public class NinjaMonkey : LoadInfo
-    {
+public class NinjaMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<NinjaMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<NinjaMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.NinjaMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.NinjaMonkeyEnabled;
+}
 
-    public class SniperMonkey : LoadInfo
-    {
+public class SniperMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<SniperMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<SniperMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.SniperMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.SniperMonkeyEnabled;
+}
 
-    public class SpikeFactory : LoadInfo
-    {
+public class SpikeFactory : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<SpikeFactoryLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<SpikeFactoryLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.SpikeFactoryEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.SpikeFactoryEnabled;
+}
 
-    public class SuperMonkey : LoadInfo
-    {
+public class SuperMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<SuperMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<SuperMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.SuperMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.SuperMonkeyEnabled;
+}
 
-    public class TackShooter : LoadInfo
-    {
+public class TackShooter : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<TackShooterLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<TackShooterLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.TackShooterEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.TackShooterEnabled;
+}
 
-    public class WizardMonkey : LoadInfo
-    {
+public class WizardMonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<WizardMonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<WizardMonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.WizardMonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.WizardMonkeyEnabled;
+}
 
-    public class Mermonkey : LoadInfo
-    {
+public class Mermonkey : LoadInfo
+{
 #if RELEASE
-        public override ModByteLoader<TowerModel> Loader => GetInstance<MermonkeyLoader>();
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MermonkeyLoader>();
 #endif
 
-        public override ModSettingBool Enabled => TowerSettings.MermonkeyEnabled;
-    }
+    public override ModSettingBool Enabled => TowerSettings.MermonkeyEnabled;
 }
