@@ -11,7 +11,7 @@ public class Settings : ModSettings
 {
     protected override int Order => 1;
 
-    public const int MaxTiersMin = 15;
+    public const int MaxTiersMin = 7;
     public const int MaxTiersMax = 15;
 
     public static readonly ModSettingInt MaxTiers = new(MaxTiersMax)
