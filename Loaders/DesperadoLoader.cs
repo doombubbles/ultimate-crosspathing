@@ -352,10 +352,18 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.towerType = br.ReadBoolean() ? null : br.ReadString();
-			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType3 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin3 = br.ReadBoolean() ? null : br.ReadString();
 			v.reactDelay = br.ReadSingle();
 		}
 	}
@@ -495,6 +503,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
 			v.displayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
+			v.cantCreateSubProjectiles = br.ReadBoolean();
 		}
 	}
 	
@@ -833,6 +842,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.damageAddative = br.ReadSingle();
 			v.mustIncludeAllTags = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
+			v.ignoreTag = br.ReadBoolean();
 		}
 	}
 	
@@ -866,6 +876,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
+			v.maxActivationsPerGame = br.ReadInt32();
 			v.animation = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
@@ -1213,6 +1224,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>();
@@ -1360,6 +1372,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Bloons.BloonBehaviorModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionBehaviorModel>();

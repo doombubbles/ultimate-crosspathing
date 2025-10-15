@@ -352,10 +352,18 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.towerType = br.ReadBoolean() ? null : br.ReadString();
-			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType3 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin3 = br.ReadBoolean() ? null : br.ReadString();
 			v.reactDelay = br.ReadSingle();
 		}
 	}
@@ -458,6 +466,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
 			v.displayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
+			v.cantCreateSubProjectiles = br.ReadBoolean();
 		}
 	}
 	
@@ -893,6 +902,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.damageAddative = br.ReadSingle();
 			v.mustIncludeAllTags = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
+			v.ignoreTag = br.ReadBoolean();
 		}
 	}
 	
@@ -1074,6 +1084,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
+			v.maxActivationsPerGame = br.ReadInt32();
 			v.animation = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
@@ -1263,6 +1274,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.ignoreSeekAngle = br.ReadBoolean();
 			v.overrideRotation = br.ReadBoolean();
 			v.useLifetimeAsDistance = br.ReadBoolean();
+			v.expireOnContactTarget = br.ReadBoolean();
 			turnRateField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}

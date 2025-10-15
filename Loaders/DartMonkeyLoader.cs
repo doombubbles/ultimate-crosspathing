@@ -352,10 +352,18 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.waterSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.reactSoundAlt = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
-			v.towerType = br.ReadBoolean() ? null : br.ReadString();
-			v.towerSkin = br.ReadBoolean() ? null : br.ReadString();
+			v.reactSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.reactSoundAlt3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.towerType1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin1 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin2 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerType3 = br.ReadBoolean() ? null : br.ReadString();
+			v.towerSkin3 = br.ReadBoolean() ? null : br.ReadString();
 			v.reactDelay = br.ReadSingle();
 		}
 	}
@@ -465,6 +473,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.ignorePierceExhaustion = br.ReadBoolean();
 			v.saveId = br.ReadBoolean() ? null : br.ReadString();
 			v.displayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
+			v.cantCreateSubProjectiles = br.ReadBoolean();
 		}
 	}
 	
@@ -673,6 +682,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.addedViaUpgrade = br.ReadBoolean() ? null : br.ReadString();
 			v.livesCost = br.ReadInt32();
 			v.maxActivationsPerRound = br.ReadInt32();
+			v.maxActivationsPerGame = br.ReadInt32();
 			v.animation = br.ReadInt32();
 			v.enabled = br.ReadBoolean();
 			v.canActivateBetweenRounds = br.ReadBoolean();
@@ -794,6 +804,15 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		}
 	}
 	
+	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
+			v.changeRotation = br.ReadBoolean();
+			v.clearCollidedWith = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -811,6 +830,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.damageAddative = br.ReadSingle();
 			v.mustIncludeAllTags = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
+			v.ignoreTag = br.ReadBoolean();
 		}
 	}
 	
@@ -921,6 +941,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileBlockerCollisionReboundModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
@@ -964,6 +985,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileBlockerCollisionReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_KnockbackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());

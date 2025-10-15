@@ -2,8 +2,8 @@
 
 public static class ModHelperData
 {
-    public const string WorksOnVersion = "50.0";
-    public const string Version = "1.7.1";
+    public const string WorksOnVersion = "51.0";
+    public const string Version = "1.7.2";
     public const string Name = "Ultimate Crosspathing";
 
     public const string Description =
