@@ -199,6 +199,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -236,6 +237,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -430,6 +432,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	
@@ -644,6 +647,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
+			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1029,7 +1033,14 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.type = br.ReadBoolean() ? null : br.ReadString();
+			v.altType = br.ReadBoolean() ? null : br.ReadString();
+			v.projectileId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1255,6 +1266,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1321,15 +1333,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
-	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
-			v.changeRotation = br.ReadBoolean();
-			v.clearCollidedWith = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_TargetSelectedPointOrDefaultModel_Fields(int start, int count) {
 		Set_v_TargetSupplierModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1363,6 +1366,15 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.heroSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
+			v.changeRotation = br.ReadBoolean();
+			v.clearCollidedWith = br.ReadBoolean();
 		}
 	}
 	
@@ -1624,10 +1636,10 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.RandomEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileBlockerCollisionReboundModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.TargetSelectedPointOrDefaultModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.CreateEffectWhileAttackingModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.SlowModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffDisplayModel>();
@@ -1721,10 +1733,10 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RandomEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileBlockerCollisionReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TargetSelectedPointOrDefaultModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectWhileAttackingModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SlowModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionRotationOffDisplayModel_Fields(br.ReadInt32(), br.ReadInt32());

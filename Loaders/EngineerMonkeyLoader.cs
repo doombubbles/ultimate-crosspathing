@@ -199,6 +199,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -236,6 +237,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -406,6 +408,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	
@@ -998,7 +1001,14 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.type = br.ReadBoolean() ? null : br.ReadString();
+			v.altType = br.ReadBoolean() ? null : br.ReadString();
+			v.projectileId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1051,6 +1061,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1349,6 +1360,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
+			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1380,6 +1392,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateProjectileOnTowerDestroyModel)m[i+start];
 			v.projectileModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+			v.conditions = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Condition.ConditionModel>) m[br.ReadInt32()];
 			v.useTowerRotation = br.ReadBoolean();
 			v.setAgeZeroOnSell = br.ReadBoolean();
 			v.ignoreSubTowers = br.ReadBoolean();
@@ -1466,6 +1479,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
 				Read_a_Single_Array();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Condition.ConditionModel>();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
@@ -1660,6 +1674,7 @@ public class EngineerMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Condition.ConditionModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				
 				var resIndex = br.ReadInt32();

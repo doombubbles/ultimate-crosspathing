@@ -187,6 +187,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -224,6 +225,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -746,6 +748,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	

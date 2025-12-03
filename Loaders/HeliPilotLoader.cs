@@ -187,6 +187,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -224,6 +225,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -395,6 +397,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	
@@ -998,6 +1001,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1145,7 +1149,14 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.type = br.ReadBoolean() ? null : br.ReadString();
+			v.altType = br.ReadBoolean() ? null : br.ReadString();
+			v.projectileId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	

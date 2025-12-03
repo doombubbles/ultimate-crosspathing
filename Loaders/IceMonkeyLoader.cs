@@ -187,6 +187,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -224,6 +225,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -376,15 +378,6 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
-	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
-			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
-			v.createOnAirUnit = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_FreezeNearbyWaterModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -393,6 +386,15 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.areaHeightOffset = br.ReadSingle();
 			v.freezeAsset = ModContent.CreatePrefabReference(br.ReadString());
 			v.displayPriority = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_CreateEffectOnUpgradeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel)m[i+start];
+			v.effectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createOnAirUnit = br.ReadBoolean();
 		}
 	}
 	
@@ -413,6 +415,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	
@@ -611,6 +614,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
+			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -699,7 +703,14 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.type = br.ReadBoolean() ? null : br.ReadString();
+			v.altType = br.ReadBoolean() ? null : br.ReadString();
+			v.projectileId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -967,6 +978,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1292,8 +1304,8 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SwitchTargetSupplierOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.FreezeNearbyWaterModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
@@ -1365,8 +1377,8 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SwitchTargetSupplierOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FreezeNearbyWaterModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_WeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());

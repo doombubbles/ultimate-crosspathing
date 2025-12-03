@@ -211,6 +211,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.tier = br.ReadInt32();
 			v.tiers = (Il2CppStructArray<int>) m[br.ReadInt32()];
 			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
+			v.towerTheme = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
 			v.icon3D = ModContent.CreatePrefabReference(br.ReadString());
 			v.portrait = ModContent.CreateSpriteReference(br.ReadString());
@@ -248,6 +249,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.frontierId = br.ReadInt32();
 		}
 	}
 	
@@ -429,6 +431,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.addsToSharedGrid = br.ReadBoolean();
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
+			v.disableOnCreate = br.ReadBoolean();
 		}
 	}
 	
@@ -899,6 +902,22 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
+	private void Set_v_FilterBadImmunityModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterBadImmunityModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_FilterWithTagsModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel)m[i+start];
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.inclusive = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1002,6 +1021,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
+			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			animationOffsetField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			cooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1205,7 +1225,14 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.sound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.sound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound1 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound2 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound3 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound4 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+			v.altSound5 = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.type = br.ReadBoolean() ? null : br.ReadString();
+			v.altType = br.ReadBoolean() ? null : br.ReadString();
+			v.projectileId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -1335,6 +1362,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
+			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1438,6 +1466,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutOffscreenModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBadImmunityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterWithTagsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PoplustSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DruidVengeanceEffectModel>();
@@ -1518,6 +1548,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutOffscreenModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterBadImmunityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterWithTagsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PoplustSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DruidVengeanceEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
