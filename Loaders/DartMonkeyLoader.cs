@@ -212,6 +212,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
+			v.ignoreAreaChanges = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
@@ -699,6 +700,7 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
+			v.activateOnRoundEnd = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -808,15 +810,6 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 		}
 	}
 	
-	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
-			v.changeRotation = br.ReadBoolean();
-			v.clearCollidedWith = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_DamageModifierModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -863,6 +856,15 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 			v.canCreateInBetweenRounds = br.ReadBoolean();
 			v.collideOnSubProjectile = br.ReadBoolean();
 			v.passOnCollidedWith = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_MapBorderReboundModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel)m[i+start];
+			v.changeRotation = br.ReadBoolean();
+			v.clearCollidedWith = br.ReadBoolean();
 		}
 	}
 	
@@ -945,10 +947,10 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ProjectileBlockerCollisionReboundModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnExhaustFractionModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.MapBorderReboundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnExhaustFractionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ExpireProjectileAtScreenEdgeModel>();
 				
@@ -989,10 +991,10 @@ public class DartMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ProjectileBlockerCollisionReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_KnockbackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MapBorderReboundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnExhaustFractionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ExpireProjectileAtScreenEdgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				

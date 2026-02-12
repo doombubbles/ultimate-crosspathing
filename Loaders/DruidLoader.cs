@@ -236,6 +236,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
+			v.ignoreAreaChanges = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
@@ -1020,6 +1021,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
+			v.activateOnRoundEnd = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1050,8 +1052,9 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CashPerBananaFarmInRangeModel)m[i+start];
 			v.baseCash = br.ReadSingle();
-			v.cash = br.ReadSingle();
+			v.extraCashPerTier = (Il2CppStructArray<float>) m[br.ReadInt32()];
 			v.rangeIncrease = br.ReadSingle();
+			v.maxCashGeneration = br.ReadSingle();
 			v.textAssetId = ModContent.CreatePrefabReference(br.ReadString());
 			v.textLifespan = br.ReadSingle();
 		}
@@ -1065,11 +1068,39 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 		}
 	}
 	
-	private void Set_v_ActivateAbilitiesOnAbilityModel_Fields(int start, int count) {
-		Set_v_AbilityBehaviorModel_Fields(start, count);
+	private void Set_v_BuffIconPerTowerInRangeModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel)m[i+start];
-			v.abilityToFind = br.ReadBoolean() ? null : br.ReadString();
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BuffIconPerTowerInRangeModel)m[i+start];
+			v.towerIdFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffLocsFullName = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_ActivateAttackModel_Fields(int start, int count) {
+		Set_v_AbilityBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
+		var lifespanField = t.GetField("lifespan", bindFlags);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel)m[i+start];
+			v.attacks = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>) m[br.ReadInt32()];
+			v.processOnActivate = br.ReadBoolean();
+			v.cancelIfNoTargets = br.ReadBoolean();
+			v.turnOffExisting = br.ReadBoolean();
+			v.endOnRoundEnd = br.ReadBoolean();
+			v.endOnDefeatScreen = br.ReadBoolean();
+			v.isOneShot = br.ReadBoolean();
+			v.isSaved = br.ReadBoolean();
+			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+		}
+	}
+	
+	private void Set_v_MultiInstantEmissionModel_Fields(int start, int count) {
+		Set_v_EmissionModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.MultiInstantEmissionModel)m[i+start];
+			v.amount = br.ReadInt32();
 		}
 	}
 	
@@ -1362,7 +1393,6 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
-			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -1409,9 +1439,10 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Read_a_TargetType_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				Read_a_Single_Array();
+				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				Read_a_PrefabReference_Array();
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
-				Read_a_Single_Array();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				
 				//##  Step 2: create empty objects
@@ -1476,7 +1507,9 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CashPerBananaFarmInRangeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.BonusLivesOnAbilityModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAbilitiesOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BuffIconPerTowerInRangeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.ActivateAttackModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.MultiInstantEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.SpiritOfTheForestModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageOverTimeZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeCustomModel>();
@@ -1558,7 +1591,9 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashPerBananaFarmInRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusLivesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_ActivateAbilitiesOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BuffIconPerTowerInRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_ActivateAttackModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_MultiInstantEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SpiritOfTheForestModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeCustomModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1585,6 +1620,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Weapons.WeaponModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel>();
+				LinkArray<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackModel>();
 				LinkArray<Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel>();
 				LinkList<Il2CppAssets.Scripts.Models.Model>();
 				

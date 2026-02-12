@@ -224,6 +224,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
+			v.ignoreAreaChanges = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
@@ -1040,6 +1041,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
+			v.activateOnRoundEnd = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1148,13 +1150,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel)m[i+start];
 			v.offset = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_FilterAllModel_Fields(int start, int count) {
-		Set_v_FilterModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllModel)m[i+start];
 		}
 	}
 	
@@ -1274,6 +1269,13 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel) m[br.ReadInt32()];
 			v.noGrabEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.maxPullRbe = br.ReadInt32();
+		}
+	}
+	
+	private void Set_v_FilterAllModel_Fields(int start, int count) {
+		Set_v_FilterModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllModel)m[i+start];
 		}
 	}
 	
@@ -1429,7 +1431,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateEffectOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmmisionTowardsTargetModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ScaleProjectileModel>();
 				Create_Records<Il2CppAssets.Scripts.Simulation.Towers.Projectiles.Behaviors.Curve>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.ArriveAtTargetModel>();
@@ -1438,6 +1439,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.KnockbackModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.GreatWhiteDisplayStepModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateGreatWhiteEffectModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterAllModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateProjectileOnIntervalModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectProjectileAfterTimeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.LatchToBloonModel>();
@@ -1506,7 +1508,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_CreateEffectOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmmisionTowardsTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_FilterAllModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ScaleProjectileModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_Curve_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArriveAtTargetModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1515,6 +1516,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_KnockbackModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GreatWhiteDisplayStepModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateGreatWhiteEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FilterAllModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateProjectileOnIntervalModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectProjectileAfterTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_LatchToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());

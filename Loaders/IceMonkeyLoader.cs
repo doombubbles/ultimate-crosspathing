@@ -212,6 +212,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
+			v.ignoreAreaChanges = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
@@ -614,7 +615,6 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.cascadeMutators = br.ReadBoolean();
 			v.growBlockModel = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel) m[br.ReadInt32()];
 			v.applyAfterDamage = br.ReadBoolean();
-			v.preventHealthPercentTriggers = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
@@ -977,6 +977,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
+			v.activateOnRoundEnd = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
@@ -1257,6 +1258,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBonusDamagePerHitToBloonModel)m[i+start];
 			v.mutationId = br.ReadBoolean() ? null : br.ReadString();
+			v.priority = br.ReadInt32();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.perHitDamageAddition = br.ReadSingle();
 			v.layers = br.ReadInt32();
@@ -1264,6 +1266,7 @@ public class IceMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.lastAppliesFirst = br.ReadBoolean();
 			v.cascadeMutators = br.ReadBoolean();
 			v.overlayType = br.ReadBoolean() ? null : br.ReadString();
+			v.filter = (Il2CppAssets.Scripts.Models.Towers.Filters.FilterModel) m[br.ReadInt32()];
 		}
 	}
 	

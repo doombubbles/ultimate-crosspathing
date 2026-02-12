@@ -238,6 +238,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.towerSelectionMenuThemeId = br.ReadBoolean() ? null : br.ReadString();
 			v.secondarySelectionMenu = ModContent.CreatePrefabReference(br.ReadString());
 			v.ignoreCoopAreas = br.ReadBoolean();
+			v.ignoreAreaChanges = br.ReadBoolean();
 			v.canAlwaysBeSold = br.ReadBoolean();
 			v.blockSelling = br.ReadBoolean();
 			v.isParagon = br.ReadBoolean();
@@ -1061,6 +1062,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.startOffCooldown = br.ReadBoolean();
 			v.alwaysSetAnimationState = br.ReadBoolean();
 			v.rechargeMonkeyMoneyCost = br.ReadInt32();
+			v.activateOnRoundEnd = br.ReadBoolean();
 			v.restrictAbilityAfterMaxRoundTimer = br.ReadBoolean();
 			v.isHidden = br.ReadBoolean();
 			cooldownSpeedScaleField.SetValue(v,br.ReadSingle().ToIl2Cpp());
