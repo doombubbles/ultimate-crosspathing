@@ -286,3 +286,19 @@ public class SuperMonkeyBeacon : LoadInfo
 #endif
     public override bool PowerPro => true;
 }
+
+public class TechBotPrime : LoadInfo
+{
+#if RELEASE
+    public override ModByteLoader<TowerModel> Loader => GetInstance<TechBotPrimeLoader>();
+#endif
+    public override bool PowerPro => true;
+}
+
+public class MonkeyBoostPro : LoadInfo
+{
+#if RELEASE
+    public override ModByteLoader<TowerModel> Loader => GetInstance<MonkeyBoostProLoader>();
+#endif
+    public override bool PowerPro => true;
+}

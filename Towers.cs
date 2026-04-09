@@ -19,23 +19,25 @@ public static class Towers
     /// </summary>
     public static readonly Dictionary<string, (int, int, int)> PathPriorities = new()
     {
-        {TowerType.DartMonkey, (0, 2, 1)}, // This means Top Path > Bottom Path > Middle Path
-        {TowerType.TackShooter, (0, 1, 2)},
-        {TowerType.BoomerangMonkey, (1, 2, 0)},
-        {TowerType.BombShooter, (2, 1, 0)},
-        {TowerType.MonkeyBuccaneer, (0, 1, 2)},
-        {TowerType.NinjaMonkey, (0, 2, 1)},
-        {TowerType.SniperMonkey, (1, 2, 0)},
-        {TowerType.DartlingGunner, (2, 0, 1)},
-        {TowerType.IceMonkey, (2, 0, 1)},
-        {TowerType.SuperMonkey, (0, 1, 2)},
-        {TowerType.GlueGunner, (2, 0, 1)},
-        {TowerType.WizardMonkey, (0, 2, 1)},
-        {TowerType.BananaFarm, (1, 2, 0)},
-        {TowerType.SpikeFactory, (2, 1, 0)},
-        {TowerType.Mermonkey, (1, 2, 0)},
-        {TowerType.BananaFarmerPro, (0, 1, 2)},
-        {TowerType.SuperMonkeyBeacon, (1, 2, 0)}
+        { TowerType.DartMonkey, (0, 2, 1) }, // This means Top Path > Bottom Path > Middle Path
+        { TowerType.TackShooter, (0, 1, 2) },
+        { TowerType.BoomerangMonkey, (1, 2, 0) },
+        { TowerType.BombShooter, (2, 1, 0) },
+        { TowerType.MonkeyBuccaneer, (0, 1, 2) },
+        { TowerType.NinjaMonkey, (0, 2, 1) },
+        { TowerType.SniperMonkey, (1, 2, 0) },
+        { TowerType.DartlingGunner, (2, 0, 1) },
+        { TowerType.IceMonkey, (2, 0, 1) },
+        { TowerType.SuperMonkey, (0, 1, 2) },
+        { TowerType.GlueGunner, (2, 0, 1) },
+        { TowerType.WizardMonkey, (0, 2, 1) },
+        { TowerType.BananaFarm, (1, 2, 0) },
+        { TowerType.SpikeFactory, (2, 1, 0) },
+        { TowerType.Mermonkey, (1, 2, 0) },
+        { TowerType.BananaFarmerPro, (0, 1, 2) },
+        { TowerType.SuperMonkeyBeacon, (1, 2, 0) },
+        { "MonkeyBoostPro", (0, 1, 2) },
+        { TowerType.TechBotPrime, (2, 0, 1) },
     };
 
     /// <summary>
@@ -53,24 +55,26 @@ public static class Towers
     {
         var baseId = loadInfo.Name;
         var (high, medium, low) = PathPriorities.TryGetValue(baseId, out var priority)
-                                      ? priority
-                                      : PathPriorities[TowerType.DartMonkey];
+            ? priority
+            : PathPriorities[TowerType.DartMonkey];
         int[] tiers = [top, mid, bot];
         leftTiers = [top, mid, bot];
         rightTiers = [top, mid, bot];
         var orderedTiers = tiers.OrderByDescending(num => num).ToArray();
 
-        if (loadInfo.PowerPro && tiers.ToList().IndexOf(0) is var zeroIndex and >= 0 )
+        if (loadInfo.PowerPro && tiers.ToList().IndexOf(0) is var zeroIndex and >= 0)
         {
             if (zeroIndex == high)
             {
                 leftTiers[low] = 0;
                 rightTiers[medium] = 0;
-            } else if (zeroIndex == medium)
+            }
+            else if (zeroIndex == medium)
             {
                 leftTiers[low] = 0;
                 rightTiers[high] = 0;
-            } else if (zeroIndex == low)
+            }
+            else if (zeroIndex == low)
             {
                 leftTiers[medium] = 0;
                 rightTiers[high] = 0;
@@ -272,8 +276,8 @@ public static class Towers
             };
 
             upgradePathModel.tower = upgradeTiers.Sum() <= Settings.MaxTiersMax
-                                         ? $"{towerModel.baseId}-{upgradeTiers[0]}{upgradeTiers[1]}{upgradeTiers[2]}"
-                                         : null;
+                ? $"{towerModel.baseId}-{upgradeTiers[0]}{upgradeTiers[1]}{upgradeTiers[2]}"
+                : null;
         }
 
         towerModel.upgrades = allUpgrades.Values.Where(u => u.tower != null).ToIl2CppReferenceArray();

@@ -60,6 +60,11 @@ public static class DeepMerging
         { new Tuple<string, Type>("isSharedRangeEnabled", Il2CppType.Of<TargetSupplierModel>()), true },
     };
 
+    private static readonly string[] SharedAbilityNames =
+    [
+        "Super Monkey Beacon",
+        "Monkey Boost Pro"
+    ];
 
     private static Object DeepMerge(Object left, Object right, Object ancestor, History history,
         bool shallow = false)
@@ -183,7 +188,7 @@ public static class DeepMerging
         {
             var leftProps = leftValue.Unbox<BloonProperties>();
             var rightProps = rightValue.Unbox<BloonProperties>();
-            var result = (int)(leftProps & rightProps);
+            var result = (int) (leftProps & rightProps);
             memberInfo.SetValue(left, result.ToIl2Cpp());
         }
     }
@@ -544,7 +549,7 @@ public static class DeepMerging
                     var ancestorCount = GetCountForEmissionModel(ancestor, ancestorModel.Cast<EmissionModel>());
 
                     leftWeapon.projectile.GetDamageModel().damage =
-                        (float)Math.Round(
+                        (float) Math.Round(
                             leftWeapon.projectile.GetDamageModel().damage * rightCount / ancestorCount);
 
                     history.GetLeft<TowerModel>().GetBehavior<LinkProjectileRadiusToTowerRangeModel>()
@@ -664,9 +669,8 @@ public static class DeepMerging
         if (leftModel.IsType<AbilityModel>(out var leftAbility) &&
             rightModel.IsType<AbilityModel>(out var rightAbility))
         {
-            return leftAbility.displayName == rightAbility.displayName ||
-                   leftAbility.displayName.StartsWith("Super Monkey Beacon") &&
-                   rightAbility.displayName.StartsWith("Super Monkey Beacon");
+            return leftAbility.displayName == rightAbility.displayName || SharedAbilityNames.Any(name =>
+                leftAbility.displayName.StartsWith(name) && rightAbility.displayName.StartsWith(name));
         }
 
         if (leftModel.IsType<TowerBehaviorModel>() && rightModel.IsType<TowerBehaviorModel>() &&
