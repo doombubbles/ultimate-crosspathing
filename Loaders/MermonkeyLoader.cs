@@ -7,21 +7,24 @@ using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Runtime.Serialization;
-using Il2CppSystem.Reflection;
 using Il2CppSystem;
-using Il2CppAssets.Scripts.Simulation.SMath;
+using Il2CppSystem.Collections.Generic;
 using System.IO;
+using Il2CppSystem.Reflection;
+using Il2CppSystem.Runtime.Serialization;
+
+using Il2CppNinjaKiwi.Common;
+
+using Il2CppAssets.Scripts.Simulation.SMath;
 
 public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.TowerModel> {
 	
-	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
-	BinaryReader br = null;
+	private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	
-	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
+	private BinaryReader br = null;
+	// NOTE: was a collection per type but it prevented inheritance e.g list of Products would required class type id
 	protected override string BytesFileName => "Mermonkeys.bytes";
-	int mIndex = 1; // first element is null
+	private int mIndex = 1; // first element is null
 	#region Read array
 	
 	private void LinkArray<T>() where T : Il2CppObjectBase {
@@ -62,6 +65,32 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		for (var i = 0; i < setCount; i++) {
 			var arrIndex = br.ReadInt32();
 			var arr = (Dictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var valueIndex = br.ReadInt32();
+				var obj = (T)m[valueIndex];
+				arr[obj.name] = obj;
+			}
+		}
+	}
+	private void LinkSerializableDictionary<T>() where T : Il2CppObjectBase {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var key = br.ReadString();
+				var valueIndex = br.ReadInt32();
+				arr[key] = (T) m[valueIndex];
+			}
+		}
+	}
+	private void LinkModelSerializableDictionary<T>() where T : Il2CppAssets.Scripts.Models.Model {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
 			var arrCount = br.ReadInt32();
 			for (var j = 0; j < arrCount; j++) {
 				var valueIndex = br.ReadInt32();
@@ -144,14 +173,21 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	private void CreateListSet<T>() where T : Il2CppObjectBase {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new List<T>(br.ReadInt32()); // set capactity
+			m[mIndex++] = new List<T>(br.ReadInt32()); // set capacity
 		}
 	}
 	
 	private void CreateDictionarySet<K, T>() {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capactity
+			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capacity
+		}
+	}
+	
+	private void CreateSerializableDictionarySet<K, T>() {
+		var arrCount = br.ReadInt32();
+		for (var i = 0; i < arrCount; i++) {
+			m[mIndex++] = new SerializableDictionary<K, T>(br.ReadInt32());// set capacity
 		}
 	}
 	
@@ -183,7 +219,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		var childDependantsField = t.GetField("childDependants", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : String.Intern(br.ReadString()));
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
 		}
 	}
@@ -212,6 +248,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
+			v.hideInfoButton = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -230,6 +267,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.isParagon = br.ReadBoolean();
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.ignoreStun = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -461,6 +499,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.modelName = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -663,6 +702,18 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		Set_v_BloonBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_FreezeModifierForTagsModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModifierForTagsModel)m[i+start];
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.freezeId = br.ReadBoolean() ? null : br.ReadString();
+			v.freezeTimeMultiplier = br.ReadSingle();
+			v.resetToUnmodified = br.ReadBoolean();
+			v.preventMutation = br.ReadBoolean();
 		}
 	}
 	
@@ -1180,7 +1231,6 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInSetModel)m[i+start];
 			v.towerSets = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet[]) m[br.ReadInt32()];
-			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 		}
 	}
 	
@@ -1585,6 +1635,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.GrowBlockModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.FreezeModifierForTagsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.ArcEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TrackTargetModel>();
@@ -1682,6 +1733,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_DamageModifierForBloonStateModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FreezeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GrowBlockModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_FreezeModifierForTagsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ArcEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TrackTargetModel_Fields(br.ReadInt32(), br.ReadInt32());

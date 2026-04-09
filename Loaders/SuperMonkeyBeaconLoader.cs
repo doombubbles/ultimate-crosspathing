@@ -7,21 +7,24 @@ using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Runtime.Serialization;
-using Il2CppSystem.Reflection;
 using Il2CppSystem;
-using Il2CppAssets.Scripts.Simulation.SMath;
+using Il2CppSystem.Collections.Generic;
 using System.IO;
+using Il2CppSystem.Reflection;
+using Il2CppSystem.Runtime.Serialization;
+
+using Il2CppNinjaKiwi.Common;
+
+using Il2CppAssets.Scripts.Simulation.SMath;
 
 public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.TowerModel> {
 	
-	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
-	BinaryReader br = null;
+	private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	
-	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
+	private BinaryReader br = null;
+	// NOTE: was a collection per type but it prevented inheritance e.g list of Products would required class type id
 	protected override string BytesFileName => "SuperMonkeyBeacons.bytes";
-	int mIndex = 1; // first element is null
+	private int mIndex = 1; // first element is null
 	#region Read array
 	
 	private void LinkArray<T>() where T : Il2CppObjectBase {
@@ -62,6 +65,32 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 		for (var i = 0; i < setCount; i++) {
 			var arrIndex = br.ReadInt32();
 			var arr = (Dictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var valueIndex = br.ReadInt32();
+				var obj = (T)m[valueIndex];
+				arr[obj.name] = obj;
+			}
+		}
+	}
+	private void LinkSerializableDictionary<T>() where T : Il2CppObjectBase {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var key = br.ReadString();
+				var valueIndex = br.ReadInt32();
+				arr[key] = (T) m[valueIndex];
+			}
+		}
+	}
+	private void LinkModelSerializableDictionary<T>() where T : Il2CppAssets.Scripts.Models.Model {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
 			var arrCount = br.ReadInt32();
 			for (var j = 0; j < arrCount; j++) {
 				var valueIndex = br.ReadInt32();
@@ -132,14 +161,21 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 	private void CreateListSet<T>() where T : Il2CppObjectBase {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new List<T>(br.ReadInt32()); // set capactity
+			m[mIndex++] = new List<T>(br.ReadInt32()); // set capacity
 		}
 	}
 	
 	private void CreateDictionarySet<K, T>() {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capactity
+			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capacity
+		}
+	}
+	
+	private void CreateSerializableDictionarySet<K, T>() {
+		var arrCount = br.ReadInt32();
+		for (var i = 0; i < arrCount; i++) {
+			m[mIndex++] = new SerializableDictionary<K, T>(br.ReadInt32());// set capacity
 		}
 	}
 	
@@ -171,7 +207,7 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 		var childDependantsField = t.GetField("childDependants", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : String.Intern(br.ReadString()));
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
 		}
 	}
@@ -200,6 +236,7 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
+			v.hideInfoButton = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -218,6 +255,7 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 			v.isParagon = br.ReadBoolean();
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.ignoreStun = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -268,6 +306,22 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 			var v = (Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel)m[i+start];
 			v.tower = br.ReadBoolean() ? null : br.ReadString();
 			v.upgrade = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
+	private void Set_v_CreateSoundOnMonkeyMoneyActivatedModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnMonkeyMoneyActivatedModel)m[i+start];
+			v.sound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_SoundModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Audio.SoundModel)m[i+start];
+			v.assetId = ModContent.CreateAudioClipReference(br.ReadString());
 		}
 	}
 	
@@ -344,14 +398,6 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 			v.towerType3 = br.ReadBoolean() ? null : br.ReadString();
 			v.towerSkin3 = br.ReadBoolean() ? null : br.ReadString();
 			v.reactDelay = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_SoundModel_Fields(int start, int count) {
-		Set_v_Model_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Audio.SoundModel)m[i+start];
-			v.assetId = ModContent.CreateAudioClipReference(br.ReadString());
 		}
 	}
 	
@@ -498,6 +544,7 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.modelName = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -906,13 +953,14 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CircleFootprintModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnMonkeyMoneyActivatedModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Audio.SoundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PowerProTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnSellModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Effects.EffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnPlaceModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PlayAnimationIndexModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnTowerPlaceModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Audio.SoundModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnSellModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
@@ -949,13 +997,14 @@ public class SuperMonkeyBeaconLoader : ModByteLoader<Il2CppAssets.Scripts.Models
 				Set_v_TowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CircleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_UpgradePathModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CreateSoundOnMonkeyMoneyActivatedModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PowerProTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PlayAnimationIndexModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnTowerPlaceModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_SoundModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnSellModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -7,21 +7,24 @@ using BTD_Mod_Helper.Api;
 using Il2Cpp;
 
 namespace UltimateCrosspathing.Loaders;
-using Il2CppSystem.Collections.Generic;
-using Il2CppSystem.Runtime.Serialization;
-using Il2CppSystem.Reflection;
 using Il2CppSystem;
-using Il2CppAssets.Scripts.Simulation.SMath;
+using Il2CppSystem.Collections.Generic;
 using System.IO;
+using Il2CppSystem.Reflection;
+using Il2CppSystem.Runtime.Serialization;
+
+using Il2CppNinjaKiwi.Common;
+
+using Il2CppAssets.Scripts.Simulation.SMath;
 
 public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.TowerModel> {
 	
-	BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
-	BinaryReader br = null;
+	private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static; 
 	
-	// NOTE: was a collection per type but it prevented inheriance e.g list of Products would required class type id
+	private BinaryReader br = null;
+	// NOTE: was a collection per type but it prevented inheritance e.g list of Products would required class type id
 	protected override string BytesFileName => "BeastHandlers.bytes";
-	int mIndex = 1; // first element is null
+	private int mIndex = 1; // first element is null
 	#region Read array
 	
 	private void LinkArray<T>() where T : Il2CppObjectBase {
@@ -62,6 +65,32 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		for (var i = 0; i < setCount; i++) {
 			var arrIndex = br.ReadInt32();
 			var arr = (Dictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var valueIndex = br.ReadInt32();
+				var obj = (T)m[valueIndex];
+				arr[obj.name] = obj;
+			}
+		}
+	}
+	private void LinkSerializableDictionary<T>() where T : Il2CppObjectBase {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
+			var arrCount = br.ReadInt32();
+			for (var j = 0; j < arrCount; j++) {
+				var key = br.ReadString();
+				var valueIndex = br.ReadInt32();
+				arr[key] = (T) m[valueIndex];
+			}
+		}
+	}
+	private void LinkModelSerializableDictionary<T>() where T : Il2CppAssets.Scripts.Models.Model {
+		var setCount = br.ReadInt32();
+		for (var i = 0; i < setCount; i++) {
+			var arrIndex = br.ReadInt32();
+			var arr = (SerializableDictionary<string, T>)m[arrIndex];
 			var arrCount = br.ReadInt32();
 			for (var j = 0; j < arrCount; j++) {
 				var valueIndex = br.ReadInt32();
@@ -144,14 +173,21 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	private void CreateListSet<T>() where T : Il2CppObjectBase {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new List<T>(br.ReadInt32()); // set capactity
+			m[mIndex++] = new List<T>(br.ReadInt32()); // set capacity
 		}
 	}
 	
 	private void CreateDictionarySet<K, T>() {
 		var arrCount = br.ReadInt32();
 		for (var i = 0; i < arrCount; i++) {
-			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capactity
+			m[mIndex++] = new Dictionary<K, T>(br.ReadInt32());// set capacity
+		}
+	}
+	
+	private void CreateSerializableDictionarySet<K, T>() {
+		var arrCount = br.ReadInt32();
+		for (var i = 0; i < arrCount; i++) {
+			m[mIndex++] = new SerializableDictionary<K, T>(br.ReadInt32());// set capacity
 		}
 	}
 	
@@ -183,7 +219,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 		var childDependantsField = t.GetField("childDependants", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : String.Intern(br.ReadString()));
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
 		}
 	}
@@ -212,6 +248,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.emoteSpriteSmall = ModContent.CreateSpriteReference(br.ReadString());
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
+			v.hideInfoButton = br.ReadBoolean();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -230,6 +267,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.isParagon = br.ReadBoolean();
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.ignoreStun = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -533,6 +571,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			customStartCooldownField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.animateOnMainAttack = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
+			v.modelName = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
@@ -697,6 +736,20 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.mustIncludeAllStates = br.ReadBoolean();
 			v.applyOverMaxDamage = br.ReadBoolean();
 			v.mustBeModified = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
+			v.tag = br.ReadBoolean() ? null : br.ReadString();
+			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAddative = br.ReadSingle();
+			v.mustIncludeAllTags = br.ReadBoolean();
+			v.applyOverMaxDamage = br.ReadBoolean();
+			v.ignoreTag = br.ReadBoolean();
 		}
 	}
 	
@@ -895,20 +948,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.grabRadius = br.ReadSingle();
 			v.grabAmount = br.ReadInt32();
 			v.extraGrabAmount = br.ReadSingle();
-		}
-	}
-	
-	private void Set_v_DamageModifierForTagModel_Fields(int start, int count) {
-		Set_v_DamageModifierModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel)m[i+start];
-			v.tag = br.ReadBoolean() ? null : br.ReadString();
-			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
-			v.damageMultiplier = br.ReadSingle();
-			v.damageAddative = br.ReadSingle();
-			v.mustIncludeAllTags = br.ReadBoolean();
-			v.applyOverMaxDamage = br.ReadBoolean();
-			v.ignoreTag = br.ReadBoolean();
 		}
 	}
 	
@@ -1400,6 +1439,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForBloonStateModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.SingleEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.CreateEffectOnContactModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.CycleAnimationModel>();
@@ -1414,7 +1454,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnAirUnitDestroyModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.AttackAirUnitModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.GyrfalconPatternModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterBloonIfDamageTypeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Filters.FilterOutTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.AirUnitModel>();
@@ -1477,6 +1516,7 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_DamageModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForBloonStateModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_SingleEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateEffectOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CycleAnimationModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1491,7 +1531,6 @@ public class BeastHandlerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 				Set_v_CreateEffectOnAirUnitDestroyModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AttackAirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_GyrfalconPatternModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterBloonIfDamageTypeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterOutTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AirUnitModel_Fields(br.ReadInt32(), br.ReadInt32());
