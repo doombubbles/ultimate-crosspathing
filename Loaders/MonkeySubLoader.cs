@@ -994,6 +994,7 @@ public class MonkeySubLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		var cooldownField = t.GetField("cooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
+			v.modelName = br.ReadBoolean() ? null : br.ReadString();
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());

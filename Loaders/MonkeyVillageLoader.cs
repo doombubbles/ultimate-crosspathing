@@ -972,6 +972,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 		var cooldownField = t.GetField("cooldown", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel)m[i+start];
+			v.modelName = br.ReadBoolean() ? null : br.ReadString();
 			v.displayName = br.ReadBoolean() ? null : br.ReadString();
 			v.description = br.ReadBoolean() ? null : br.ReadString();
 			v.icon = ModContent.CreateSpriteReference(br.ReadString());
@@ -1082,6 +1083,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.TowerFilters.FilterInSetModel)m[i+start];
 			v.towerSets = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet[]) m[br.ReadInt32()];
+			v.towerSet = (Il2CppAssets.Scripts.Models.TowerSets.TowerSet) (br.ReadInt32());
 		}
 	}
 	
