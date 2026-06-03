@@ -288,6 +288,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -472,6 +474,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1342,6 +1345,8 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.speedMultiplier = br.ReadSingle();
+			v.tagFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.tagInclusive = br.ReadBoolean();
 		}
 	}
 	

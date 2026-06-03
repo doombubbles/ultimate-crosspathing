@@ -7,6 +7,7 @@
         <LangVersion>preview</LangVersion>
         <Optimize>False</Optimize>
         <DebugType>embedded</DebugType>
+        <DontCopyLaunchSettings>true</DontCopyLaunchSettings>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(Configuration)'=='Debug'">

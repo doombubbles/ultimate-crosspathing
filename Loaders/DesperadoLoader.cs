@@ -264,6 +264,8 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -473,6 +475,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -903,6 +906,14 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 		}
 	}
 	
+	private void Set_v_AttackMinimumRangeModel_Fields(int start, int count) {
+		Set_v_AttackBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackMinimumRangeModel)m[i+start];
+			v.minimumRange = br.ReadSingle();
+		}
+	}
+	
 	private void Set_v_AbilityModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
@@ -1327,6 +1338,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.LineProjectileEmissionModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForTagModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors.AttackMinimumRangeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TakeAimModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
@@ -1394,6 +1406,7 @@ public class DesperadoLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				Set_v_LineProjectileEmissionModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageModifierForTagModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AttackMinimumRangeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_TakeAimModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());

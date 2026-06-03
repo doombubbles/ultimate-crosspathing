@@ -276,6 +276,8 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -431,6 +433,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -581,6 +584,8 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.speedMultiplier = br.ReadSingle();
+			v.tagFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.tagInclusive = br.ReadBoolean();
 		}
 	}
 	
@@ -690,6 +695,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.interval = br.ReadInt32();
 			v.alternateAnimation = br.ReadInt32();
+			v.priority = br.ReadInt32();
 		}
 	}
 	
@@ -1227,6 +1233,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.percent = br.ReadSingle();
 			v.tags = (Il2CppStringArray) m[br.ReadInt32()];
 			v.damageBloonsOffscreenOnly = br.ReadBoolean();
+			v.isUnique = br.ReadBoolean();
 		}
 	}
 	

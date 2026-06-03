@@ -288,6 +288,8 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -460,6 +462,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -708,6 +711,24 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
+	private void Set_v_DamageModifierModel_Fields(int start, int count) {
+		Set_v_ProjectileBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
+		}
+	}
+	
+	private void Set_v_DamageModifierForCashAmountModel_Fields(int start, int count) {
+		Set_v_DamageModifierModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForCashAmountModel)m[i+start];
+			v.damageMultiplier = br.ReadSingle();
+			v.damageAdditive = br.ReadSingle();
+			v.cashThreshold = br.ReadSingle();
+			v.stackId = br.ReadBoolean() ? null : br.ReadString();
+		}
+	}
+	
 	private void Set_v_WeaponBehaviorModel_Fields(int start, int count) {
 		Set_v_EntityBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -948,13 +969,6 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.Behaviors.EmissionRotationOffDisplayModel)m[i+start];
 			v.offsetRotation = br.ReadInt32();
-		}
-	}
-	
-	private void Set_v_DamageModifierModel_Fields(int start, int count) {
-		Set_v_ProjectileBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel)m[i+start];
 		}
 	}
 	
@@ -1581,6 +1595,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AddBehaviorToBloonModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Bloons.Behaviors.DamageOverTimeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DamageModifierForCashAmountModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FireAlternateWeaponModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FireWhenAlternateWeaponIsReadyModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.FilterTargetAngleFilterModel>();
@@ -1674,6 +1689,7 @@ public class MonkeyBuccaneerLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_AddBehaviorToBloonModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageOverTimeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DisplayModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DamageModifierForCashAmountModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireAlternateWeaponModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FireWhenAlternateWeaponIsReadyModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_FilterTargetAngleFilterModel_Fields(br.ReadInt32(), br.ReadInt32());

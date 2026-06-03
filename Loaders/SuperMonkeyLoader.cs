@@ -276,6 +276,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -472,6 +474,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -854,14 +857,32 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	
 	private void Set_v_DarkshiftModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DarkshiftModel>();
+		var towerSpawnDelayField = t.GetField("towerSpawnDelay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DarkshiftModel)m[i+start];
 			v.restrictToTowerRadius = br.ReadBoolean();
 			v.placementZoneAssetRadius = br.ReadSingle();
-			v.placementZoneAsset = ModContent.CreatePrefabReference(br.ReadString());
+			v.helperMessageLocsKey = br.ReadBoolean() ? null : br.ReadString();
+			v.yOffset = br.ReadSingle();
+			towerSpawnDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.delaySpawnUntilEffectIsFinished = br.ReadBoolean();
+			v.maxSpawnDelay = br.ReadSingle();
+			v.resetRotation = br.ReadBoolean();
+			v.placementZoneAsset = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
 			v.darkshiftSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.disappearEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
 			v.reappearEffectModel = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.createProjectileOnFinish = (Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileModel) m[br.ReadInt32()];
+			v.projectileEmission = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
+		}
+	}
+	
+	private void Set_v_AssetPathModel_Fields(int start, int count) {
+		Set_v_Model_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel)m[i+start];
+			v.assetPath = ModContent.CreatePrefabReference(br.ReadString());
 		}
 	}
 	
@@ -1039,6 +1060,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.speedMultiplier = br.ReadSingle();
+			v.tagFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.tagInclusive = br.ReadBoolean();
 		}
 	}
 	
@@ -1378,6 +1401,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.interval = br.ReadInt32();
 			v.alternateAnimation = br.ReadInt32();
+			v.priority = br.ReadInt32();
 		}
 	}
 	
@@ -1610,47 +1634,14 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
+	private void Set_v_BonusCashZoneModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
-			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
-			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
-			v.maxStackSize = br.ReadInt32();
-			v.isGlobalRange = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_DiscountZoneModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorBuffModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel)m[i+start];
-			v.discountMultiplier = br.ReadSingle();
-			v.stackLimit = br.ReadInt32();
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusCashZoneModel)m[i+start];
+			v.multiplier = br.ReadSingle();
 			v.stackName = br.ReadBoolean() ? null : br.ReadString();
-			v.affectSelf = br.ReadBoolean();
-			v.tierCap = br.ReadInt32();
-			v.tierMin = br.ReadInt32();
-			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
-			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
-			v.isBuffFromArea = br.ReadBoolean();
-			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
-			v.dontAffectOthersInCoop = br.ReadBoolean();
-			v.isGlobal = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
-			v.buffName = br.ReadBoolean() ? null : br.ReadString();
-			v.iconName = br.ReadBoolean() ? null : br.ReadString();
-			v.stackable = br.ReadBoolean();
-			v.maxStackSize = br.ReadInt32();
-			v.globalRange = br.ReadBoolean();
-			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			v.dontShowX = br.ReadBoolean();
+			v.groupName = br.ReadBoolean() ? null : br.ReadString();
+			v.stackLimit = br.ReadInt32();
 		}
 	}
 	
@@ -1684,14 +1675,47 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_BonusCashZoneModel_Fields(int start, int count) {
+	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusCashZoneModel)m[i+start];
-			v.multiplier = br.ReadSingle();
-			v.stackName = br.ReadBoolean() ? null : br.ReadString();
-			v.groupName = br.ReadBoolean() ? null : br.ReadString();
+			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
+			v.buffName = br.ReadBoolean() ? null : br.ReadString();
+			v.iconName = br.ReadBoolean() ? null : br.ReadString();
+			v.stackable = br.ReadBoolean();
+			v.maxStackSize = br.ReadInt32();
+			v.globalRange = br.ReadBoolean();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.dontShowX = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.isGlobalRange = br.ReadBoolean();
+		}
+	}
+	
+	private void Set_v_DiscountZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel)m[i+start];
+			v.discountMultiplier = br.ReadSingle();
 			v.stackLimit = br.ReadInt32();
+			v.stackName = br.ReadBoolean() ? null : br.ReadString();
+			v.affectSelf = br.ReadBoolean();
+			v.tierCap = br.ReadInt32();
+			v.tierMin = br.ReadInt32();
+			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
+			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.isBuffFromArea = br.ReadBoolean();
+			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAffectOthersInCoop = br.ReadBoolean();
+			v.isGlobal = br.ReadBoolean();
 		}
 	}
 	
@@ -1814,6 +1838,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.EjectEffectModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.AbilityModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.DarkshiftModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Effects.AssetPathModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionWithOffsetsModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.ThrowMarkerOffsetModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.RetargetOnContactModel>();
@@ -1878,10 +1903,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.RangeTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Mutators.AddBehaviorToTowerMutatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusCashZoneModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PierceSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DamageSupportModel>();
@@ -1929,6 +1954,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_EjectEffectModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DarkshiftModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_AssetPathModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_EmissionWithOffsetsModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_ThrowMarkerOffsetModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RetargetOnContactModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -1993,10 +2019,10 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_RangeTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_AddBehaviorToTowerMutatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_DiscountZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DiscountZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PierceSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RangeSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DamageSupportModel_Fields(br.ReadInt32(), br.ReadInt32());

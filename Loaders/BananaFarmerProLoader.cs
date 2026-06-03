@@ -264,6 +264,8 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -731,6 +733,25 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 		}
 	}
 	
+	private void Set_v_DiscountZoneModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel)m[i+start];
+			v.discountMultiplier = br.ReadSingle();
+			v.stackLimit = br.ReadInt32();
+			v.stackName = br.ReadBoolean() ? null : br.ReadString();
+			v.affectSelf = br.ReadBoolean();
+			v.tierCap = br.ReadInt32();
+			v.tierMin = br.ReadInt32();
+			v.towerBaseIds = br.ReadBoolean() ? null : br.ReadString();
+			v.towerBaseIdList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.isBuffFromArea = br.ReadBoolean();
+			v.upgradeId = br.ReadBoolean() ? null : br.ReadString();
+			v.dontAffectOthersInCoop = br.ReadBoolean();
+			v.isGlobal = br.ReadBoolean();
+		}
+	}
+	
 	private void Set_v_MonkeyBankerModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorBuffModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -790,6 +811,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -844,6 +866,8 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.speedMultiplier = br.ReadSingle();
+			v.tagFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.tagInclusive = br.ReadBoolean();
 		}
 	}
 	
@@ -948,6 +972,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateEffectOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CreateSoundOnUpgradeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CashbackZoneModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.MonkeyBankerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BananaFarmerRegrowBananasModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Weapons.Behaviors.BananaFarmerRegrowBananasWeaponBehaviorModel>();
@@ -993,6 +1018,7 @@ public class BananaFarmerProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 				Set_v_CreateEffectOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnUpgradeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CashbackZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_DiscountZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_MonkeyBankerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BananaFarmerRegrowBananasModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BananaFarmerRegrowBananasWeaponBehaviorModel_Fields(br.ReadInt32(), br.ReadInt32());

@@ -4,11 +4,11 @@ using BTD_Mod_Helper.Api.Commands;
 namespace UltimateCrosspathing;
 
 #if DEBUG
-internal class ExportTowerBytesCommands : ModCommand<ExportCommand>
+internal class GenerateByteLoadersCommand : ModCommand<GenerateCommand>
 {
     public override string Command => "uc";
-    public override string Help => "Export Ultimate Crosspathing tower bytes";
-    
+    public override string Help => "Generate Ultimate Crosspathing byte loaders";
+
     public override bool Execute(ref string resultText)
     {
         try
@@ -19,7 +19,7 @@ internal class ExportTowerBytesCommands : ModCommand<ExportCommand>
         {
             ModHelper.Error<UltimateCrosspathingMod>(e);
         }
-        
+
         return true;
     }
 

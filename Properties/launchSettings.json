@@ -11,6 +11,24 @@
       "executablePath": "$(BloonsTD6)/BloonsTD6.exe",
       "workingDirectory": "$(BloonsTD6)",
       "commandLineArgs": "moddingDev --melonloader.debug"
+    },
+    "BloonsTD6 (Only This Mod)": {
+      "commandName": "Executable",
+      "executablePath": "$(BloonsTD6)/BloonsTD6.exe",
+      "workingDirectory": "$(BloonsTD6)",
+      "commandLineArgs": "moddingDev --modhelper.only='$(ProjectName);$(Dependencies)'"
+    },
+    "BloonsTD6 (Tests)": {
+      "commandName": "Executable",
+      "executablePath": "$(BloonsTD6)/BloonsTD6.exe",
+      "workingDirectory": "$(BloonsTD6)",
+      "commandLineArgs": "moddingDev -batchmode --modhelper.offline --modhelper.only='$(ProjectName);$(Dependencies)' --modhelper.noaudio --modhelper.run -q test mod $(ProjectName)"
+    },
+    "BloonsTD6 (Generate Byte Loaders)": {
+      "commandName": "Executable",
+      "executablePath": "$(BloonsTD6)/BloonsTD6.exe",
+      "workingDirectory": "$(BloonsTD6)",
+      "commandLineArgs": "moddingDev -batchmode --modhelper.offline --modhelper.only='$(ProjectName);$(Dependencies)' --modhelper.noaudio --modhelper.run -q generate uc"
     }
   }
 }

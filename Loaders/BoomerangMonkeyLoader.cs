@@ -288,6 +288,8 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -460,6 +462,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1054,6 +1057,7 @@ public class BoomerangMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.T
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.TurboModel)m[i+start];
 			v.multiplier = br.ReadSingle();
 			v.projectileDisplay = (Il2CppAssets.Scripts.Models.Effects.AssetPathModel) m[br.ReadInt32()];
+			v.dontBlockActivation = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.extraDamage = br.ReadInt32();
 			v.projectileRadiusScaleBonus = br.ReadSingle();

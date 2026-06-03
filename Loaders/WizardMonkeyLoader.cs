@@ -264,6 +264,8 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -436,6 +438,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1177,11 +1180,16 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	
 	private void Set_v_AbilityCreateTowerModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
+		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.AbilityCreateTowerModel>();
+		var towerLifetimeField = t.GetField("towerLifetime", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.AbilityCreateTowerModel)m[i+start];
 			v.towerModel = (Il2CppAssets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
 			v.isAirBasedTower = br.ReadBoolean();
 			v.trackCirclePosition = br.ReadBoolean();
+			v.hideMainTower = br.ReadBoolean();
+			towerLifetimeField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.towerLifetimeFrames = br.ReadInt32();
 		}
 	}
 	
@@ -1285,6 +1293,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.interval = br.ReadInt32();
 			v.alternateAnimation = br.ReadInt32();
+			v.priority = br.ReadInt32();
 		}
 	}
 	

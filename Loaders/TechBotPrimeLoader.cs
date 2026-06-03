@@ -264,6 +264,8 @@ public class TechBotPrimeLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -555,7 +557,7 @@ public class TechBotPrimeLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.travelEffectSpeed = br.ReadSingle();
 			v.ambushTechActive = br.ReadBoolean();
 			v.linkedTowerMax = br.ReadInt32();
-			v.radius = br.ReadInt32();
+			v.zoneActive = br.ReadBoolean();
 			v.activateInRadius = br.ReadBoolean();
 		}
 	}
@@ -598,6 +600,7 @@ public class TechBotPrimeLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	

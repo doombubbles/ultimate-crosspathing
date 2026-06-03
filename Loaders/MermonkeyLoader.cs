@@ -276,6 +276,8 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -472,6 +474,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1243,6 +1246,7 @@ public class MermonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.abilityCooldownSpeedScale = br.ReadSingle();
 			v.affectsOnlyWater = br.ReadBoolean();
 			v.mutatorPriority = br.ReadInt32();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	

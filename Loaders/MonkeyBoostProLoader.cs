@@ -252,6 +252,8 @@ public class MonkeyBoostProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -606,7 +608,7 @@ public class MonkeyBoostProLoader : ModByteLoader<Il2CppAssets.Scripts.Models.To
 			v.displayModel = (Il2CppAssets.Scripts.Models.GenericBehaviors.DisplayModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];
 			v.useTowerRange = br.ReadBoolean();
-            v.stunMutators = (Il2CppStringArray) m[br.ReadInt32()];
+			v.stunMutators = (Il2CppStringArray) m[br.ReadInt32()];
 		}
 	}
 	

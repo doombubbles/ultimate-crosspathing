@@ -173,6 +173,20 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			m[mIndex++] = arr;
 		}
 	}
+	private void Read_String_v_String_Dictionary() {
+		var arrSetCount = br.ReadInt32();
+		var count = arrSetCount;
+		for (var i = 0; i < count; i++) {
+			var arrCount = br.ReadInt32();
+			var arr = new Dictionary<string, string>(arrCount);
+			for (var j = 0; j < arrCount; j++) {
+				var key = br.ReadBoolean() ? null : br.ReadString();
+				var value = br.ReadBoolean() ? null : br.ReadString();
+				arr[key] = value;
+			}
+			m[mIndex++] = arr;
+		}
+	}
 	#endregion
 	
 	#region Read object records
@@ -290,6 +304,8 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -495,6 +511,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1233,12 +1250,13 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 	private void Set_v_MorphTowerModel_Fields(int start, int count) {
 		Set_v_AbilityBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MorphTowerModel>();
+		var LinkedAbilityCooldownsField = t.GetField("LinkedAbilityCooldowns", bindFlags);
 		var lifespanField = t.GetField("lifespan", bindFlags);
+		var morphDelayField = t.GetField("morphDelay", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.MorphTowerModel)m[i+start];
 			v.isUnique = br.ReadBoolean();
 			v.priority = br.ReadInt32();
-			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.mutateAll = br.ReadBoolean();
 			v.mutateSelf = br.ReadBoolean();
 			v.towerModel = (Il2CppAssets.Scripts.Models.Towers.TowerModel) m[br.ReadInt32()];
@@ -1253,7 +1271,13 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.resetOnDefeatScreen = br.ReadBoolean();
 			v.ignoreWithMutators = br.ReadBoolean() ? null : br.ReadString();
 			v.ignoreWithMutatorsList = (Il2CppStringArray) m[br.ReadInt32()];
+			v.canTowerStillUpgrade = br.ReadBoolean();
+			v.saveMutator = br.ReadBoolean();
+			v.animationIndexDuringMorphDelay = br.ReadInt32();
+			v.effectDuringMorphDelay = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			LinkedAbilityCooldownsField.SetValue(v,(Dictionary<System.String, System.String>) m[br.ReadInt32()]);
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			morphDelayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 		}
 	}
 	
@@ -1437,6 +1461,7 @@ public class AlchemistLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 				CreateArraySet<Il2CppAssets.Scripts.Models.Towers.Projectiles.ProjectileBehaviorModel>();
 				CreateListSet<Il2CppAssets.Scripts.Models.Model>();
 				Read_String_v_Single_Dictionary();
+				Read_String_v_String_Dictionary();
 				
 				//##  Step 2: create empty objects
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.TowerModel>();

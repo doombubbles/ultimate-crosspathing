@@ -264,6 +264,8 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -436,6 +438,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -823,6 +826,7 @@ public class BombShooterLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.interval = br.ReadInt32();
 			v.alternateAnimation = br.ReadInt32();
+			v.priority = br.ReadInt32();
 		}
 	}
 	

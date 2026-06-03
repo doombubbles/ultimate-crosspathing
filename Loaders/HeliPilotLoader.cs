@@ -264,6 +264,8 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -437,6 +439,7 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -914,6 +917,8 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			v.distanceScaleForTagsTags = br.ReadBoolean() ? null : br.ReadString();
 			v.distanceScaleForTagsTagsList = (Il2CppStringArray) m[br.ReadInt32()];
 			v.speedMultiplier = br.ReadSingle();
+			v.tagFilter = (Il2CppStringArray) m[br.ReadInt32()];
+			v.tagInclusive = br.ReadBoolean();
 		}
 	}
 	
@@ -1063,6 +1068,10 @@ public class HeliPilotLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.
 			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.RedeployModel)m[i+start];
 			v.selectionObjectPath = ModContent.CreatePrefabReference(br.ReadString());
 			v.isSelectableGameObject = ModContent.CreatePrefabReference(br.ReadString());
+			v.effectOnRedeploy = (Il2CppAssets.Scripts.Models.Effects.EffectModel) m[br.ReadInt32()];
+			v.towerSuspendFrames = br.ReadInt32();
+			v.helperMessageLocsKey = br.ReadBoolean() ? null : br.ReadString();
+			v.helperMessageInvalidLocsKey = br.ReadBoolean() ? null : br.ReadString();
 			v.activateSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.pickupSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];
 			v.dropOffSound = (Il2CppAssets.Scripts.Models.Audio.SoundModel) m[br.ReadInt32()];

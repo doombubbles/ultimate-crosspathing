@@ -288,6 +288,8 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.destroyTowerOnRedistribution = br.ReadBoolean();
 			v.displayScale = br.ReadSingle();
 			v.useAirUnitHeight = br.ReadBoolean();
+			v.isTransformedTower = br.ReadBoolean();
+			v.cantBeStunned = br.ReadBoolean();
 			v.frontierId = br.ReadInt32();
 		}
 	}
@@ -460,6 +462,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.sharedGridRange = br.ReadSingle();
 			v.drawRangeCircle = br.ReadBoolean();
 			v.disableOnCreate = br.ReadBoolean();
+			v.fixedRange = br.ReadBoolean();
 		}
 	}
 	
@@ -1114,6 +1117,7 @@ public class MonkeyVillageLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tow
 			v.abilityCooldownSpeedScale = br.ReadSingle();
 			v.affectsOnlyWater = br.ReadBoolean();
 			v.mutatorPriority = br.ReadInt32();
+			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 		}
 	}
 	
