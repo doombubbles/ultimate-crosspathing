@@ -1,4 +1,4 @@
-﻿global using System.Linq;
+global using System.Linq;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Api;
 using System;
@@ -10,6 +10,7 @@ using UltimateCrosspathing;
 [assembly:
     MelonInfo(typeof(UltimateCrosspathingMod), ModHelperData.Name, ModHelperData.Version, ModHelperData.RepoOwner)]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
+[assembly: MelonGame("Ninja Kiwi", "BloonsTD6-Epic")]
 [assembly: MelonPriority(-500)]
 
 namespace UltimateCrosspathing;

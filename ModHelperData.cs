@@ -11,5 +11,6 @@ public static class ModHelperData
         "Note for Mod Browser: This mod's dll is beefy, so if your internet isn't super fast you may need to go into your Mod Helper Settings and increase the 'Request Timeout' duration under Mod Browser Settings.";
 
     public const string RepoOwner = "doombubbles";
-    public const string RepoName = "ultimate-crosspathing";
+    public const string PrevRepoName = "ultimate-crosspathing";
+    public const string RepoName = "UltimateCrosspathing";
 }

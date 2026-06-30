@@ -1,0 +1,31 @@
+[package]
+name = "UltimateCrosspathing"
+namespace = "doombubbles"
+description = "Instead of your Towers being restricted to 5 Upgrades in one path and 2 in another, you can take your upgrades in any path, optionally up to all 15!"
+websiteUrl = "https://github.com/doombubbles/UltimateCrosspathing"
+
+[package.dependencies]
+LavaGang-MelonLoader = "0.7.3"
+doombubbles-Btd6ModHelper = "3.6.5"
+
+[build]
+icon = "./Icon.png"
+readme = "./README.md"
+outdir = "bin"
+
+[[build.copy]]
+source = "./bin/Release/UltimateCrosspathing.dll"
+target = "UltimateCrosspathing.dll"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "./CHANGELOG.md"
+
+[[build.copy]]
+source = "./LICENSE"
+target = "./LICENSE"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["bloons-td-6"]
+categories = ["mods"]

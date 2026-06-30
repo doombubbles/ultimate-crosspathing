@@ -34,8 +34,6 @@ requires a restart.
 
 The UltimateCrosspathing.dll file is quite beefy. If your internet connection is on the slower side, you may need to increase the Request Timeout duration in the Mod Helper Settings.
 
-<img width="500" src="https://media.discordapp.net/attachments/800115046134186026/1012882202167607306/unknown.png?width=1158&height=670"/>
-
 ### It says "Failed to load Assembly ... No Compaitibility Layer Found!"
 
 [BloonsTD6 Mod Helper](https://github.com/gurrenm3/BTD-Mod-Helper/releases/latest) is not installed correctly. Make sure
@@ -48,7 +46,7 @@ That's the Ninja Kiwi way of saying the tower doesn't exist for you to upgrade t
 installed correctly. See previous answer. Also check the logs for the mod to see if there was an error generating the
 towers. *The cost itself is not the issue*
 
-<details><summary><h1>Developing Ultimate Crosspathing</h1></summary>
+<details><summary>Developing Ultimate Crosspathing</summary>
 
 The two solution confiurations of Ultimate Crosspathing, *Debug* and *Release* build the mod in two different ways.
 
