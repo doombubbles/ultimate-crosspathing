@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.3] - 2026-08-06
+
 - Updated for BTD6 v56
 - Added support for Sky Warden and Portable Lake Pro
-- Added optional tower ID arguments to `generate uc` for targeted TowerModel, loader, and byte generation
+  - I'm on vacation so I haven't done much testing on either of these, if the merged behavior seems wrong it will be fixed in a future update
+- Updated the setup for the embedded merging data so it can now be zip compressed, dropping the file size of the dll from nearly 50 MB to just 7 MB
 
 ## [1.8.2] - 2026-06-03
 
@@ -214,7 +217,8 @@ KNOWN ISSUES:
 - Switch to slider from 7 to 15 for crosspathing instead of the execute order 66 toggle
 - Using a new custom load step for smoother startup
 
-[unreleased]: https://github.com/doombubbles/UltimateCrosspathing/compare/1.8.2...HEAD
+[unreleased]: https://github.com/doombubbles/UltimateCrosspathing/compare/1.8.3...HEAD
+[1.8.3]: https://github.com/doombubbles/UltimateCrosspathing/compare/1.8.2...1.8.3
 
 [1.8.2]: https://github.com/doombubbles/UltimateCrosspathing/compare/1.8.1...1.8.2
 

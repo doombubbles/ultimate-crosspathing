@@ -9,25 +9,29 @@
         <DebugType>embedded</DebugType>
         <DontCopyLaunchSettings>true</DontCopyLaunchSettings>
     </PropertyGroup>
-    
+
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <Compile Remove="Loaders\*.cs" />
-        <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Bytes" />
-      <Folder Include="Loaders" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Content Include=".github\ISSUE_TEMPLATE\config.yml" />
-      <Content Include=".github\ISSUE_TEMPLATE\load_error.md" />
-      <Content Include=".github\ISSUE_TEMPLATE\other.md" />
-      <Content Include=".github\ISSUE_TEMPLATE\tower_error.md" />
-      <Content Include=".github\ISSUE_TEMPLATE\tower_improvement.md" />
-      <Content Include=".github\workflows\build.yml" />
+        <Compile Remove="Loaders\*.cs"/>
+        <PackageReference Include="CommandLineParser" Version="2.9.1"/>
     </ItemGroup>
 
-    <Import Project="..\btd6.targets" />
+    <ItemGroup>
+        <Folder Include="Bytes"/>
+        <Folder Include="Loaders"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include=".github\ISSUE_TEMPLATE\config.yml"/>
+        <Content Include=".github\ISSUE_TEMPLATE\load_error.md"/>
+        <Content Include=".github\ISSUE_TEMPLATE\other.md"/>
+        <Content Include=".github\ISSUE_TEMPLATE\tower_error.md"/>
+        <Content Include=".github\ISSUE_TEMPLATE\tower_improvement.md"/>
+        <Content Include=".github\workflows\build.yml"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <ZipEmbeddedResources Include="Bytes\*.bytes"/>
+    </ItemGroup>
+
+    <Import Project="..\btd6.targets"/>
 </Project>

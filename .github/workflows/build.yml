@@ -230,7 +230,7 @@ jobs:
         if: env.IS_RELEASE == 'true'
         working-directory: ${{ env.PROJECT_NAME }}
         run: |
-          tcli build --package-version ${{ env.RELEASE_TAG }} | tee tcli.log
+          tcli build --package-version "${{ env.RELEASE_TAG }}" | tee tcli.log
           sed -i 's|\x1B\[[0-9;]*m||g' tcli.log # get rid of ansi colors
           path=$(grep '^Output path ' tcli.log | sed 's|^Output path ||')
           if [ -z "$path" ]; then
@@ -249,11 +249,11 @@ jobs:
           path: ${{ env.THUNDERSTORE_PACKAGE_PATH }}
 
       - name: Publish Thunderstore Package
-        if: env.IS_RELEASE == 'true' && env.ACT != 'true'
+        if: env.IS_RELEASE == 'true' && env.TCLI_AUTH_TOKEN != '' && env.ACT != 'true'
         env:
           TCLI_AUTH_TOKEN: ${{ secrets.TCLI_AUTH_TOKEN }}
         working-directory: ${{ env.PROJECT_NAME }}
-        run: tcli publish --file ${{ env.THUNDERSTORE_PACKAGE_PATH }}
+        run: tcli publish --file "${{ env.THUNDERSTORE_PACKAGE_PATH }}"
 
       - name: Release
         uses: softprops/action-gh-release@v3
