@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Updated for BTD6 v56
+- Added support for Sky Warden and Portable Lake Pro
+- Added optional tower ID arguments to `generate uc` for targeted TowerModel, loader, and byte generation
+
 ## [1.8.2] - 2026-06-03
 
 - Updated for BTD6 v55

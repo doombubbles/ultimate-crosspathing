@@ -203,12 +203,16 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	
 	private void Set_v_Model_Fields(int start, int count) {
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Model>();
-		var _nameField = t.GetField("_name", bindFlags);
+		var runtimeTypeIndexField = t.GetField("runtimeTypeIndex", bindFlags);
+		var isTowerField = t.GetField("isTower", bindFlags);
 		var childDependantsField = t.GetField("childDependants", bindFlags);
+		var _nameField = t.GetField("_name", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
+			runtimeTypeIndexField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+			isTowerField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 		}
 	}
 	
@@ -237,6 +241,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.hideInfoButton = br.ReadBoolean();
+			v.bonusSelectionRadius = br.ReadSingle();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -256,6 +261,7 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 			v.ignoreStun = br.ReadBoolean();
+			v.isPrimedForRedeploy = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -989,14 +995,13 @@ public class WizardMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towe
 	private void Set_v_TravelAlongPathModel_Fields(int start, int count) {
 		Set_v_ProjectileBehaviorModel_Fields(start, count);
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelAlongPathModel>();
-		var speedField = t.GetField("speed", bindFlags);
 		var lifespanField = t.GetField("lifespan", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.TravelAlongPathModel)m[i+start];
 			v.range = br.ReadSingle();
 			v.reverse = br.ReadBoolean();
 			v.disableRotateWithPathDirection = br.ReadBoolean();
-			speedField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.speed = br.ReadSingle();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.rotationLerp = br.ReadSingle();
 		}

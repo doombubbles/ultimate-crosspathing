@@ -52,6 +52,8 @@ The two solution confiurations of Ultimate Crosspathing, *Debug* and *Release* b
 
 - *Debug* - For each Tower you have enabled in Settings, and to the number of upgrades you have set in the Settings, the corresponding crosspathings will be generated from scratch into the game. The Debug setting to "Export Tower Bytes" becomes available, and pressing it will update the TowerLoader classes and bytes for each tower in the source code.
 
+  The `generate uc` command does the same export for all enabled towers. Pass one or more tower base IDs to limit both batch-mode merging and export to those towers, for example `generate uc PortableLakePro` or `generate uc Skywarden PortableLakePro`.
+
 - *Release* - Instead of generating, it loads in all towers based on what bytes have already been generated and included. The settings then merely determine In-Game crosspathing capability.
 
 The work flow of fixing Ultimate Crosspathing after a new update goes something like:

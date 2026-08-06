@@ -65,15 +65,61 @@ public abstract class LoadInfo : ModContent
                                                         : Find<ModTower>(baseId) != null;
 
 #if DEBUG
-    public static void ExportTowers()
+    public static bool TryGetRequestedInfos(IEnumerable<string> requestedNames, out LoadInfo[] infos,
+        out string resultText)
     {
-        foreach (var info in GetContent<LoadInfo>().Where(info => info.Enabled))
+        var requested = (requestedNames ?? [])
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(System.StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var allInfos = GetContent<LoadInfo>();
+
+        if (requested.Length == 0)
+        {
+            infos = allInfos.Where(info => info.Enabled).ToArray();
+            resultText = null;
+            return true;
+        }
+
+        var byName = allInfos.ToDictionary(info => info.Name, System.StringComparer.OrdinalIgnoreCase);
+        var unknown = requested.Where(name => !byName.ContainsKey(name)).ToArray();
+        if (unknown.Length > 0)
+        {
+            infos = [];
+            resultText = $"Unknown tower ID(s): {string.Join(", ", unknown)}";
+            return false;
+        }
+
+        infos = requested.Select(name => byName[name]).ToArray();
+        resultText = null;
+        return true;
+    }
+
+    public static bool ExportTowers(IEnumerable<string> requestedNames, out string resultText)
+    {
+        if (!TryGetRequestedInfos(requestedNames, out var infos, out resultText)) return false;
+
+        var missingModels = infos
+            .Where(info => GenerateTask.TowerModels.All(model => model.baseId != info.Name))
+            .Select(info => info.Name)
+            .ToArray();
+        if (missingModels.Length > 0)
+        {
+            resultText = $"No generated models found for: {string.Join(", ", missingModels)}";
+            return false;
+        }
+
+        foreach (var info in infos)
         {
             info.Export();
         }
 
-        ModHelper.Msg<UltimateCrosspathingMod>("Finished exporting!");
+        resultText = $"Finished exporting {string.Join(", ", infos.Select(info => info.Name))}!";
+        ModHelper.Msg<UltimateCrosspathingMod>(resultText);
+        return true;
     }
+
+    public static void ExportTowers() => ExportTowers([], out _);
 
     public void Export()
     {
@@ -269,6 +315,21 @@ public class Mermonkey : LoadInfo
 #if RELEASE
     public override ModByteLoader<TowerModel> Loader => GetInstance<MermonkeyLoader>();
 #endif
+}
+
+public class Skywarden : LoadInfo
+{
+#if RELEASE
+    public override ModByteLoader<TowerModel> Loader => GetInstance<SkywardenLoader>();
+#endif
+}
+
+public class PortableLakePro : LoadInfo
+{
+#if RELEASE
+    public override ModByteLoader<TowerModel> Loader => GetInstance<PortableLakeProLoader>();
+#endif
+    public override bool PowerPro => true;
 }
 
 public class BananaFarmerPro : LoadInfo

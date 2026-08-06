@@ -215,12 +215,16 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	
 	private void Set_v_Model_Fields(int start, int count) {
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Model>();
-		var _nameField = t.GetField("_name", bindFlags);
+		var runtimeTypeIndexField = t.GetField("runtimeTypeIndex", bindFlags);
+		var isTowerField = t.GetField("isTower", bindFlags);
 		var childDependantsField = t.GetField("childDependants", bindFlags);
+		var _nameField = t.GetField("_name", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
+			runtimeTypeIndexField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+			isTowerField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 		}
 	}
 	
@@ -249,6 +253,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.hideInfoButton = br.ReadBoolean();
+			v.bonusSelectionRadius = br.ReadSingle();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -268,6 +273,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 			v.ignoreStun = br.ReadBoolean();
+			v.isPrimedForRedeploy = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -1290,6 +1296,7 @@ public class NinjaMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.range = br.ReadSingle();
 			v.maxNumTowersModified = br.ReadSingle();
 			v.canAffectThisTower = br.ReadBoolean();
+			v.oneShotInRange = br.ReadBoolean();
 			lifespanField.SetValue(v,br.ReadSingle().ToIl2Cpp());
 			v.damageModifierModel = (Il2CppAssets.Scripts.Models.Towers.Projectiles.DamageModifierModel) m[br.ReadInt32()];
 			v.filters = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TowerFilters.TowerFilterModel>) m[br.ReadInt32()];

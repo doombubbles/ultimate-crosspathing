@@ -227,12 +227,16 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 	
 	private void Set_v_Model_Fields(int start, int count) {
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Model>();
-		var _nameField = t.GetField("_name", bindFlags);
+		var runtimeTypeIndexField = t.GetField("runtimeTypeIndex", bindFlags);
+		var isTowerField = t.GetField("isTower", bindFlags);
 		var childDependantsField = t.GetField("childDependants", bindFlags);
+		var _nameField = t.GetField("_name", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
+			runtimeTypeIndexField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+			isTowerField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 		}
 	}
 	
@@ -261,6 +265,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.hideInfoButton = br.ReadBoolean();
+			v.bonusSelectionRadius = br.ReadSingle();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -280,6 +285,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 			v.ignoreStun = br.ReadBoolean();
+			v.isPrimedForRedeploy = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -1292,6 +1298,7 @@ public class DruidLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Towers.Towe
 			v.emissionModel = (Il2CppAssets.Scripts.Models.Towers.Behaviors.Emissions.EmissionModel) m[br.ReadInt32()];
 			v.splitRange = br.ReadSingle();
 			delayField.SetValue(v,br.ReadSingle().ToIl2Cpp());
+			v.targetLast = br.ReadBoolean();
 		}
 	}
 	

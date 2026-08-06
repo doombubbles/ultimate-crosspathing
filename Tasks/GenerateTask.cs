@@ -18,8 +18,15 @@ public class GenerateTask : ModLoadTask
 
     public override IEnumerator Coroutine()
     {
-        var enabled = GetContent<LoadInfo>().Where(info => info.Enabled).Select(info => info.Name).ToArray();
-        var disabled = GetContent<LoadInfo>().Where(info => !info.Enabled).Select(info => info.Name).ToArray();
+        var requestedTowerIds = GenerateByteLoadersCommand.GetBatchTowerIds();
+        if (!LoadInfo.TryGetRequestedInfos(requestedTowerIds, out var selectedInfos, out var selectionError))
+        {
+            ModHelper.Error<UltimateCrosspathingMod>(selectionError);
+            yield break;
+        }
+
+        var enabled = selectedInfos.Select(info => info.Name).ToArray();
+        var disabled = GetContent<LoadInfo>().Except(selectedInfos).Select(info => info.Name).ToArray();
 
         if (enabled.Any())
         {
@@ -43,9 +50,7 @@ public class GenerateTask : ModLoadTask
             info.loaded = true;
         }
 
-        var enabledTowers = loadInfos
-            .Where(info => info.Enabled)
-            .ToArray();
+        var enabledTowers = selectedInfos;
 
         while (true)
         {

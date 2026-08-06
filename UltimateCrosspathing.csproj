@@ -12,6 +12,7 @@
     
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <Compile Remove="Loaders\*.cs" />
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
     </ItemGroup>
     
     <ItemGroup>

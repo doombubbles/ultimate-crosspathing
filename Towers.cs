@@ -34,10 +34,12 @@ public static class Towers
         { TowerType.BananaFarm, (1, 2, 0) },
         { TowerType.SpikeFactory, (2, 1, 0) },
         { TowerType.Mermonkey, (1, 2, 0) },
+        { TowerType.Skywarden, (0, 1, 2) },
         { TowerType.BananaFarmerPro, (0, 1, 2) },
         { TowerType.SuperMonkeyBeacon, (1, 2, 0) },
         { "MonkeyBoostPro", (0, 1, 2) },
         { TowerType.TechBotPrime, (2, 0, 1) },
+        { TowerType.PortableLakePro, (0, 1, 2) },
     };
 
     /// <summary>

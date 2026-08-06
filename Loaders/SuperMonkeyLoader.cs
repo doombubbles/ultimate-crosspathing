@@ -215,12 +215,16 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 	
 	private void Set_v_Model_Fields(int start, int count) {
 		var t = Il2CppType.Of<Il2CppAssets.Scripts.Models.Model>();
-		var _nameField = t.GetField("_name", bindFlags);
+		var runtimeTypeIndexField = t.GetField("runtimeTypeIndex", bindFlags);
+		var isTowerField = t.GetField("isTower", bindFlags);
 		var childDependantsField = t.GetField("childDependants", bindFlags);
+		var _nameField = t.GetField("_name", bindFlags);
 		for (var i=0; i<count; i++) {
 			var v = (Il2CppAssets.Scripts.Models.Model)m[i+start];
-			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
+			runtimeTypeIndexField.SetValue(v,br.ReadInt32().ToIl2Cpp());
+			isTowerField.SetValue(v,br.ReadBoolean().ToIl2Cpp());
 			childDependantsField.SetValue(v,(List<Il2CppAssets.Scripts.Models.Model>) m[br.ReadInt32()]);
+			_nameField.SetValue(v,br.ReadBoolean() ? null : string.Intern(br.ReadString()));
 		}
 	}
 	
@@ -249,6 +253,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.emoteSpriteLarge = ModContent.CreateSpriteReference(br.ReadString());
 			v.doesntRotate = br.ReadBoolean();
 			v.hideInfoButton = br.ReadBoolean();
+			v.bonusSelectionRadius = br.ReadSingle();
 			v.upgrades = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.Upgrades.UpgradePathModel>) m[br.ReadInt32()];
 			v.appliedUpgrades = (Il2CppStringArray) m[br.ReadInt32()];
 			v.targetTypes = (Il2CppReferenceArray<Il2CppAssets.Scripts.Models.Towers.TargetType>) m[br.ReadInt32()];
@@ -268,6 +273,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.ignoreMaxSellPercent = br.ReadBoolean();
 			v.isStunned = br.ReadBoolean();
 			v.ignoreStun = br.ReadBoolean();
+			v.isPrimedForRedeploy = br.ReadBoolean();
 			v.geraldoItemName = br.ReadBoolean() ? null : br.ReadString();
 			v.sellbackModifierAdd = br.ReadSingle();
 			v.skinName = br.ReadBoolean() ? null : br.ReadString();
@@ -1015,6 +1021,39 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
+	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
+			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
+			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
+			v.maxStackSize = br.ReadInt32();
+			v.isGlobalRange = br.ReadBoolean();
+		}
+	}
+
+	private void Set_v_CanBuffIndicatorModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorBuffModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.CanBuffIndicatorModel)m[i+start];
+			v.isDisabled = br.ReadBoolean();
+		}
+	}
+
+	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
+		Set_v_TowerBehaviorModel_Fields(start, count);
+		for (var i=0; i<count; i++) {
+			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
+			v.buffName = br.ReadBoolean() ? null : br.ReadString();
+			v.iconName = br.ReadBoolean() ? null : br.ReadString();
+			v.stackable = br.ReadBoolean();
+			v.maxStackSize = br.ReadInt32();
+			v.globalRange = br.ReadBoolean();
+			v.onlyShowBuffIfMutated = br.ReadBoolean();
+			v.dontShowX = br.ReadBoolean();
+		}
+	}
+
 	private void Set_v_RectangleFootprintModel_Fields(int start, int count) {
 		Set_v_FootprintModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1675,31 +1714,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 		}
 	}
 	
-	private void Set_v_BuffIndicatorModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel)m[i+start];
-			v.buffName = br.ReadBoolean() ? null : br.ReadString();
-			v.iconName = br.ReadBoolean() ? null : br.ReadString();
-			v.stackable = br.ReadBoolean();
-			v.maxStackSize = br.ReadInt32();
-			v.globalRange = br.ReadBoolean();
-			v.onlyShowBuffIfMutated = br.ReadBoolean();
-			v.dontShowX = br.ReadBoolean();
-		}
-	}
-	
-	private void Set_v_TowerBehaviorBuffModel_Fields(int start, int count) {
-		Set_v_TowerBehaviorModel_Fields(start, count);
-		for (var i=0; i<count; i++) {
-			var v = (Il2CppAssets.Scripts.Models.Towers.Behaviors.TowerBehaviorBuffModel)m[i+start];
-			v.buffLocsName = br.ReadBoolean() ? null : br.ReadString();
-			v.buffIconName = br.ReadBoolean() ? null : br.ReadString();
-			v.maxStackSize = br.ReadInt32();
-			v.isGlobalRange = br.ReadBoolean();
-		}
-	}
-	
 	private void Set_v_DiscountZoneModel_Fields(int start, int count) {
 		Set_v_TowerBehaviorBuffModel_Fields(start, count);
 		for (var i=0; i<count; i++) {
@@ -1737,6 +1751,7 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 			v.additive = br.ReadSingle();
 			v.mutatorId = br.ReadBoolean() ? null : br.ReadString();
 			v.isUnique = br.ReadBoolean();
+			v.maxStacks = br.ReadInt32();
 		}
 	}
 	
@@ -1849,6 +1864,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.AgeModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors.DistributeToChildrenBloonModifierModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors.CreateSoundOnAbilityModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.CanBuffIndicatorModel>();
+				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RectangleFootprintModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RotateToDefaultPositionTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.KeepTowerZAtTerrainHeightModel>();
@@ -1905,7 +1922,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PerRoundCashBonusTowerModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.BonusCashZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RateSupportModel>();
-				Create_Records<Il2CppAssets.Scripts.Models.GenericBehaviors.BuffIndicatorModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.DiscountZoneModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.PierceSupportModel>();
 				Create_Records<Il2CppAssets.Scripts.Models.Towers.Behaviors.RangeSupportModel>();
@@ -1965,6 +1981,8 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_AgeModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DistributeToChildrenBloonModifierModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_CreateSoundOnAbilityModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_CanBuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
+				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RectangleFootprintModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RotateToDefaultPositionTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_KeepTowerZAtTerrainHeightModel_Fields(br.ReadInt32(), br.ReadInt32());
@@ -2021,7 +2039,6 @@ public class SuperMonkeyLoader : ModByteLoader<Il2CppAssets.Scripts.Models.Tower
 				Set_v_PerRoundCashBonusTowerModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_BonusCashZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RateSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
-				Set_v_BuffIndicatorModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_DiscountZoneModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_PierceSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
 				Set_v_RangeSupportModel_Fields(br.ReadInt32(), br.ReadInt32());
